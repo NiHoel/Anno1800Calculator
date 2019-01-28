@@ -282,6 +282,7 @@
                             ←
                         </div>
                         <div class="ui-fchain-item" data-bind="visible: amount">
+                            <div class="ui-fchain-item-name" data-bind="text: product.name"></div>
                             <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                             <div class="ui-fchain-item-count">
                                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
