@@ -1,0 +1,307 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Sauerbraten95">
+    <title>Anno 1800 Calculator</title>
+
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+
+    <script type="text/javascript" src="AnnoCalculator.js"></script>
+</head>
+<body>
+    <!-- #params-dialog -->
+    <div id="params-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Enter parameters</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <textarea class="form-control" rows="5" id="input-params"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#params-dialog -->
+    <!-- #settings-dialog -->
+    <div id="settings-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: texts.settings.name">Settings</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="noOptionalNeeds" name="example1" data-bind="checked: settings.noOptionalNeeds.checked">
+                            <label class="custom-control-label" for="noOptionalNeeds" data-bind="text: settings.noOptionalNeeds.name">No optional needs</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="decimalsForBuildings" name="example1" data-bind="checked: settings.decimalsForBuildings.checked">
+                            <label class="custom-control-label" for="decimalsForBuildings" data-bind="text: settings.decimalsForBuildings.name">Decimals for buildings</label>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
+                            </div>
+
+                            <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/settings-dialog -->
+    <!-- #help-dialog -->
+    <div id="help-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: texts.help.name">Settings</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <pre data-bind="text: texts.helpContent.name" style="white-space:pre-wrap"></pre>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#help-dialog -->
+    <div id="content" data-bind="visible: true" style="display:none">
+        <div class="fixed-top" style="padding-right: 17px;">
+            <div class="btn-group float-right">
+                <button class="btn btn-default" data-toggle="modal" data-target="#settings-dialog">
+                    <span class="fa fa-cog"> </span>
+                </button>
+                <button class="btn btn-default"  data-toggle="modal" data-target="#help-dialog">
+                    <span class="fa fa-question-circle-o" > </span>
+                </button>
+            </div>
+        </div>
+        <fieldset class="ui-fieldset" id="inhabitants-view">
+            <legend data-bind="text:texts.inhabitants.name">Inhabitants</legend>
+
+            <div>
+
+                <div class="ui-race-input fleft">
+                    <!-- <div class="ui-race-icon">
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
+                    <div data-bind="foreach: populationLevels">
+                        <div class="ui-race-unit">
+                            <div class="ui-race-unit-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
+                            <div class="ui-race-unit-name" data-bind="text: name"></div>
+
+                            <div class="input text">
+                                <div class="input-group spinner mb-3">
+                                    <input class="form-control" type="text" value="0" data-bind="value: amount" />
+                                    <div class="input-group-append">
+                                        <div class="input-group-btn-vertical">
+                                            <button class="btn btn-default" type="button" data-bind="click: incrementAmount"><i class="fa fa-caret-up"></i></button>
+                                            <button class="btn btn-default" type="button" data-bind="click: decrementAmount"><i class="fa fa-caret-down"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+
+        <fieldset class="ui-fieldset" id="workforce-view">
+            <legend class="collapser" data-toggle="collapse" data-target="#workforce">
+                <span class="fa fa-chevron-right"></span>
+                <span class="fa fa-chevron-down"></span>
+                <span data-bind="text:texts.workforce.name"></span>
+            </legend>
+
+            <div id="workforce" class="collapse show">
+
+                <div class="ui-race-input fleft">
+                    <!-- <div class="ui-race-icon">
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
+                    <div data-bind="foreach: workforce">
+                        <div class="ui-race-unit">
+                            <div class="ui-race-unit-icon"><img data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
+                            <!--<div class="ui-race-unit-name" data-bind="text: name"></div>-->
+                            <div class="ui-fchain-item-count">
+                                <span data-bind="text: amount"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="clear"></div>
+            </div>
+        </fieldset>
+
+
+        <div data-bind="foreach: categories">
+            <fieldset class="ui-fieldset" id="categories-view">
+                <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#' + removeSpaces(name)}">
+                    <span class="fa fa-chevron-right"></span>
+                    <span class="fa fa-chevron-down"></span>
+                    <span data-bind="text:name"></span>
+                </legend>
+
+                <div class="ui-fchain collapse show" data-bind="attr: {id:  removeSpaces(name)}">
+                    <div data-bind="foreach: products">
+                        <div>
+
+                            <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable">
+                                <div class="ui-fchain-item-name" data-bind="text: factory.name"></div>
+                                <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
+                                <div class="ui-fchain-item-count">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}">
+                                        <div class="input-group mb-3 spinner">
+                                            <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
+                                            <div class="input-group-append">
+                                                <div class="input-group-btn-vertical">
+                                                    <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
+                                                    <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: percentBoost() > 1"><i class="fa fa-caret-down"></i></button>
+                                                </div>
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-fchain-item-count" data-bind="if: !$data.editable">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? buildings().toFixed(2) : Math.ceil(buildings())"></span>
+                                        <span>x</span>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                            <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable: buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ui-fchain-item-count" data-bind="if: $data.editable">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                        
+                                            <div class="input-group mb-3 spinner">
+                                                <input class="form-control" type="text" value="0" step="1" data-bind="value: buildings" />
+                                                <div class="input-group-append">
+                                                    <div class="input-group-btn-vertical">
+                                                        <button class="btn btn-default" type="button" data-bind="click: buildings(buildings() + 1)"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: buildings(buildings() - 1), enable: buildings() > 0"><i class="fa fa-caret-down"></i></button>
+                                                    </div>
+                                                    <span class="input-group-text">x</span>
+                                                </div>
+                                            </div>
+                                      
+                                    </div>
+                                </div>
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                    <div class="ui-fchain-item-load"><span data-bind="text: amount().toFixed(2)"></span><span> t/min</span></div>
+                                    
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </fieldset>
+        </div>
+
+
+        <div data-bind="foreach: populationLevels">
+            <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount">
+                <legend class="collapser" data-toggle="collapse" data-bind="text:name, attr: {'data-target' : '#consumption-' +  removeSpaces(name)}"></legend>
+                <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  removeSpaces(name)}">
+                    <div class="ui-fchain" data-bind="visible: amount">
+                        <div class="d-flex flex-wrap align-content-start" data-bind="foreach: allDemands">
+                            <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need)">
+                                ←
+                            </div>
+                            <div class="ui-fchain-item" data-bind="visible: amount">
+                                <div class="ui-fchain-item-name" data-bind="text: product.name"></div>
+                                <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
+                                <div class="ui-fchain-item-count">
+                                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? buildings().toFixed(2) : Math.ceil(buildings())"></span>
+                                        <span>x</span>
+                                    </span>
+                                </div>
+                                <div class="ui-fchain-item-load">
+                                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                        <span data-bind="text: amount().toFixed(2)"></span><span> t/min</span>
+                                    </span>
+                                </div>
+                                <!--<div class="ui-fchain-item-loadbar"><div style="background-color:red; width:4px;"><img src="/img/pixel.gif" width="1" height="6"></div></div>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </fieldset>
+        </div>
+
+
+        <fieldset class="ui-fieldset" id="construction-material-view">
+            <legend class="collapser" data-toggle="collapse" data-target="#building-materials-chains" data-bind="text: categories[1].name"></legend>
+            <div class="collapse show" data-bind="foreach: buildingMaterialsNeeds" id="building-materials-chains">
+                <div class="ui-fchain" data-bind="visible: amount">
+                    <div data-bind="foreach: allDemands">
+                        <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need)">
+                            ←
+                        </div>
+                        <div class="ui-fchain-item" data-bind="visible: amount">
+                            <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
+                            <div class="ui-fchain-item-count">
+                                <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? buildings().toFixed(2) : Math.ceil(buildings())"></span>
+                                    <span>x</span>
+                                </span>
+                            </div>
+                            <div class="ui-fchain-item-load">
+                                <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                    <span data-bind="text: amount().toFixed(2)"></span><span> t/min</span>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </fieldset>
+
+    </div>
+</body>
+</html>
