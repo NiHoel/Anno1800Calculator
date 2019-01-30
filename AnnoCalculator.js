@@ -417,7 +417,7 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 
 Haftungsausschluss:
-Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstüzt.`,
+Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt.`,
         english:
             `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed. 
 
