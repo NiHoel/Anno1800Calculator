@@ -413,7 +413,11 @@ In jeder Kachel wird der Name der Fabrik, das Icon der hergestellten Ware, der B
 
 Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im Gegensatz zu Warenrechnern früherer Annos) mit aufgeführt, um so den Verbrauch von Minen besser planen zu können. Es muss die Anzahl der Endbetriebe per Hand eingegeben werden.
 
-Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt, der Warenrechner heruntergeladen und Einstellungen für die Warenberechnung getroffen werden.`,
+Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt, der Warenrechner heruntergeladen und Einstellungen für die Warenberechnung getroffen werden.
+
+
+Haftungsausschluss:
+Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstüzt.`,
         english:
             `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed. 
 
@@ -425,7 +429,11 @@ Each card displays the name of the factory, the icon of the produced good, the b
 
 Since construction materials share intermediate products with consumables they are explicitly listed (unlike in calculators for previous Annos) to better plan the production of mines. The number of factories must be entered manually.
 
-When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language, download the calculator and chose options affecting the calculation.`
+When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language, download the calculator and chose options affecting the calculation.
+
+
+Disclaimer: 
+The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind.`
     }
 }
 

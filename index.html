@@ -102,8 +102,8 @@
                 <button class="btn btn-default" data-toggle="modal" data-target="#settings-dialog">
                     <span class="fa fa-cog"> </span>
                 </button>
-                <button class="btn btn-default"  data-toggle="modal" data-target="#help-dialog">
-                    <span class="fa fa-question-circle-o" > </span>
+                <button class="btn btn-default" data-toggle="modal" data-target="#help-dialog">
+                    <span class="fa fa-question-circle-o"> </span>
                 </button>
             </div>
         </div>
@@ -212,23 +212,23 @@
                                 </div>
                                 <div class="ui-fchain-item-count" data-bind="if: $data.editable">
                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                        
-                                            <div class="input-group mb-3 spinner">
-                                                <input class="form-control" type="text" value="0" step="1" data-bind="value: buildings" />
-                                                <div class="input-group-append">
-                                                    <div class="input-group-btn-vertical">
-                                                        <button class="btn btn-default" type="button" data-bind="click: buildings(buildings() + 1)"><i class="fa fa-caret-up"></i></button>
-                                                        <button class="btn btn-default" type="button" data-bind="click: buildings(buildings() - 1), enable: buildings() > 0"><i class="fa fa-caret-down"></i></button>
-                                                    </div>
-                                                    <span class="input-group-text">x</span>
+
+                                        <div class="input-group mb-3 spinner">
+                                            <input class="form-control" type="text" value="0" step="1" data-bind="value: buildings" />
+                                            <div class="input-group-append">
+                                                <div class="input-group-btn-vertical">
+                                                    <button class="btn btn-default" type="button" data-bind="click: buildings(buildings() + 1)"><i class="fa fa-caret-up"></i></button>
+                                                    <button class="btn btn-default" type="button" data-bind="click: buildings(buildings() - 1), enable: buildings() > 0"><i class="fa fa-caret-down"></i></button>
                                                 </div>
+                                                <span class="input-group-text">x</span>
                                             </div>
-                                      
+                                        </div>
+
                                     </div>
                                 </div>
                                 <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
                                     <div class="ui-fchain-item-load"><span data-bind="text: amount().toFixed(2)"></span><span> t/min</span></div>
-                                    
+
                                 </div>
                             </div>
 
@@ -242,7 +242,11 @@
 
         <div data-bind="foreach: populationLevels">
             <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount">
-                <legend class="collapser" data-toggle="collapse" data-bind="text:name, attr: {'data-target' : '#consumption-' +  removeSpaces(name)}"></legend>
+                <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  removeSpaces(name)}">
+                    <span class="fa fa-chevron-right"></span>
+                    <span class="fa fa-chevron-down"></span>
+                    <span data-bind="text:name"></span>
+                </legend>
                 <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  removeSpaces(name)}">
                     <div class="ui-fchain" data-bind="visible: amount">
                         <div class="d-flex flex-wrap align-content-start" data-bind="foreach: allDemands">
@@ -274,7 +278,11 @@
 
 
         <fieldset class="ui-fieldset" id="construction-material-view">
-            <legend class="collapser" data-toggle="collapse" data-target="#building-materials-chains" data-bind="text: categories[1].name"></legend>
+            <legend class="collapser" data-toggle="collapse" data-target="#building-materials-chains">
+                <span class="fa fa-chevron-right"></span>
+                <span class="fa fa-chevron-down"></span>
+                <span data-bind="text: categories[1].name"></span>
+            </legend>
             <div class="collapse show" data-bind="foreach: buildingMaterialsNeeds" id="building-materials-chains">
                 <div class="ui-fchain" data-bind="visible: amount">
                     <div data-bind="foreach: allDemands">
@@ -282,7 +290,6 @@
                             ←
                         </div>
                         <div class="ui-fchain-item" data-bind="visible: amount">
-                            <div class="ui-fchain-item-name" data-bind="text: product.name"></div>
                             <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                             <div class="ui-fchain-item-count">
                                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
