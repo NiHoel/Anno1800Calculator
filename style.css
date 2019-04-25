@@ -141,6 +141,8 @@ h1 {
     width: 80px;
     border: 1px solid #CECECE;
     border-radius: 4px;
+    height: unset;
+    padding: 0;
 }
 
 #nav {
@@ -255,4 +257,15 @@ p{
 
 :not(.collapsed) > .fa-chevron-down {
     display: inline;
+}
+
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+input[type=number]::-webkit-inner-spin-button { 
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0; 
 }
