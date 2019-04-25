@@ -72,12 +72,12 @@ class Product extends NamedElement {
 
         this.amount = ko.observable(0);
         this.percentBoost = ko.observable(100);
-        this.boost = ko.computed(() => this.percentBoost() / 100);
+        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.demands = [];
         if (this.producer) {
             this.factory = assetsMap.get(this.producer);
             let factoryTpmin = this.factory.tpmin;
-            this.buildings = ko.computed(() => this.amount() / factoryTpmin / this.boost());
+            this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
             this.workforceDemand = this.factory.getWorkforceDemand();
             this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
         }
@@ -104,12 +104,12 @@ class Product extends NamedElement {
     }
 
     incrementBuildings() {
-        if (this.buildings() <= 0 || this.percentBoost() <= 1)
+        if (this.buildings() <= 0 || parseInt(this.percentBoost()) <= 1)
             return;
 
-        var minBuildings = Math.ceil(this.buildings() * this.percentBoost() / (this.percentBoost() - 1));
-        let nextBoost = Math.ceil(this.percentBoost() * this.buildings() / minBuildings)
-        this.percentBoost(Math.min(nextBoost, this.percentBoost() - 1));
+        var minBuildings = Math.ceil(this.buildings() * parseInt(this.percentBoost()) / (parseInt(this.percentBoost()) - 1));
+        let nextBoost = Math.ceil(parseInt(this.percentBoost()) * this.buildings() / minBuildings)
+        this.percentBoost(Math.min(nextBoost, parseInt(this.percentBoost()) - 1));
     }
 
     decrementBuildings() {
@@ -120,17 +120,17 @@ class Product extends NamedElement {
         if (this.buildings() - nextBuildings < 0.01)
             nextBuildings = Math.floor(nextBuildings - 0.01);
         var nextBoost = Math.ceil(100 * this.boost() * this.buildings() / nextBuildings);
-        if (nextBoost - this.percentBoost() < 1)
-            nextBoost = this.percentBoost() + 1;
+        if (nextBoost - parseInt(this.percentBoost()) < 1)
+            nextBoost = parseInt(this.percentBoost()) + 1;
         this.percentBoost(nextBoost);
     }
 
     incrementPercentBoost() {
-        this.percentBoost(this.percentBoost() + 1);
+        this.percentBoost(parseInt(this.percentBoost()) + 1);
     }
 
     decrementPercentBoost() {
-        this.percentBoost(this.percentBoost() - 1);
+        this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
 
 }
@@ -159,7 +159,7 @@ class Demand extends NamedElement {
             if (this.product.producer) {
 
                 let factoryTpmin = assetsMap.get(this.product.producer).tpmin;
-                this.buildings = ko.computed(() => this.amount() / factoryTpmin / this.product.boost());
+                this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.product.boost());
             }
         }
     }
@@ -223,11 +223,11 @@ class PopulationLevel extends NamedElement {
     }
 
     incrementAmount() {
-        this.amount(this.amount() + 1);
+        this.amount(parseFloat(this.amount()) + 1);
     }
 
     decrementAmount() {
-        this.amount(this.amount() - 1);
+        this.amount(parseFloat(this.amount()) - 1);
     }
 }
 
