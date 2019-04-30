@@ -321,6 +321,13 @@ function init() {
         let l = new PopulationLevel(level)
         assetsMap.set(l.guid, l);
         view.populationLevels.push(l);
+
+        if (localStorage) {
+            if (localStorage.getItem(l.guid))
+                l.amount(parseInt(localStorage.getItem(l.guid)));
+
+            l.amount.subscribe(val => localStorage.setItem(l.guid, val));
+        }
     }
 
     for (category of params.productFilter) {
