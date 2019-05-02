@@ -119,7 +119,7 @@
                     <div data-bind="foreach: populationLevels">
                         <div class="ui-race-unit">
                             <div class="ui-race-unit-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
-                            <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked"></div>
+                            <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked()"></div>
 
                             <div class="input text">
                                 <div class="input-group spinner mb-3">
@@ -178,10 +178,10 @@
                         <div>
 
                             <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable">
-                                <div class="ui-fchain-item-name" data-bind="text: factory.name, visible: !$root.settings.hideNames.checked"></div>
+                                <div class="ui-fchain-item-name" data-bind="text: factory.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                                 <div class="ui-fchain-item-count">
-                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
                                         <div class="input-group mb-3 spinner">
                                             <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
                                             <div class="input-group-append">

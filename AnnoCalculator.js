@@ -95,8 +95,8 @@ class Product extends NamedElement {
             } else if (this.guid === 1010242) { // distinguish marquetry producer in old and new world
                 let factoryTpmin = this.factory.tpmin;
                 this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
-                this.workforceDemandOld = this.factory.getWorkforceDemand();
-                this.workforceDemandNew = new WorkforceDemand({ workforce: assetsMap.get(1010117), Amount: 150, Product: 1010117, factory: this.factory }); 
+                this.workforceDemandNew = this.factory.getWorkforceDemand();
+                this.workforceDemandOld = new WorkforceDemand({ workforce: assetsMap.get(1010117), Amount: 150, Product: 1010117, factory: this.factory }); 
                 let updateWorkforce = val => {
                     let oldWorldMarquetry = !!view.settings.oldWorldMarquetry.checked()
                     this.workforceDemandOld.updateAmount(val * oldWorldMarquetry)
@@ -335,10 +335,10 @@ function init() {
 
         if (localStorage) {
             let id = "settings." + attr;
-            if (localStorage.getItem(id))
-                o.checked(localStorage.getItem(id));
+            if (localStorage.getItem(id) != null)
+                o.checked(parseInt(localStorage.getItem(id)));
 
-            o.checked.subscribe(val => localStorage.setItem(id, val));
+            o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
         }
     }
     view.settings.languages = params.languages;
