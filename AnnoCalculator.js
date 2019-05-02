@@ -335,10 +335,10 @@ function init() {
 
         if (localStorage) {
             let id = "settings." + attr;
-            if (localStorage.getItem(id))
-                o.checked(localStorage.getItem(id));
+            if (localStorage.getItem(id) != null)
+                o.checked(parseInt(localStorage.getItem(id)));
 
-            o.checked.subscribe(val => localStorage.setItem(id, val));
+            o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
         }
     }
     view.settings.languages = params.languages;
