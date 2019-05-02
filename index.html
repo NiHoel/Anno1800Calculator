@@ -59,14 +59,13 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="noOptionalNeeds" name="example1" data-bind="checked: settings.noOptionalNeeds.checked">
-                            <label class="custom-control-label" for="noOptionalNeeds" data-bind="text: settings.noOptionalNeeds.name">No optional needs</label>
+                        <div data-bind="foreach: settings.options">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+                            </div>
                         </div>
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="decimalsForBuildings" name="example1" data-bind="checked: settings.decimalsForBuildings.checked">
-                            <label class="custom-control-label" for="decimalsForBuildings" data-bind="text: settings.decimalsForBuildings.name">Decimals for buildings</label>
-                        </div>
+
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
@@ -111,7 +110,7 @@
         <fieldset class="ui-fieldset" id="inhabitants-view">
             <legend data-bind="text:texts.inhabitants.name">Inhabitants</legend>
 
-            <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;">
 
                 <div class="ui-race-input fleft">
                     <!-- <div class="ui-race-icon">
@@ -120,18 +119,18 @@
                     <div data-bind="foreach: populationLevels">
                         <div class="ui-race-unit">
                             <div class="ui-race-unit-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
-                            <div class="ui-race-unit-name" data-bind="text: name"></div>
+                            <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked"></div>
 
                             <div class="input text">
                                 <div class="input-group spinner mb-3">
-                                    <input step="10" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' }" />
+                                    <input step="100" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' }" />
                                 </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
-
+                <btn class="btn btn-light float-right align-middle" onclick="reset()">Reset</btn>
             </div>
         </fieldset>
 
@@ -179,10 +178,10 @@
                         <div>
 
                             <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable">
-                                <div class="ui-fchain-item-name" data-bind="text: factory.name"></div>
+                                <div class="ui-fchain-item-name" data-bind="text: factory.name, visible: !$root.settings.hideNames.checked"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                                 <div class="ui-fchain-item-count">
-                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked">
                                         <div class="input-group mb-3 spinner">
                                             <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
                                             <div class="input-group-append">
@@ -249,7 +248,7 @@
                                 ←
                             </div>
                             <div class="ui-fchain-item" data-bind="visible: amount">
-                                <div class="ui-fchain-item-name" data-bind="text: product.name"></div>
+                                <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">

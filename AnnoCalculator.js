@@ -76,10 +76,40 @@ class Product extends NamedElement {
         this.demands = [];
         if (this.producer) {
             this.factory = assetsMap.get(this.producer);
-            let factoryTpmin = this.factory.tpmin;
-            this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
-            this.workforceDemand = this.factory.getWorkforceDemand();
-            this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
+            if (this.guid === 1010226) { // distinguish mine and kiln as producer
+                this.charcoalFactory = assetsMap.get(1010298);
+                this.coalFactory = assetsMap.get(1010304);
+                this.buildings = ko.computed(() => {
+                    let factory = view.settings.useCharcoal.checked() ? this.charcoalFactory : this.coalFactory;
+                    return parseFloat(this.amount()) / factory.tpmin / this.boost();
+                });
+                this.workforceDemandCoal = this.coalFactory.getWorkforceDemand();
+                this.workforceDemandCharcoal = this.charcoalFactory.getWorkforceDemand();
+                let updateWorkforce = val => {
+                    let useCharcoal = !!view.settings.useCharcoal.checked();
+                    this.workforceDemandCharcoal.updateAmount(val * useCharcoal);
+                    this.workforceDemandCoal.updateAmount(val * !useCharcoal);
+                };
+                this.buildings.subscribe(updateWorkforce);
+                view.settings.useCharcoal.checked.subscribe(() => updateWorkforce(this.buildings()));
+            } else if (this.guid === 1010242) { // distinguish marquetry producer in old and new world
+                let factoryTpmin = this.factory.tpmin;
+                this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
+                this.workforceDemandOld = this.factory.getWorkforceDemand();
+                this.workforceDemandNew = new WorkforceDemand({ workforce: assetsMap.get(1010117), Amount: 150, Product: 1010117, factory: this.factory }); 
+                let updateWorkforce = val => {
+                    let oldWorldMarquetry = !!view.settings.oldWorldMarquetry.checked()
+                    this.workforceDemandOld.updateAmount(val * oldWorldMarquetry)
+                    this.workforceDemandNew.updateAmount(val * !oldWorldMarquetry)
+                };
+                this.buildings.subscribe(updateWorkforce);
+                view.settings.oldWorldMarquetry.checked.subscribe(() => updateWorkforce(this.buildings()));
+            } else {
+                let factoryTpmin = this.factory.tpmin;
+                this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
+                this.workforceDemand = this.factory.getWorkforceDemand();
+                this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
+            }
         }
     }
 
@@ -269,7 +299,17 @@ class WorkforceDemand extends NamedElement {
     }
 }
 
+function reset() {
+    assetsMap.forEach(a => {
+        if (a instanceof Product) {
+            a.percentBoost(100);               
+        }
+        if (a instanceof PopulationLevel)
+            a.amount(0);
+    });
 
+    view.buildingMaterialsNeeds.forEach(b => b.product.buildings(0));
+}
 
 function init() {
     $(document).on("keydown", (evt)=>{
@@ -286,8 +326,20 @@ function init() {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
     }
 
+    view.settings.options = [];
     for (attr in options) {
-        view.settings[attr] = new Option(options[attr]);
+        let o = new Option(options[attr]);
+        o.id = attr;
+        view.settings[attr] = o;
+        view.settings.options.push(o);
+
+        if (localStorage) {
+            let id = "settings." + attr;
+            if (localStorage.getItem(id))
+                o.checked(localStorage.getItem(id));
+
+            o.checked.subscribe(val => localStorage.setItem(id, val));
+        }
     }
     view.settings.languages = params.languages;
 
@@ -311,6 +363,14 @@ function init() {
 
             products.push(p);
             assetsMap.set(p.guid, p);
+
+            if (localStorage) {
+                let id = p.guid + ".percentBoost";
+                if (localStorage.getItem(id))
+                    p.percentBoost(parseInt(localStorage.getItem(id)));
+
+                p.percentBoost.subscribe(val => localStorage.setItem(id, val));
+            }
         }
     }
 
@@ -323,10 +383,11 @@ function init() {
         view.populationLevels.push(l);
 
         if (localStorage) {
-            if (localStorage.getItem(l.guid))
-                l.amount(parseInt(localStorage.getItem(l.guid)));
+            let id = l.guid + ".amount";
+            if (localStorage.getItem(id))
+                l.amount(parseInt(localStorage.getItem(id)));
 
-            l.amount.subscribe(val => localStorage.setItem(l.guid, val));
+            l.amount.subscribe(val => localStorage.setItem(id, val));
         }
     }
 
@@ -337,10 +398,10 @@ function init() {
     }
 
     for (let b of view.categories[1].products) {
-//        if (b.guid != 1010224) {
+
         if (b && b.demands.length == 0) {
             b.editable = true;
-            let n = new BuildingMaterialsNeed({ guid: b.guid });
+            let n = new BuildingMaterialsNeed({ guid: b.guid, product: b });
             b.buildings = ko.observable(0);
             b.buildings.subscribe(val => {
                 if (!(typeof val === 'number'))
@@ -349,6 +410,14 @@ function init() {
             });
             b.boost.subscribe(() => n.updateAmount(b.buildings()));
             view.buildingMaterialsNeeds.push(n);
+
+            if (localStorage) {
+                let id = n.guid + ".buildings";
+                if (localStorage.getItem(id))
+                    b.buildings(parseInt(localStorage.getItem(id)));
+
+                b.buildings.subscribe(val => localStorage.setItem(id, val));
+            }
         }
     }
 
@@ -427,7 +496,18 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 
 Haftungsausschluss:
-Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt.`,
+Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
+Dies sind insbesondere, aber nicht ausschließlich alle Icons der Bevölkerung, Waren und Gegenstände sowie die Daten der Produktionsketten und die Verbrachswerte der Bevölkerung.
+
+Diese Software steht unter der MIT-Lizenz.
+
+
+Autor:
+Nico Höllerich
+
+Fehler und Verbesserungen:
+Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf Github (https://github.com/NiHoel/Anno1800Calculator/issues)`,
+
         english:
             `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed. 
 
@@ -443,11 +523,35 @@ When clicking on the cog wheel in the upper right corner of the screen the setti
 
 
 Disclaimer: 
-The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind.`
+The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.
+These are especially but not exclusively all the icons of population, goods and items and the data of production chains and the consumptions values of population.
+
+This software is under the MIT license.
+
+
+Author:
+Nico Höllerich
+
+Bugs and improvements:
+If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on Github (https://github.com/NiHoel/Anno1800Calculator/issues)`
     }
 }
 
 options = {
+    "oldWorldMarquetry": {
+        "name": "Produce marquetry in the Old World",
+        "locaText": {
+            "english": "Produce marquetry in the Old World",
+            "german": "Produziere Furniere in der Alten Welt"
+        }
+    },
+    "useCharcoal": {
+        "name": "Use Charcoal",
+        "locaText": {
+            "english": "Use Charcoal",
+            "german": "Verwende Holzkohle"
+        }
+    },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {
@@ -462,5 +566,18 @@ options = {
             "german": "Zeige Nachkommastellen bei der Gebäudeanzahl"
         }
     },
-
+    "hideNames": {
+        "name": "Hide the names of products, factories, and population levels",
+        "locaText": {
+            "english": "Hide the names of products, factories, and population levels",
+            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen"
+        }
+    },
+    "hideProductionBoost": {
+        "name": "Hide the input fields for production boost",
+        "locaText": {
+            "english": "Hide the input fields for production boost",
+            "german": "Verberge das Eingabefelder für Produktionsboosts"
+        }
+    },
 }
