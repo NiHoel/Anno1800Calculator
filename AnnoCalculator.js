@@ -75,13 +75,13 @@ class Product extends NamedElement {
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.demands = [];
         if (this.producer) {
-            this.factory = assetsMap.get(this.producer);
+            this.factory = ko.observable(assetsMap.get(this.producer));
             if (this.guid === 1010226) { // distinguish mine and kiln as producer
                 this.charcoalFactory = assetsMap.get(1010298);
                 this.coalFactory = assetsMap.get(1010304);
+                this.factory = ko.computed(() => view.settings.useCharcoal.checked() ? this.charcoalFactory : this.coalFactory);
                 this.buildings = ko.computed(() => {
-                    let factory = view.settings.useCharcoal.checked() ? this.charcoalFactory : this.coalFactory;
-                    return parseFloat(this.amount()) / factory.tpmin / this.boost();
+                    return parseFloat(this.amount()) / this.factory().tpmin / this.boost();
                 });
                 this.workforceDemandCoal = this.coalFactory.getWorkforceDemand();
                 this.workforceDemandCharcoal = this.charcoalFactory.getWorkforceDemand();
@@ -93,9 +93,9 @@ class Product extends NamedElement {
                 this.buildings.subscribe(updateWorkforce);
                 view.settings.useCharcoal.checked.subscribe(() => updateWorkforce(this.buildings()));
             } else if (this.guid === 1010242) { // distinguish marquetry producer in old and new world
-                let factoryTpmin = this.factory.tpmin;
+                let factoryTpmin = this.factory().tpmin;
                 this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
-                this.workforceDemandNew = this.factory.getWorkforceDemand();
+                this.workforceDemandNew = this.factory().getWorkforceDemand();
                 this.workforceDemandOld = new WorkforceDemand({ workforce: assetsMap.get(1010117), Amount: 150, Product: 1010117, factory: this.factory }); 
                 let updateWorkforce = val => {
                     let oldWorldMarquetry = !!view.settings.oldWorldMarquetry.checked()
@@ -105,9 +105,9 @@ class Product extends NamedElement {
                 this.buildings.subscribe(updateWorkforce);
                 view.settings.oldWorldMarquetry.checked.subscribe(() => updateWorkforce(this.buildings()));
             } else {
-                let factoryTpmin = this.factory.tpmin;
+                let factoryTpmin = this.factory().tpmin;
                 this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
-                this.workforceDemand = this.factory.getWorkforceDemand();
+                this.workforceDemand = this.factory().getWorkforceDemand();
                 this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
             }
         }

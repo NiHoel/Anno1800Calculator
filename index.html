@@ -178,7 +178,7 @@
                         <div>
 
                             <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable">
-                                <div class="ui-fchain-item-name" data-bind="text: factory.name, visible: !$root.settings.hideNames.checked()"></div>
+                                <div class="ui-fchain-item-name" data-bind="text: factory().name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
