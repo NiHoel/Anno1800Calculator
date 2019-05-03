@@ -316,14 +316,17 @@ function init() {
       if(evt.altKey || evt.ctrlKey || evt.shiftKey)
           return true;
 
+      var focused = false;
       $(".ui-race-unit-name").filter(function() {
         return (new RegExp(`^${evt.key}`, 'i')).test($(this).text());
-      }).each((i, ele) =>
-        $(ele).closest('.ui-race-unit').find('input').focus().select()
-      );
+      }).each((i, ele) => {
+        focused = true;
+        return $(ele).closest('.ui-race-unit').find('input').focus().select()
+      });
          
-      if(evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key))){
-          return ['ArrowUp','ArrowDown','Backspace','Delete'].includes(evt.key)
+      if(evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused){
+          let isDigit = evt.key >= "0" && evt.key <= "9";
+          return ['ArrowUp','ArrowDown','Backspace','Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
       }
     });
 
