@@ -312,14 +312,15 @@ function reset() {
 }
 
 function init() {
-    $(document).on("keydown", (evt)=>{
+     $(document).on("keydown", (evt)=>{
+      if(evt.altKey || evt.ctrlKey || evt.shiftKey)
+          return true;
+
       $(".ui-race-unit-name").filter(function() {
         return (new RegExp(`^${evt.key}`, 'i')).test($(this).text());
       }).each((i, ele) =>
         $(ele).closest('.ui-race-unit').find('input').focus().select()
       );
-      return evt.target.tagName === 'INPUT'
-        && !isNaN(parseInt(evt.key)) || ['ArrowUp','ArrowDown','Backspace','Delete'].includes(evt.key)
     });
 
     for (attr in texts) {
