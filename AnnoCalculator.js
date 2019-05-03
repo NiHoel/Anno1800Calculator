@@ -321,6 +321,10 @@ function init() {
       }).each((i, ele) =>
         $(ele).closest('.ui-race-unit').find('input').focus().select()
       );
+         
+      if(evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key))){
+          return ['ArrowUp','ArrowDown','Backspace','Delete'].includes(evt.key)
+      }
     });
 
     for (attr in texts) {
