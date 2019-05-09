@@ -203,15 +203,20 @@ class Need extends Demand {
     constructor(config) {
         super(config);
         this.allDemands = [];
-        if (this.happiness) {
-            this.optionalAmount = ko.observable(0);
-            view.settings.noOptionalNeeds.checked.subscribe(checked => {
-                if (checked)
-                    this.amount(0);
-                else
-                    this.amount(this.optionalAmount());
-            })
-        }
+        this.checked = ko.observable(true);
+        this.banned = ko.computed(() => {
+            var checked = this.checked();
+            var noOptionalNeeds = view.settings.noOptionalNeeds.checked();
+            return !checked || this.happiness && noOptionalNeeds;
+        })
+        this.optionalAmount = ko.observable(0);
+
+        this.banned.subscribe(banned => {
+            if (banned)
+                this.amount(0);
+            else
+                this.amount(this.optionalAmount());
+        })
 
         let treeTraversal = node => {
             this.allDemands.push(node);
@@ -221,13 +226,9 @@ class Need extends Demand {
     }
 
     updateAmount(inhabitants) {
-        if (this.optionalAmount) {
-            this.optionalAmount(this.tpmin * inhabitants)
-            if (!view.settings.noOptionalNeeds.checked())
-                this.amount(this.tpmin * inhabitants);
-        } else {
-            this.amount(this.tpmin * inhabitants);
-        }
+        this.optionalAmount(this.tpmin * inhabitants);
+        if (!this.banned())
+            this.amount(this.optionalAmount());
     }
 }
 
@@ -330,12 +331,12 @@ function init() {
       }
     });
 
-    for (attr in texts) {
+    for (let attr in texts) {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
     }
 
     view.settings.options = [];
-    for (attr in options) {
+    for (let attr in options) {
         let o = new Option(options[attr]);
         o.id = attr;
         view.settings[attr] = o;
@@ -352,20 +353,20 @@ function init() {
     view.settings.languages = params.languages;
 
 
-    for (workforce of params.workforce) {
+    for (let workforce of params.workforce) {
         let w = new Workforce(workforce)
         assetsMap.set(w.guid, w);
         view.workforce.push(w);
     }
 
-    for (factory of params.factories) {
+    for (let factory of params.factories) {
         let f = new Factory(factory)
         assetsMap.set(f.guid, f);
         view.factories.push(f);
     }
 
     let products = [];
-    for (product of params.products) {
+    for (let product of params.products) {
         if (product.producer) {
             let p = new Product(product);
 
@@ -385,7 +386,7 @@ function init() {
     view.factories.forEach(f => f.referenceProducts());
 
 
-    for (level of params.populationLevels) {
+    for (let level of params.populationLevels) {
         let l = new PopulationLevel(level)
         assetsMap.set(l.guid, l);
         view.populationLevels.push(l);
@@ -396,6 +397,17 @@ function init() {
                 l.amount(parseInt(localStorage.getItem(id)));
 
             l.amount.subscribe(val => localStorage.setItem(id, val));
+        }
+
+        for (let n of l.needs) {
+            if (localStorage) {
+                let id = `${l.guid}[${n.guid}].checked`;
+                if (localStorage.getItem(id))
+                    n.checked(parseInt(localStorage.getItem(id)))
+
+                n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+            }
+
         }
     }
 

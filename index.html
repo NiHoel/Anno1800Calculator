@@ -245,13 +245,17 @@
                     <span data-bind="text:name"></span>
                 </legend>
                 <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  removeSpaces(name)}">
-                    <div class="ui-fchain" data-bind="visible: amount">
+                    <div class="ui-fchain" data-bind="visible: optionalAmount, css:{inactive: banned}">
                         <div class="d-flex flex-wrap align-content-start" data-bind="foreach: allDemands">
-                            <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need)">
+                            <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount">
                                 ←
                             </div>
-                            <div class="ui-fchain-item" data-bind="visible: amount">
+                            <div class="ui-fchain-item" data-bind="visible: ($data instanceof Need) || amount || ($data instanceof Need)">
+
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
+                                <div class="float-right" data-bind="if: ($data instanceof Need)">
+                                    <input type="checkbox" data-bind="checked: $data.checked">
+                                </div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
