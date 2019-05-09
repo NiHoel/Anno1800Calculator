@@ -1,11 +1,13 @@
 products = new Map();
 assetsMap = new Map();
 view = {
+    regions: [],
     populationLevels: [],
     factories: [],
     categories: [],
     workforce: [],
     buildingMaterialsNeeds: [],
+    multiFactoryProducts: [],
     settings: {
         language: ko.observable(navigator.language.startsWith("de") ? "german" : "english")
     },
@@ -29,6 +31,8 @@ class NamedElement {
     }
 }
 
+class Region extends NamedElement { }
+
 class Option extends NamedElement {
     constructor(config) {
         super(config);
@@ -38,6 +42,22 @@ class Option extends NamedElement {
 }
 
 class Factory extends NamedElement {
+    constructor(config) {
+        super(config);
+
+        if (config.region)
+            this.region = assetsMap.get(config.region);
+
+        this.amount = ko.observable(0);
+
+        this.percentBoost = ko.observable(100);
+        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
+        this.demands = new Set();
+        this.buildings = ko.computed(() => parseFloat(this.amount()) / this.tpmin / this.boost());
+
+        this.workforceDemand = this.getWorkforceDemand();
+        this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
+    }
 
     getInputs() {
         return this.inputs || [];
@@ -50,6 +70,10 @@ class Factory extends NamedElement {
     referenceProducts() {
         this.getInputs().forEach(i => i.product = assetsMap.get(i.Product));
         this.getOutputs().forEach(i => i.product = assetsMap.get(i.Product));
+
+        this.product = this.getProduct();
+        if (!this.icon)
+            this.icon = this.product.icon;
     }
 
     getProduct() {
@@ -63,54 +87,12 @@ class Factory extends NamedElement {
                 return new WorkforceDemand($.extend({ factory: this, workforce: a }, m));
         }
     }
-}
 
-class Product extends NamedElement {
-    constructor(config) {
-        super(config);
+    getRegionExtendedName() {
+        if (!this.region || this.product.factories.length <= 1)
+            return this.name;
 
-
-        this.amount = ko.observable(0);
-        this.percentBoost = ko.observable(100);
-        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-        this.demands = [];
-        if (this.producer) {
-            this.factory = ko.observable(assetsMap.get(this.producer));
-            if (this.guid === 1010226) { // distinguish mine and kiln as producer
-                this.charcoalFactory = assetsMap.get(1010298);
-                this.coalFactory = assetsMap.get(1010304);
-                this.factory = ko.computed(() => view.settings.useCharcoal.checked() ? this.charcoalFactory : this.coalFactory);
-                this.buildings = ko.computed(() => {
-                    return parseFloat(this.amount()) / this.factory().tpmin / this.boost();
-                });
-                this.workforceDemandCoal = this.coalFactory.getWorkforceDemand();
-                this.workforceDemandCharcoal = this.charcoalFactory.getWorkforceDemand();
-                let updateWorkforce = val => {
-                    let useCharcoal = !!view.settings.useCharcoal.checked();
-                    this.workforceDemandCharcoal.updateAmount(val * useCharcoal);
-                    this.workforceDemandCoal.updateAmount(val * !useCharcoal);
-                };
-                this.buildings.subscribe(updateWorkforce);
-                view.settings.useCharcoal.checked.subscribe(() => updateWorkforce(this.buildings()));
-            } else if (this.guid === 1010242) { // distinguish marquetry producer in old and new world
-                let factoryTpmin = this.factory().tpmin;
-                this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
-                this.workforceDemandNew = this.factory().getWorkforceDemand();
-                this.workforceDemandOld = new WorkforceDemand({ workforce: assetsMap.get(1010117), Amount: 150, Product: 1010117, factory: this.factory }); 
-                let updateWorkforce = val => {
-                    let oldWorldMarquetry = !!view.settings.oldWorldMarquetry.checked()
-                    this.workforceDemandOld.updateAmount(val * oldWorldMarquetry)
-                    this.workforceDemandNew.updateAmount(val * !oldWorldMarquetry)
-                };
-                this.buildings.subscribe(updateWorkforce);
-                view.settings.oldWorldMarquetry.checked.subscribe(() => updateWorkforce(this.buildings()));
-            } else {
-                let factoryTpmin = this.factory().tpmin;
-                this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.boost());
-                this.workforceDemand = this.factory().getWorkforceDemand();
-                this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
-            }
-        }
+        return `${this.name()} (${this.region.name()})`;
     }
 
     updateAmount() {
@@ -119,18 +101,15 @@ class Product extends NamedElement {
         this.amount(sum);
     }
 
-    getInputs() {
-        if (!this.producer) return [];
-        return assetsMap.get(this.producer).getInputs();
-    }
-
-    getOutputs() {
-        if (!this.producer) return [];
-        return assetsMap.get(this.producer).getOutputs();
-    }
 
     add(demand) {
-        this.demands.push(demand);
+        this.demands.add(demand);
+        this.updateAmount();
+    }
+
+    remove(demand) {
+        this.demands.delete(demand);
+        this.updateAmount();
     }
 
     incrementBuildings() {
@@ -162,7 +141,22 @@ class Product extends NamedElement {
     decrementPercentBoost() {
         this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
+}
 
+class Product extends NamedElement {
+    constructor(config) {
+        super(config);
+
+
+        this.amount = ko.observable(0);
+
+        this.factories = this.producers.map(p => assetsMap.get(p));
+        this.fixedFactory = ko.observable(null);
+
+        if (this.producers) {
+            this.amount = ko.computed(() => this.factories.map(f => f.amount()).reduce((a, b) => a + b));
+        }
+    }
 }
 
 class Demand extends NamedElement {
@@ -172,25 +166,54 @@ class Demand extends NamedElement {
         this.amount = ko.observable(0);
 
         this.product = assetsMap.get(this.guid);
-        if (this.product) {
-            this.product.add(this);
-            this.demands = this.product.getInputs().map(input => {
+        this.factory = ko.observable(config.factory);
 
-                let d = new Demand({ guid: input.Product });
+        if (this.product) {
+            this.updateFixedProductFactory(this.product.fixedFactory());
+            this.product.fixedFactory.subscribe(f => this.updateFixedProductFactory(f));
+            if (this.consumer)
+                this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
+
+            this.demands = this.factory().getInputs().map(input => {
+
+                let d = new Demand({ guid: input.Product, consumer: this });
                 this.amount.subscribe(val => d.updateAmount(val * input.Amount));
                 return d;
             });
 
 
             this.amount.subscribe(val => {
-                this.product.updateAmount();
+                this.factory().updateAmount();
             });
 
-            if (this.product.producer) {
+            this.buildings = ko.computed(() => parseFloat(this.amount()) / this.factory().tpmin / this.factory().boost());
+        }
+    }
 
-                let factoryTpmin = assetsMap.get(this.product.producer).tpmin;
-                this.buildings = ko.computed(() => parseFloat(this.amount()) / factoryTpmin / this.product.boost());
+    updateFixedProductFactory(f) {
+        if (f == null) {
+            if (this.consumer) { // find factory in the same region as consumer
+                let region = this.consumer.factory().region;
+                if (region) {
+                    for (let fac of this.product.factories) {
+                        if (fac.region === region) {
+                            f = fac;
+                            break;
+                        }
+                    }
+                }
             }
+        }
+
+        if (f == null) // region based approach not successful
+            f = this.product.factories[0];
+
+        if (f != this.factory()) {
+            if (this.factory())
+                this.factory().remove(this);
+
+            this.factory(f);
+            f.add(this);
         }
     }
 
@@ -203,6 +226,20 @@ class Need extends Demand {
     constructor(config) {
         super(config);
         this.allDemands = [];
+
+        let treeTraversal = node => {
+            this.allDemands.push(node);
+            (node.demands || []).forEach(treeTraversal);
+        }
+        treeTraversal(this);
+    }
+
+}
+
+class PopulationNeed extends Need {
+    constructor(config) {
+        super(config);
+
         this.checked = ko.observable(true);
         this.banned = ko.computed(() => {
             var checked = this.checked();
@@ -216,13 +253,7 @@ class Need extends Demand {
                 this.amount(0);
             else
                 this.amount(this.optionalAmount());
-        })
-
-        let treeTraversal = node => {
-            this.allDemands.push(node);
-            (node.demands || []).forEach(treeTraversal);
-        }
-        treeTraversal(this);
+        });
     }
 
     updateAmount(inhabitants) {
@@ -232,12 +263,21 @@ class Need extends Demand {
     }
 }
 
-
 class BuildingMaterialsNeed extends Need {
-    updateAmount(buildings) {
-        let factory = assetsMap.get(this.product.producer);
-        this.amount(buildings * factory.tpmin * this.product.boost());
+    constructor(config) {
+        super(config);
+
+        this.product = config.product;
+        this.factory(config.factory);
+
+        this.factory().add(this);
     }
+
+    updateAmount(buildings) {
+        this.amount(buildings * this.factory().tpmin * this.factory().boost());
+    }
+
+    updateFixedProductFactory() { }
 }
 
 class PopulationLevel extends NamedElement {
@@ -248,7 +288,7 @@ class PopulationLevel extends NamedElement {
         this.needs = [];
         config.needs.forEach(n => {
             if (n.tpmin > 0)
-                this.needs.push(new Need(n));
+                this.needs.push(new PopulationNeed(n));
         });
         this.amount.subscribe(val => this.needs.forEach(n => n.updateAmount(val)));
     }
@@ -302,14 +342,19 @@ class WorkforceDemand extends NamedElement {
 
 function reset() {
     assetsMap.forEach(a => {
-        if (a instanceof Product) {
-            a.percentBoost(100);               
-        }
+        if (a instanceof Product)
+            a.fixedFactory(null);
+        if (a instanceof Factory)
+            a.percentBoost(100);
         if (a instanceof PopulationLevel)
             a.amount(0);
     });
 
-    view.buildingMaterialsNeeds.forEach(b => b.product.buildings(0));
+    view.buildingMaterialsNeeds.forEach(b => b.factory().buildings(0));
+    view.populationLevels.forEach(l => l.needs.forEach(n => {
+        if (n.checked)
+            n.checked(true);
+    }))
 }
 
 function init() {
@@ -352,6 +397,11 @@ function init() {
     }
     view.settings.languages = params.languages;
 
+    for (let region of params.regions) {
+        let r = new Region(region);
+        assetsMap.set(r.guid, r);
+        view.regions.push(r);
+    }
 
     for (let workforce of params.workforce) {
         let w = new Workforce(workforce)
@@ -363,22 +413,43 @@ function init() {
         let f = new Factory(factory)
         assetsMap.set(f.guid, f);
         view.factories.push(f);
+
+        if (localStorage) {
+            let id = f.guid + ".percentBoost";
+            if (localStorage.getItem(id))
+                f.percentBoost(parseInt(localStorage.getItem(id)));
+
+            f.percentBoost.subscribe(val => localStorage.setItem(id, val));
+        }
     }
 
     let products = [];
     for (let product of params.products) {
-        if (product.producer) {
+        if (product.producers && product.producers.length) {
             let p = new Product(product);
 
             products.push(p);
             assetsMap.set(p.guid, p);
 
-            if (localStorage) {
-                let id = p.guid + ".percentBoost";
-                if (localStorage.getItem(id))
-                    p.percentBoost(parseInt(localStorage.getItem(id)));
+            if (p.factories.length > 1)
+                view.multiFactoryProducts.push(p);
 
-                p.percentBoost.subscribe(val => localStorage.setItem(id, val));
+            if (localStorage) {
+                {
+                    let id = p.guid + ".percentBoost";
+                    if (localStorage.getItem(id)) {
+                        let b = parseInt(localStorage.getItem(id))
+                        p.factories.forEach(f => f.percentBoost(b));
+                        localStorage.removeItem(id);
+                    }
+                }
+
+                {
+                    let id = p.guid + ".fixedFactory";
+                    if (localStorage.getItem(id))
+                        p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
+                    p.fixedFactory.subscribe(f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
+                }
             }
         }
     }
@@ -417,26 +488,27 @@ function init() {
         view.categories.push(c);
     }
 
-    for (let b of view.categories[1].products) {
+    for (let p of view.categories[1].products) {
+        for (let b of p.factories) {
+            if (b && b.demands.size == 0) {
+                b.editable = true;
+                let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p });
+                b.buildings = ko.observable(0);
+                b.buildings.subscribe(val => {
+                    if (!(typeof val === 'number'))
+                        val = parseFloat(val);
+                    n.updateAmount(val);
+                });
+                b.boost.subscribe(() => n.updateAmount(b.buildings()));
+                view.buildingMaterialsNeeds.push(n);
 
-        if (b && b.demands.length == 0) {
-            b.editable = true;
-            let n = new BuildingMaterialsNeed({ guid: b.guid, product: b });
-            b.buildings = ko.observable(0);
-            b.buildings.subscribe(val => {
-                if (!(typeof val === 'number'))
-                    val = parseFloat(val);
-                n.updateAmount(val);
-            });
-            b.boost.subscribe(() => n.updateAmount(b.buildings()));
-            view.buildingMaterialsNeeds.push(n);
+                if (localStorage) {
+                    let id = b.guid + ".buildings";
+                    if (localStorage.getItem(id))
+                        b.buildings(parseInt(localStorage.getItem(id)));
 
-            if (localStorage) {
-                let id = n.guid + ".buildings";
-                if (localStorage.getItem(id))
-                    b.buildings(parseInt(localStorage.getItem(id)));
-
-                b.buildings.subscribe(val => localStorage.setItem(id, val));
+                    b.buildings.subscribe(val => localStorage.setItem(id, val));
+                }
             }
         }
     }
@@ -500,19 +572,29 @@ texts = {
         english: "Help",
         german: "Hilfe"
     },
+    chooseFactories: {
+        english: "Choose Factory for each product",
+        german: "Wähle Fabrik für jedes Produkt"
+    },
+    noFixedFactory: {
+        english: "Automatic: same region as consumer",
+        german: "Automatisch: gleichen Region wie Verbraucher"
+    },
     helpContent: {
         german:
             `Verwendung: Trage die aktuellen oder angestrebten Einwohner pro Stufe in die oberste Reihe ein. Die Produktionsketten aktualisieren sich automatisch sobald man die Eingabe verlässt. Es werden nur diejenigen Fabriken angezeigt, die benötigt werden.
 
 In der darunterliegenden Reihe wird die Arbeitskraft angezeigt, die benötigt wird, um alle Gebäude zu betreiben (jeweils auf die nächste ganze Fabrik gerundet).
 
-Danach folgen zwei große Abschnitte, die sich wiederum in Unterabschnitte unterteilen. Der erste gibt einen Überblick über alle benötigten Gebäude, sortiert nach dem produzierten Warentyp. Der zweite schlüsselt die einzelnen Produktionsketten nach Bevölkerungsstufen auf. Jeder der Abschnitte kann durch einen Klick auf die Überschrift zusammengeklappt werden.
+Danach folgen zwei große Abschnitte, die sich wiederum in Unterabschnitte unterteilen. Der erste gibt einen Überblick über alle benötigten Gebäude, sortiert nach dem produzierten Warentyp. Der zweite schlüsselt die einzelnen Produktionsketten nach Bevölkerungsstufen auf. Jeder der Abschnitte kann durch einen Klick auf die Überschrift zusammengeklappt werden. Durch das Abwählen des Kontrollkästchens wird das entsprechende Bedürfnis von der Berechnung ausgenommen.
 
 In jeder Kachel wird der Name der Fabrik, das Icon der hergestellten Ware, der Boost für den Gebäudetyp, die Anzahl der benötigten Gebäude und die Produktionsrate in Tonnen pro Minute angezeigt. Die Anzahl der Gebäude wird mit zwei Nachkommastellen angezeigt, um die Höhe der Überkapazitäten direkt ablesen zu können. Daneben befinden sich zwei Buttons. Diese versuchen den Boost so einzustellen, dass alle Gebäude des Typs bestmöglich ausgelastet sind und dabei ein Gebäude mehr (+) bzw. eines weniger (-) benötigt wird.
 
 Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im Gegensatz zu Warenrechnern früherer Annos) mit aufgeführt, um so den Verbrauch von Minen besser planen zu können. Es muss die Anzahl der Endbetriebe per Hand eingegeben werden.
 
-Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt, der Warenrechner heruntergeladen und Einstellungen für die Warenberechnung getroffen werden.
+Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt und die Menge der dargestellten Informationen angepasst werden.
+
+Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Auswahl der Fabrik, die ein bestimmtes Produkt produzieren soll. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
 
 
 Haftungsausschluss:
@@ -533,13 +615,15 @@ Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschl
 
 The row below displays the workforce that is required to run all buildings (rounded towards the next complete factory).
 
-Afterwards two big sections follow that are subdivided into smaller sections. The first one gives an overview of the required buildings sorted by the type of good that is produced. The second one lists the individual production chains for each population level. Clicking the heading collapses each section.
+Afterwards two big sections follow that are subdivided into smaller sections. The first one gives an overview of the required buildings sorted by the type of good that is produced. The second one lists the individual production chains for each population level. Clicking the heading collapses each section. Deselecting the checkbox leads to the need being excluded from the calculation.
 
 Each card displays the name of the factory, the icon of the produced good, the boost for the given type of building, the number of required buildings, and the production rate in tons per minute. The number of buildings has two decimal places to directly show the amount of overcapacities. There are two buttons next to it. Those try to adjust the boost such that all buildings operate at full capacity and one more (+) or one building less (-) is required.
 
 Since construction materials share intermediate products with consumables they are explicitly listed (unlike in calculators for previous Annos) to better plan the production of mines. The number of factories must be entered manually.
 
-When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language, download the calculator and chose options affecting the calculation.
+When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language and customize the information presented by the calculator.
+
+The three cog wheels next to the settings dialog open a dialog to choose the factory that produces a certain good. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
 
 
 Disclaimer: 
@@ -558,20 +642,6 @@ If you encounter any bugs or inconveniences or if you want to suggest improvemen
 }
 
 options = {
-    "oldWorldMarquetry": {
-        "name": "Produce marquetry in the Old World",
-        "locaText": {
-            "english": "Produce marquetry in the Old World",
-            "german": "Produziere Furniere in der Alten Welt"
-        }
-    },
-    "useCharcoal": {
-        "name": "Use Charcoal",
-        "locaText": {
-            "english": "Use Charcoal",
-            "german": "Verwende Holzkohle"
-        }
-    },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {
@@ -600,4 +670,11 @@ options = {
             "german": "Verberge das Eingabefelder für Produktionsboosts"
         }
     },
+    "hideNewWorldConstructionMaterial": {
+        "name": "Hide factory cards for construction material that produce in the new world",
+        "locaText": {
+            "english": "Hide factory cards for construction material that is produced in the New world",
+            "german": "Verberge die Fabrikkacheln für Baumaterial, das in der Neuen Welt produziert wird"
+        }
+    }
 }
