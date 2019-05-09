@@ -89,8 +89,9 @@ h1 {
 .ui-fchain-item-name {
     font-size: 12px;
     text-align: center;
-    word-wrap:break-word;
-    height:2rem;
+    word-wrap: break-word;
+    height: 2rem;
+    max-width: calc(100% - 16px);
 }
 
 .ui-fchain-item-count {
@@ -268,4 +269,8 @@ input[type=number]::-webkit-inner-spin-button {
   -moz-appearance: textfield;
   appearance: textfield;
   margin: 0; 
+}
+
+.inactive {
+    color: grey;
 }
