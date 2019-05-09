@@ -91,6 +91,9 @@ h1 {
     text-align: center;
     word-wrap: break-word;
     height: 2rem;
+}
+
+.float-right + .ui-fchain-item {
     max-width: calc(100% - 16px);
 }
 
