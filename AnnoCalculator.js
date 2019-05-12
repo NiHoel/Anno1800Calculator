@@ -54,6 +54,7 @@ class Factory extends NamedElement {
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.demands = new Set();
         this.buildings = ko.computed(() => parseFloat(this.amount()) / this.tpmin / this.boost());
+        this.existingBuildings = ko.observable(0);
 
         this.workforceDemand = this.getWorkforceDemand();
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
@@ -346,6 +347,8 @@ function reset() {
             a.fixedFactory(null);
         if (a instanceof Factory)
             a.percentBoost(100);
+        if (a instanceof Factory)
+            a.existingBuildings(0);
         if (a instanceof PopulationLevel)
             a.amount(0);
     });
@@ -420,6 +423,14 @@ function init() {
                 f.percentBoost(parseInt(localStorage.getItem(id)));
 
             f.percentBoost.subscribe(val => localStorage.setItem(id, val));
+        }
+
+        if (localStorage) {
+            let id = f.guid + ".existingBuildings";
+            if (localStorage.getItem(id))
+                f.existingBuildings(parseInt(localStorage.getItem(id)));
+
+            f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
         }
     }
 
@@ -555,6 +566,14 @@ texts = {
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden"
+    },
+    existingNumberOfBuildings: {
+        english: "Existing Number of Buildings",
+        german: "Vorhandene Anzahl an Gebäuden"
+    },
+    existingNumberOfBuildingsIs: {
+        english: "Is:",
+        german: "Ist:"
     },
     tonsPerMinute: {
         english: "Production in Tons per Minute",

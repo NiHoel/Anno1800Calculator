@@ -215,7 +215,7 @@
                         <div data-bind="foreach: factories">
                             <div>
 
-                                <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000)">
+                                <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: buildings() > existingBuildings() ? 'danger' : ''">
                                     <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                     <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                                     <div class="ui-fchain-item-count">
@@ -256,6 +256,17 @@
                                                 </div>
                                             </div>
 
+                                        </div>
+                                    </div>
+                                    <div class="ui-fchain-item-count" data-bind="if: !$data.editable">
+                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
+                                            <span data-bind="text: $root.texts.existingNumberOfBuildingsIs.name"></span>
+                                            <span data-bind="text: existingBuildings()"></span>
+                                            <span>x</span>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-secondary" data-bind="click: () => existingBuildings(parseInt(existingBuildings() + 1))" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                <button type="button" class="btn btn-secondary" data-bind="click: () => existingBuildings(parseInt(existingBuildings() - 1)), enable: existingBuildings() >= 1" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">

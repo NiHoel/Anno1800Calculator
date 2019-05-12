@@ -80,6 +80,10 @@ h1 {
     border-radius: 4px;
     padding: 10px;
 }
+.ui-fchain-item.danger {
+    border-color: #FF0000;
+    background-color: #FFBBBB;
+}
 
 .ui-fchain-item-icon {
     text-align: center;
