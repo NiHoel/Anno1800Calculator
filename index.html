@@ -215,7 +215,7 @@
                         <div data-bind="foreach: factories">
                             <div>
 
-                                <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: buildings() > existingBuildings() ? 'danger' : ''">
+                                <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
                                     <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                     <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                                     <div class="ui-fchain-item-count">
@@ -258,7 +258,7 @@
 
                                         </div>
                                     </div>
-                                    <div class="ui-fchain-item-count" data-bind="if: !$data.editable">
+                                    <div class="ui-fchain-item-count" data-bind="if: !$data.editable && $root.settings.missingBuildingsHighlight.checked()">
                                         <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
                                             <span data-bind="text: $root.texts.existingNumberOfBuildingsIs.name"></span>
                                             <span data-bind="text: existingBuildings()"></span>

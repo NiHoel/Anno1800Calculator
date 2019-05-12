@@ -675,6 +675,13 @@ options = {
             "german": "Zeige Nachkommastellen bei der Gebäudeanzahl"
         }
     },
+    "missingBuildingsHighlight": {
+        "name": "Highlight missing buildings",
+        "locaText": {
+            "english": "Highlight missing buildings",
+            "german": "Fehlende Gebäude hervorheben"
+        }
+    },
     "hideNames": {
         "name": "Hide the names of products, factories, and population levels",
         "locaText": {
