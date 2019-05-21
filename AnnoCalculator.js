@@ -704,3 +704,41 @@ options = {
         }
     }
 }
+
+var requestInterval = setInterval(
+    () => {
+        const userAction = async () => {
+            console.log('starting request');
+            const response = await fetch('http://localhost:8000/AnnoServer/Population/');
+            const myJson = await response.json(); //extract JSON from the http response
+            console.log('answer: ', myJson);
+			if(myJson){
+				view.populationLevels.forEach(function(element){
+					element.amount(0);
+				});
+            if (myJson.Farmers) {
+                view.populationLevels[0].amount(myJson.Farmers);
+            }
+            if (myJson.Workers) {
+                view.populationLevels[1].amount(myJson.Workers);
+            }
+            if (myJson.Artisans) {
+                view.populationLevels[2].amount(myJson.Artisans);
+            }
+			if (myJson.Engineers) {
+                view.populationLevels[3].amount(myJson.Engineers);
+            }
+            if (myJson.Investors) {
+                view.populationLevels[4].amount(myJson.Investors);
+            }
+            if (myJson.Jornaleros) {
+                view.populationLevels[5].amount(myJson.Jornaleros);
+            }
+			 if (myJson.Orbreros) {
+                view.populationLevels[6].amount(myJson.Orbreros);
+            }}
+        };
+        userAction();
+
+
+    }, 1000);
