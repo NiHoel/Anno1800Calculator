@@ -7285,6 +7285,801 @@ params =
 }
 }
 ],
+"items": [
+{
+"name": "Stale Bread",
+"guid": 190799,
+"factories": [
+1010283
+],
+"replaceInputs": [
+{
+"OldInput": 1010201,
+"NewInput": 1010213
+}
+],
+"locaText": {
+"brazilian": "Stale Bread",
+"portuguese": "Stale Bread",
+"english": "Stale Bread",
+"chinese": "Stale Bread",
+"french": "Stale Bread",
+"italian": "Stale Bread",
+"polish": "Stale Bread",
+"spanish": "Stale Bread",
+"taiwanese": "Stale Bread",
+"german": "Stale Bread",
+"japanese": "Stale Bread",
+"korean": "Stale Bread",
+"russian": "Stale Bread"
+}
+},
+{
+"name": "Illustrious Gemologist",
+"guid": 190625,
+"factories": [
+1010328
+],
+"replaceInputs": [
+{
+"OldInput": 1010249,
+"NewInput": 1010233
+}
+],
+"locaText": {
+"brazilian": "Illustrious Gemologist",
+"portuguese": "Illustrious Gemologist",
+"english": "Illustrious Gemologist",
+"chinese": "杰出的宝石学家",
+"french": "Gemmologue illustre",
+"italian": "Illustre gemmologo",
+"polish": "Znakomity gemmolog",
+"spanish": "Gemólogo ilustre",
+"taiwanese": "傑出的寶石學家",
+"german": "Illustrer Gemmologe",
+"japanese": "著名な宝石鑑定士",
+"korean": "저명한 보석감정사",
+"russian": "Знаменитый геммолог"
+}
+},
+{
+"name": "Goldsmith Gilbert",
+"guid": 190626,
+"factories": [
+1010328
+],
+"replaceInputs": [
+{
+"OldInput": 1010249,
+"NewInput": 1010233
+}
+],
+"locaText": {
+"brazilian": "Goldsmith",
+"portuguese": "Goldsmith Gilbert",
+"english": "Goldsmith Gilbert",
+"chinese": "金匠吉尔伯特",
+"french": "Orfèvre Gilbert",
+"italian": "Gilbert l'orafo",
+"polish": "Złotnik Gilbert",
+"spanish": "Orfebre Gilbert",
+"taiwanese": "金匠吉爾伯特",
+"german": "Goldschmied Gilbert",
+"japanese": "金細工師ギルバート",
+"korean": "금세공사 길버트",
+"russian": "Золотых дел мастер Гилберт"
+}
+},
+{
+"name": "Baker",
+"guid": 190628,
+"factories": [
+1010291
+],
+"replaceInputs": [
+{
+"OldInput": 1010235,
+"NewInput": 1010192
+}
+],
+"locaText": {
+"brazilian": "Baker",
+"portuguese": "Baker",
+"english": "Baker",
+"chinese": "烘焙师",
+"french": "Boulanger",
+"italian": "Panettiere",
+"polish": "Piekarz",
+"spanish": "Panadero",
+"taiwanese": "烘焙師",
+"german": "Bäcker",
+"japanese": "パン屋",
+"korean": "제빵사",
+"russian": "Пекарь"
+}
+},
+{
+"name": "Torcedor Lucia",
+"guid": 190642,
+"factories": [
+1010342
+],
+"replaceInputs": [
+{
+"OldInput": 1010242,
+"NewInput": 1010196
+}
+],
+"locaText": {
+"brazilian": "Renowned Torcedor",
+"portuguese": "Torcedor Lucia",
+"english": "Torcedor Lucia",
+"chinese": "卷烟师露西娅",
+"french": "Lucia la torcedora",
+"italian": "Lucia la torcedor",
+"polish": "Torcedor Lucia",
+"spanish": "Torcedora Lucía",
+"taiwanese": "捲菸師露西婭",
+"german": "Torcedor Lucia",
+"japanese": "葉巻職人ルチア",
+"korean": "시가제조가 루시아",
+"russian": "Торседор Люсия"
+}
+},
+{
+"name": "Gerhard Fuchs, of the Patent Eyeglass.",
+"guid": 191310,
+"factories": [
+101250
+],
+"replaceInputs": [
+{
+"OldInput": 1010204,
+"NewInput": 120008
+}
+],
+"additionalOutputs": [
+{
+"Product": 1010246,
+"AdditionalOutputCycle": 3,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Moritz von Rohr - The Eyeglass Lens Designer",
+"portuguese": "Moritz von Rohr - The Eyeglass Lens Designer",
+"english": "Gerhard Fuchs, of the Patent Eyeglass",
+"chinese": "“专利眼镜”的葛尔哈德·福契斯",
+"french": "Gerhard Fuchs, du Monarque au Monocle",
+"italian": "Gerhard Fuchs, del brevetto degli occhiali",
+"polish": "Gerhard Fuchs, od patentowanych okularów",
+"spanish": "Gerhard Fuchs, patentador de las gafas",
+"taiwanese": "「專利眼鏡」的葛爾哈德．福契斯",
+"german": "Gerhard Fuchs, vom patentierten Augenglas",
+"japanese": "特許メガネのジェラルド・フックス",
+"korean": "특허 안경 기술자, 게르하르트 푹스",
+"russian": "Герхард Фукс, создатель оригинальной линзы"
+}
+},
+{
+"name": "Perfumier Prunella",
+"guid": 191318,
+"factories": [
+1010281
+],
+"replaceInputs": [
+{
+"OldInput": 1010234,
+"NewInput": 120008
+}
+],
+"locaText": {
+"brazilian": "Perfumier Prunella",
+"portuguese": "Perfumier Prunella",
+"english": "Perfumier Prunella",
+"chinese": "香氛师普涅拉",
+"french": "Prunella, parfumeuse",
+"italian": "Produttrice di profumi Prunella",
+"polish": "Perfumerzystka Prunella",
+"spanish": "Perfumista Prunella",
+"taiwanese": "香氛師普涅拉",
+"german": "Parfümeurin Prunella",
+"japanese": "香水製造者のプルネラ",
+"korean": "향수 제조가 프루넬라",
+"russian": "Парфюмер Прунелла"
+}
+},
+{
+"name": "Chronometrist Chiara",
+"guid": 191323,
+"factories": [
+1010324
+],
+"replaceInputs": [
+{
+"OldInput": 1010249,
+"NewInput": 1010204
+}
+],
+"locaText": {
+"brazilian": "Chronometrist Chiara",
+"portuguese": "Chronometrist Chiara",
+"english": "Chronometrist Chiara",
+"chinese": "测时学家奇亚拉",
+"french": "Chiara, chronométriste",
+"italian": "Chiara la cronometrista",
+"polish": "Chronometryczka Chiara ",
+"spanish": "Cronometrista Chiara",
+"taiwanese": "測時學家奇亞拉",
+"german": "Chronometrikerin Chiara",
+"japanese": "クロノメーター専門家のチアラ",
+"korean": "시간 측정학자 키아라",
+"russian": "Изготовительница хронометров Кьяра"
+}
+},
+{
+"name": "Costume Designer",
+"guid": 191348,
+"factories": [
+1010325
+],
+"replaceInputs": [
+{
+"OldInput": 1010240,
+"NewInput": 1010197
+}
+],
+"locaText": {
+"brazilian": "Costume Designer",
+"portuguese": "Costume Designer",
+"english": "Costume Designer",
+"chinese": "服装设计师",
+"french": "Fabricant de costumes",
+"italian": "Designer di costumi",
+"polish": "Projektantka kreacji",
+"spanish": "Diseñador de vestuario",
+"taiwanese": "服裝設計師",
+"german": "Kostümbildnerin",
+"japanese": "コスチュームデザイナー",
+"korean": "의복 디자이너",
+"russian": "Известный модельер"
+}
+},
+{
+"name": "Master Craftsman Franke",
+"guid": 192039,
+"factories": [
+1010325
+],
+"replaceInputs": [
+{
+"OldInput": 1010209,
+"NewInput": 1010227
+},
+{
+"OldInput": 1010240,
+"NewInput": 1010197
+}
+],
+"additionalOutputs": [
+{
+"Product": 120043,
+"AdditionalOutputCycle": 12,
+"Amount": 1
+},
+{
+"Product": 1010237,
+"AdditionalOutputCycle": 12,
+"Amount": 1
+},
+{
+"Product": 120037,
+"AdditionalOutputCycle": 12,
+"Amount": 1
+}
+],
+"locaText": {
+"portuguese": "Master Craftsman Boris",
+"english": "Master Craftsman Franke",
+"chinese": "“工艺名人”法兰克",
+"french": "Franke, maître artisan",
+"italian": "Franke il maestro artigiano",
+"polish": "Mistrz rzemieślnik Franke",
+"spanish": "Maestro artesano Franke",
+"taiwanese": "「工藝名人」法蘭克",
+"german": "Franke, der Modeguru",
+"japanese": "名匠フランク",
+"korean": "기능장 프랑케",
+"russian": "Мастер-раскройщик Франке"
+}
+},
+{
+"name": "Miliner",
+"guid": 191349,
+"factories": [
+101273
+],
+"replaceInputs": [
+{
+"OldInput": 120044,
+"NewInput": 120036
+}
+],
+"locaText": {
+"brazilian": "Miliner",
+"portuguese": "Miliner",
+"english": "Milliner",
+"chinese": "女帽工匠",
+"french": "Styliste",
+"italian": "Stilista",
+"polish": "Wytwórca sombreros",
+"spanish": "Hacedor de gorros",
+"taiwanese": "女帽工匠",
+"german": "Hutmeister",
+"japanese": "婦人帽子職人",
+"korean": "여성용 모자 제작자",
+"russian": "Галантерейщик"
+}
+},
+{
+"name": "Quality Chocolatier",
+"guid": 191332,
+"factories": [
+1010341
+],
+"replaceInputs": [
+{
+"OldInput": 1010239,
+"NewInput": 120031
+}
+],
+"additionalOutputs": [
+{
+"Product": 120032,
+"AdditionalOutputCycle": 3,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Quality Chocolatier",
+"portuguese": "Quality Chocolatier",
+"english": "Quality Chocolatier",
+"chinese": "优质巧克力师傅",
+"french": "Maître-chocolatier",
+"italian": "Cioccolatiere di qualità",
+"polish": "Mistrz kuchni czekoladowej",
+"spanish": "Chocolatero de calidad",
+"taiwanese": "優質巧克力師傅",
+"german": "Qualitätschocolatier",
+"japanese": "高級チョコレート職人",
+"korean": "고급 초콜릿 제조가",
+"russian": "Профессиональный шоколатье"
+}
+},
+{
+"name": "Master Confectioner",
+"guid": 191356,
+"factories": [
+101264
+],
+"replaceInputs": [
+{
+"OldInput": 120042,
+"NewInput": 1010254
+}
+],
+"additionalOutputs": [
+{
+"Product": 1010258,
+"AdditionalOutputCycle": 3,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Patissier",
+"portuguese": "Patissier",
+"english": "Master Confectioner",
+"chinese": "甜品大师",
+"french": "Maître-confiseur",
+"italian": "Maestro pasticcere",
+"polish": "Mistrz cukiernictwa",
+"spanish": "Repostero maestro",
+"taiwanese": "甜品大師",
+"german": "Meisterkonditor",
+"japanese": "名菓子職人",
+"korean": "마스터 과자 제조가",
+"russian": "Мастер-кондитер"
+}
+},
+{
+"name": "Johan the Inventor",
+"guid": 191354,
+"factories": [
+1010326
+],
+"replaceInputs": [
+{
+"OldInput": 1010242,
+"NewInput": 1010196
+}
+],
+"locaText": {
+"brazilian": "Johan the Inventor",
+"portuguese": "Johan the Inventor",
+"english": "Johan the Inventor",
+"chinese": "“发明家”尤汉",
+"french": "Johan l'inventeur",
+"italian": "Johan l'inventore",
+"polish": "Johan wynalazca",
+"spanish": "Johan el inventor",
+"taiwanese": "「發明家」尤漢",
+"german": "Johan der Erfinder",
+"japanese": "発明家のヨハン",
+"korean": "발명가 요한",
+"russian": "Изобретатель Иоганн"
+}
+},
+{
+"name": "Mole Master",
+"guid": 191386,
+"factories": [
+101271
+],
+"replaceInputs": [
+{
+"OldInput": 1010193,
+"NewInput": 120042
+}
+],
+"locaText": {
+"brazilian": "Tex Mex Cook",
+"portuguese": "Tex Mex Cook",
+"english": "Mole Master",
+"chinese": "莫雷酱大师",
+"french": "Saucier",
+"italian": "Maestro del mole",
+"polish": "Mistrz sosów",
+"spanish": "Maestro de la sartén",
+"taiwanese": "莫雷醬大師",
+"german": "Mole-Meister",
+"japanese": "モーレ・マスター",
+"korean": "몰 마스터",
+"russian": "Мастер по изготовлению гуакамоле"
+}
+},
+{
+"name": "Tlayolotl Savor, King of the Corn",
+"guid": 191402,
+"factories": [
+101271
+],
+"replaceInputs": [
+{
+"OldInput": 120034,
+"NewInput": 120041
+}
+],
+"additionalOutputs": [
+{
+"Product": 120033,
+"AdditionalOutputCycle": 3,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Pablo Savor - The Tortilla King",
+"portuguese": "Pablo Savor - The Tortilla King",
+"english": "Tlayolotl Savor, King of the Corn",
+"chinese": "“玉米之王”特拉由洛提·萨佛",
+"french": "Tlayolotl Savor, Roi du maïs",
+"italian": "Tlayolotl Savor, il re del mais",
+"polish": "Tlayolotl Savor, król kukurydzy",
+"spanish": "Tlayolotl Savor, rey del maíz",
+"taiwanese": "「玉米之王」特拉由洛提．薩佛",
+"german": "Tlayolotl Savor, Maiskönig",
+"japanese": "トラヨルトル・サボール、コーンの王",
+"korean": "옥수수의 왕, 틀라욜로틀 세이버",
+"russian": "Тлайолотл Пикантный, король кукурузы"
+}
+},
+{
+"name": "Maxime Graves, Delicatesseur Extraordinaire",
+"guid": 191388,
+"factories": [
+1010316
+],
+"replaceInputs": [
+{
+"OldInput": 1010199,
+"NewInput": 1010193
+}
+],
+"additionalOutputs": [
+{
+"Product": 1010215,
+"AdditionalOutputCycle": 2,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Maxim \"In the End\" - The Grand Specialist of Delicatessen",
+"portuguese": "Maxim \"In the End\" - The Grand Specialist of Delicatessen",
+"english": "Maxime Graves, Delicatesseur Extraordinaire",
+"chinese": "“极致高级熟食冷肉贩”麦克席梅·格雷夫斯",
+"french": "Maxime Graves, traiteur intraitable",
+"italian": "Maxime Graves, gastronomo sublime",
+"polish": "Maxime Graves, Delicatesseur Extraordinaire",
+"spanish": "Maxime Graves, experto en carnes",
+"taiwanese": "「極致高級熟食冷肉販」麥克席梅．格雷夫斯",
+"german": "Maxime Graves, Delicatesseur Extraordinaire",
+"japanese": "マキシム・グレーブス、驚異のデリカテッセン",
+"korean": "탁월한 육가공품 제조가, 막심 그라베스",
+"russian": "Максим Грейвз, непревзойденный мастер приготовления деликатесов"
+}
+},
+{
+"name": "Chef Michel",
+"guid": 191406,
+"factories": [
+1010295
+],
+"replaceInputs": [
+{
+"OldInput": 1010215,
+"NewInput": 1010199
+}
+],
+"additionalOutputs": [
+{
+"Product": 1010238,
+"AdditionalOutputCycle": 2,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Chef Michel",
+"portuguese": "Chef Michel",
+"english": "Chef Michel",
+"chinese": "米歇尔大厨",
+"french": "Chef Michel",
+"italian": "Chef Michel",
+"polish": "Kucharz Michel",
+"spanish": "Jefe Michel",
+"taiwanese": "米歇爾大廚",
+"german": "Michel der Sternekoch",
+"japanese": "シェフ・ミシェル",
+"korean": "주방장 미셸",
+"russian": "Повар Мишель"
+}
+},
+{
+"name": "Mrs. Mayson, The Very Good Housekeeper",
+"guid": 191407,
+"factories": [
+1010295
+],
+"replaceInputs": [
+{
+"OldInput": 1010227,
+"NewInput": 1010235
+}
+],
+"additionalOutputs": [
+{
+"Product": 120035,
+"AdditionalOutputCycle": 3,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Mrs Mayson - Discerning Household Manager",
+"portuguese": "Mrs Mayson - Discerning Household Manager",
+"english": "Mrs. Mayson, The Very Good Housekeeper",
+"chinese": "“绝佳管家”梅森太太",
+"french": "Mme Mayson, l'excellente gouvernante",
+"italian": "Signora Mayson, la governante perfetta",
+"polish": "Pani Mayson, bardzo dobra gospodyni",
+"spanish": "Mrs. Mayson, ama de llaves suprema",
+"taiwanese": "「絕佳管家」梅森太太",
+"german": "Mrs. Mayson, Koryphäe der Hauswirtschaft",
+"japanese": "メイソン婦人、とても優秀な家政婦",
+"korean": "아주 뛰어난 가정부, 메이슨",
+"russian": "Госпожа Мейсон, лучшая домоправительница"
+}
+},
+{
+"name": "Recipe Archivist",
+"guid": 191400,
+"factories": [
+1010293
+],
+"replaceInputs": [
+{
+"OldInput": 1010193,
+"NewInput": 1010199
+}
+],
+"locaText": {
+"brazilian": "Recipe Maker",
+"portuguese": "Recipe Maker",
+"english": "Recipe Archivist",
+"chinese": "食谱保管员",
+"french": "Archiviste culinaire",
+"italian": "Collezionista di ricette",
+"polish": "Archiwistka przepisów",
+"spanish": "Archivista de recetas",
+"taiwanese": "食譜保管員",
+"german": "Rezeptarchivarin",
+"japanese": "レシピ考案家",
+"korean": "조리법 보관인",
+"russian": "Хранительница рецептов"
+}
+},
+{
+"name": "Marcel Forcas, Celebrity Chef",
+"guid": 191408,
+"factories": [
+1010293
+],
+"replaceInputs": [
+{
+"OldInput": 1010193,
+"NewInput": 1010199
+},
+{
+"OldInput": 1010198,
+"NewInput": 1010195
+}
+],
+"locaText": {
+"brazilian": "Marcel Boulestin - The Celebrity Chef",
+"portuguese": "Marcel Boulestin - The Celebrity Chef",
+"english": "Marcel Forcas, Celebrity Chef",
+"chinese": "明星大厨马歇尔·佛卡斯",
+"french": "Marcel Forcas, chef des célébrités",
+"italian": "Marcel Forcas, lo chef delle celebrità",
+"polish": "Marcel Forcas, gwiazda kuchni",
+"spanish": "Marcel Forcas, chef famoso",
+"taiwanese": "明星大廚馬歇爾．佛卡斯",
+"german": "Marcel Forcas, Koch für Berühmtheiten",
+"japanese": "マルセル・フォルカス、セレブシェフ",
+"korean": "유명 주방장, 마르셀 포르카스",
+"russian": "Марсель Форкас, знаменитый шеф-повар"
+}
+},
+{
+"name": "Susannah the Steam Engineer",
+"guid": 191420,
+"factories": [
+1010303
+],
+"replaceInputs": [
+{
+"OldInput": 1010224,
+"NewInput": 1010243
+}
+],
+"additionalOutputs": [
+{
+"Product": 1010208,
+"AdditionalOutputCycle": 4,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Industrial Designer",
+"portuguese": "Industrial Designer",
+"english": "Susannah the Steam Engineer",
+"chinese": "蒸汽工程师苏珊娜",
+"french": "Susannah l'ingénieure vapeur",
+"italian": "Susannah, l'ingegnere del vapore",
+"polish": "Susannah, inżynierka od maszyn parowych",
+"spanish": "Susannah, ingeniera de vapor",
+"taiwanese": "蒸汽工程師蘇珊娜",
+"german": "Susannah die Dampfingenieurin",
+"japanese": "蒸気エンジニアのスザンナ",
+"korean": "증기 기술자 수잔나",
+"russian": "Сюзанна, механик паровых машин"
+}
+},
+{
+"name": "Dario the Mechanical Engineer ",
+"guid": 191424,
+"factories": [
+1010323,
+1010284
+],
+"replaceInputs": [
+{
+"OldInput": 1010219,
+"NewInput": 1010227
+}
+],
+"additionalOutputs": [
+{
+"Product": 1010246,
+"AdditionalOutputCycle": 8,
+"Amount": 1
+},
+{
+"Product": 1010248,
+"AdditionalOutputCycle": 8,
+"Amount": 1
+}
+],
+"locaText": {
+"brazilian": "Marios the Mechanical Engineer ",
+"portuguese": "Marios the Mechanical Engineer ",
+"english": "Dario the Mechanical Engineer",
+"chinese": "机械工程师达利欧",
+"french": "Dario l'ingénieur mécanique",
+"italian": "Dario, l'ingegnere meccanico",
+"polish": "Dario, inżynier mechaniczny",
+"spanish": "Dario, ingeniero mecánico",
+"taiwanese": "機械工程師達利歐",
+"german": "Dario der Maschinenbauer",
+"japanese": "機械エンジニアのダリオ",
+"korean": "기계 기술자 다리오",
+"russian": "Дарио, инженер-механик"
+}
+},
+{
+"name": "Glass Maker",
+"guid": 191428,
+"factories": [
+1010285
+],
+"replaceInputs": [
+{
+"OldInput": 1010241,
+"NewInput": 1010228
+}
+],
+"locaText": {
+"brazilian": "Glass Maker",
+"portuguese": "Glass Maker",
+"english": "Glass Maker",
+"chinese": "玻璃工",
+"french": "Verrier",
+"italian": "Artigiano del vetro",
+"polish": "Wytwórca szkła",
+"spanish": "Cristalero",
+"taiwanese": "玻璃工",
+"german": "Glasmacher",
+"japanese": "ガラス職人",
+"korean": "유리 제작자",
+"russian": "Стекловар"
+}
+},
+{
+"name": "Cementer",
+"guid": 191462,
+"factories": [
+1010280
+],
+"replaceInputs": [
+{
+"OldInput": 1010231,
+"NewInput": 1010201
+}
+],
+"locaText": {
+"brazilian": "Constructor",
+"portuguese": "Constructor",
+"english": "Cementer",
+"chinese": "水泥工",
+"french": "Cimentier",
+"italian": "Produttore di cemento",
+"polish": "Operator betoniarki",
+"spanish": "Cementero",
+"taiwanese": "水泥工",
+"german": "Zementierer",
+"japanese": "セメント職人",
+"korean": "시멘트 제조가",
+"russian": "Мастер цементных работ"
+}
+}
+],
 "regions": [
 {
 "name": "Moderate",

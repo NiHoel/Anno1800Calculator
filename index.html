@@ -98,7 +98,7 @@
     <!-- /#help-dialog -->
     <!-- #factory-choose-dialog -->
     <div id="factory-choose-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 data-bind="text: $root.texts.chooseFactories.name">Choose Factory for each Product</h4>
@@ -108,19 +108,48 @@
                 <div class="modal-body">
                     <form>
                         <div data-bind="foreach: view.multiFactoryProducts">
-                            
 
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? icon : null, alt: name }">
-                                </span>
-                                <span class="input-group-text" data-bind="text: name"></span>
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? icon : null, alt: name }">
+                                    </span>
+                                    <span class="input-group-text" data-bind="text: name"></span>
+                                </div>
+
+                                <select class="custom-select" data-bind="value: $data.fixedFactory, options: $data.factories, optionsText: f => f.getRegionExtendedName(), optionsCaption: $root.texts.noFixedFactory.name()"></select>
                             </div>
-
-                            <select class="custom-select" data-bind="value: $data.fixedFactory, options: $data.factories, optionsText: f => f.getRegionExtendedName(), optionsCaption: $root.texts.noFixedFactory.name()"></select>
                         </div>
+                        <hr />
+
+                        <div data-bind="foreach: view.items">
+                            <div class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
+
+                                <div class="ui-fchain-item-name" style="height: unset">
+                                    <div class="float-right">
+                                        <input type="checkbox" data-bind="checked: $data.checked">
+                                    </div>
+                                    <span data-bind="text: name"></span>
+                                </div>
+
+                                <div class="ui-fchain-item-icon" data-bind="foreach: $data.factories"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
+
+
+                                <div data-bind="foreach: $data.replacementArray">
+                                    <div class="ui-fchain-item-icon-replacement">
+                                        <span class="strike-through">
+                                            <img src="" data-bind="attr: { src: $data.old.icon ? $data.old.icon : null, alt: $data.old.name }" width="30" height="30">
+                                        </span>
+                                        <div class="ui-replacement-spacer">
+                                            →
+                                        </div>
+                                        <img src="" data-bind="attr: { src: $data.new.icon ? $data.new.icon : null, alt: $data.new.name }" width="30" height="30">
+                                    </div>
+                                </div>
                             </div>
+
+                        </div>
                     </form>
                 </div>
             </div>
@@ -139,7 +168,7 @@
                 <button data-toggle="modal" data-target="#help-dialog" class="btn btn-secondary">
                     <span class="fa fa-question-circle-o"> </span>
                 </button>
-                <a role="button" href="https://github.com/NiHoel/Anno1800Calculator/archive/v1.2.zip" class="btn btn-secondary">
+                <a role="button" href="https://github.com/NiHoel/Anno1800Calculator/archive/v1.3.zip" class="btn btn-secondary">
                     <span class="fa fa-download"> </span>
                 </a>
             </div>
@@ -333,7 +362,7 @@
             <div class="collapse show" data-bind="foreach: buildingMaterialsNeeds" id="building-materials-chains">
                 <div class="ui-fchain" data-bind="visible: amount">
                     <div data-bind="foreach: allDemands">
-                        <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need)">
+                        <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount">
                             ←
                         </div>
                         <div class="ui-fchain-item" data-bind="visible: amount">
