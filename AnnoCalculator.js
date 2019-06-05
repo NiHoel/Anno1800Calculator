@@ -50,11 +50,12 @@ class Factory extends NamedElement {
             this.region = assetsMap.get(config.region);
 
         this.amount = ko.observable(0);
-
+        this.extraAmount = ko.observable(0);
+ 
         this.percentBoost = ko.observable(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.demands = new Set();
-        this.buildings = ko.computed(() => parseFloat(this.amount()) / this.tpmin / this.boost());
+        this.buildings = ko.computed(() => Math.max(0,parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
@@ -77,6 +78,17 @@ class Factory extends NamedElement {
         this.product = this.getProduct();
         if (!this.icon)
             this.icon = this.product.icon;
+
+        this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product});
+        this.extraAmount.subscribe(val => {
+            val = parseFloat(val);
+            let amount = parseFloat(this.amount());
+            if (val < -amount)
+                this.extraAmount(-amount);
+            else
+                this.extraDemand.updateAmount(val);
+        });
+        this.extraDemand.updateAmount(parseFloat(this.extraAmount()));
     }
 
     getProduct() {
@@ -101,7 +113,11 @@ class Factory extends NamedElement {
     updateAmount() {
         var sum = 0;
         this.demands.forEach(d => sum += d.amount());
-        this.amount(sum);
+        if (sum < 0)
+            this.extraAmount(this.extraAmount() - sum);
+        else 
+            this.amount(sum - this.extraAmount());
+        
     }
 
 
@@ -272,6 +288,12 @@ class PopulationNeed extends Need {
     constructor(config) {
         super(config);
 
+        this.inhabitants = 0;
+
+        this.percentBoost = ko.observable(100);
+        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
+        this.boost.subscribe(() => this.updateAmount(this.inhabitants));
+
         this.checked = ko.observable(true);
         this.banned = ko.computed(() => {
             var checked = this.checked();
@@ -289,9 +311,18 @@ class PopulationNeed extends Need {
     }
 
     updateAmount(inhabitants) {
-        this.optionalAmount(this.tpmin * inhabitants);
+        this.inhabitants = inhabitants;
+        this.optionalAmount(this.tpmin * inhabitants * this.boost());
         if (!this.banned())
             this.amount(this.optionalAmount());
+    }
+
+    incrementPercentBoost() {
+        this.percentBoost(parseInt(this.percentBoost()) + 1);
+    }
+
+    decrementPercentBoost() {
+        this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
 }
 
@@ -322,7 +353,7 @@ class PopulationLevel extends NamedElement {
             if (n.tpmin > 0)
                 this.needs.push(new PopulationNeed(n));
         });
-        this.amount.subscribe(val => this.needs.forEach(n => n.updateAmount(val)));
+        this.amount.subscribe(val => this.needs.forEach(n => n.updateAmount(parseInt(val))));
     }
 
     incrementAmount() {
@@ -395,8 +426,10 @@ function reset() {
     assetsMap.forEach(a => {
         if (a instanceof Product)
             a.fixedFactory(null);
-        if (a instanceof Factory)
+        if (a instanceof Factory) {
             a.percentBoost(100);
+            a.extraAmount(0);
+        }
         if (a instanceof Factory)
             a.existingBuildings(0);
         if (a instanceof PopulationLevel)
@@ -409,6 +442,8 @@ function reset() {
     view.populationLevels.forEach(l => l.needs.forEach(n => {
         if (n.checked)
             n.checked(true);
+        if (n.percentBoost)
+            n.percentBoost(100);
     }));
 }
 
@@ -470,22 +505,32 @@ function init() {
         view.factories.push(f);
 
         if (localStorage) {
-            let id = f.guid + ".percentBoost";
-            if (localStorage.getItem(id))
-                f.percentBoost(parseInt(localStorage.getItem(id)));
+            {
+                let id = f.guid + ".percentBoost";
+                if (localStorage.getItem(id))
+                    f.percentBoost(parseInt(localStorage.getItem(id)));
 
-            f.percentBoost.subscribe(val => localStorage.setItem(id, val));
-        }
+                f.percentBoost.subscribe(val => localStorage.setItem(id, val));
+            }
 
-        if (localStorage) {
-            let id = f.guid + ".existingBuildings";
-            if (localStorage.getItem(id))
-                f.existingBuildings(parseInt(localStorage.getItem(id)));
 
-            f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+            {
+                let id = f.guid + ".extraAmount";
+                if (localStorage.getItem(id)) {
+                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+                }
+                f.extraAmount.subscribe(val => localStorage.setItem(id, val));
+            }
+
+            {
+                let id = f.guid + ".existingBuildings";
+                if (localStorage.getItem(id))
+                    f.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+            }
         }
     }
-
     let products = [];
     for (let product of params.products) {
         if (product.producers && product.producers.length) {
@@ -506,6 +551,7 @@ function init() {
                         localStorage.removeItem(id);
                     }
                 }
+
 
                 {
                     let id = p.guid + ".fixedFactory";
@@ -555,6 +601,13 @@ function init() {
                     n.checked(parseInt(localStorage.getItem(id)))
 
                 n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+
+                id = `${l.guid}[${n.guid}].percentBoost`;
+                if (localStorage.getItem(id)) 
+                    n.percentBoost(parseInt(localStorage.getItem(id)));
+
+                n.percentBoost.subscribe(val => localStorage.setItem(id, val));
+
             }
 
         }
@@ -568,7 +621,7 @@ function init() {
 
     for (let p of view.categories[1].products) {
         for (let b of p.factories) {
-            if (b && b.demands.size == 0) {
+            if (b && b.demands.size <= 1) {
                 b.editable = true;
                 let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p });
                 b.buildings = ko.observable(0);
@@ -667,6 +720,13 @@ texts = {
     noFixedFactory: {
         english: "Automatic: same region as consumer",
         german: "Automatisch: gleichen Region wie Verbraucher"
+    },
+    "consumptionModifier": {
+        "name": "Modify the percental amount of consumption for this tier and product",
+        "locaText": {
+            "english": "Modify the percental amount of consumption for this tier and product",
+            "german": "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe"
+        }
     },
     helpContent: {
         german:

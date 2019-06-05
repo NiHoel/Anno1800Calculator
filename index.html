@@ -302,6 +302,14 @@
                                         <div class="ui-fchain-item-load"><span data-bind="text: parseFloat(amount()).toFixed(2)"></span><span> t/min</span></div>
 
                                     </div>
+                                    <div class="ui-fchain-item-load" data-bind="if: !$data.editable">
+
+                                        <div class="input-group spinner mb-3">
+                                            <div class="input-group-prepend"><span class="input-group-text">+ </span> </div>
+                                            <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
+                                        </div>
+                                     
+                                    </div>
                                 </div>
 
                             </div>
@@ -332,6 +340,17 @@
                                 </div>
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
+                                <div class="input-group mb-3 spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}">
+                                    <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
+                                    <div class="input-group-append">
+                                        <div class="input-group-btn-vertical">
+                                            <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
+                                            <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: parseInt(percentBoost()) > 1"><i class="fa fa-caret-down"></i></button>
+                                        </div>
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                         <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? parseFloat(buildings()).toFixed(2) : Math.ceil(buildings())"></span>
