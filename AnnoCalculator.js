@@ -716,26 +716,26 @@ var requestInterval = setInterval(
 				view.populationLevels.forEach(function(element){
 					element.amount(0);
 				});
-            if (myJson.Farmers) {
-                view.populationLevels[0].amount(myJson.Farmers);
+            if (myJson.farmers) {
+                view.populationLevels[0].amount(myJson.farmers);
             }
-            if (myJson.Workers) {
-                view.populationLevels[1].amount(myJson.Workers);
+            if (myJson.workers) {
+                view.populationLevels[1].amount(myJson.workers);
             }
-            if (myJson.Artisans) {
-                view.populationLevels[2].amount(myJson.Artisans);
+            if (myJson.artisans) {
+                view.populationLevels[2].amount(myJson.artisans);
             }
-			if (myJson.Engineers) {
-                view.populationLevels[3].amount(myJson.Engineers);
+			if (myJson.engineers) {
+                view.populationLevels[3].amount(myJson.engineers);
             }
-            if (myJson.Investors) {
-                view.populationLevels[4].amount(myJson.Investors);
+            if (myJson.investors) {
+                view.populationLevels[4].amount(myJson.investors);
             }
-            if (myJson.Jornaleros) {
-                view.populationLevels[5].amount(myJson.Jornaleros);
+            if (myJson.jornaleros) {
+                view.populationLevels[5].amount(myJson.jornaleros);
             }
-			 if (myJson.Orbreros) {
-                view.populationLevels[6].amount(myJson.Orbreros);
+			 if (myJson.orbreros) {
+                view.populationLevels[6].amount(myJson.orbreros);
             }}
         };
         userAction();
