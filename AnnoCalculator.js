@@ -653,6 +653,14 @@ function removeSpaces(string) {
 }
 
 $(document).ready(function () {
+    $.getJSON("https://api.github.com/repos/NiHoel/Anno1800Calculator/releases/latest").done((release) => {
+        $('#download-calculator-button').attr("href", release.zipball_url);
+    });
+
+    $.getJSON("https://github.com/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
+        $('#download-calculator-server-button').attr("href", release.assets[0].browser_download_url);
+    });
+
     if (window.params == null)
         $('#params-dialog').modal("show");
     else
