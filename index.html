@@ -341,7 +341,7 @@
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                                 <div class="input-group mb-3 spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}">
-                                    <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
+                                    <input class="form-control" type="text" value="100" min="1" data-bind="value: percentBoost" />
                                     <div class="input-group-append">
                                         <div class="input-group-btn-vertical">
                                             <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>

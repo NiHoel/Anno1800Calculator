@@ -291,6 +291,11 @@ class PopulationNeed extends Need {
         this.inhabitants = 0;
 
         this.percentBoost = ko.observable(100);
+        this.percentBoost.subscribe(val => {
+            val = parseInt(val);
+            if (val < 1)
+                this.percentBoost(1);
+        })
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.boost.subscribe(() => this.updateAmount(this.inhabitants));
 
