@@ -7925,10 +7925,13 @@ params =
 {
 "OldInput": 1010193,
 "NewInput": 1010199
-},
+}
+],
+"additionalOutputs": [
 {
-"OldInput": 1010198,
-"NewInput": 1010195
+"Product": 1010238,
+"AdditionalOutputCycle": 5,
+"Amount": 1
 }
 ],
 "locaText": {

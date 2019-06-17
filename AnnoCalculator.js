@@ -8,6 +8,7 @@ view = {
     workforce: [],
     buildingMaterialsNeeds: [],
     multiFactoryProducts: [],
+    items: [],
     settings: {
         language: ko.observable(navigator.language.startsWith("de") ? "german" : "english")
     },
@@ -55,6 +56,7 @@ class Factory extends NamedElement {
         this.demands = new Set();
         this.buildings = ko.computed(() => parseFloat(this.amount()) / this.tpmin / this.boost());
         this.existingBuildings = ko.observable(0);
+        this.items = [];
 
         this.workforceDemand = this.getWorkforceDemand();
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
@@ -176,8 +178,13 @@ class Demand extends NamedElement {
                 this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
 
             this.demands = this.factory().getInputs().map(input => {
+                var d;
+                let items = this.factory().items.filter(item => item.replacements.has(input.Product));
+                if (items.length)
+                    d = new DemandSwitch(this, input, items);
+                else
+                    d = new Demand({ guid: input.Product, consumer: this });
 
-                let d = new Demand({ guid: input.Product, consumer: this });
                 this.amount.subscribe(val => d.updateAmount(val * input.Amount));
                 return d;
             });
@@ -223,13 +230,37 @@ class Demand extends NamedElement {
     }
 }
 
+class DemandSwitch {
+    constructor(consumer, input, items) {
+        this.items = items;
+
+        this.demands = [ // use array index to toggle
+            new Demand({ guid: input.Product, consumer: consumer }),
+            new Demand({ guid: items[0].replacements.get(input.Product), consumer: consumer })
+        ];
+        this.amount = 0;
+
+        this.items.forEach(item => item.checked.subscribe(() => this.updateAmount(this.amount)));
+    }
+
+    updateAmount(amount) {
+        this.amount = amount;
+        this.demands.forEach((d, idx) => {
+            let checked = this.items.map(item => item.checked()).reduce((a, b) => a || b);
+            d.updateAmount(checked == idx ? amount : 0)
+        });
+    }
+
+}
+
 class Need extends Demand {
     constructor(config) {
         super(config);
         this.allDemands = [];
 
         let treeTraversal = node => {
-            this.allDemands.push(node);
+            if (node instanceof Demand)
+                this.allDemands.push(node);
             (node.demands || []).forEach(treeTraversal);
         }
         treeTraversal(this);
@@ -341,6 +372,25 @@ class WorkforceDemand extends NamedElement {
     }
 }
 
+class Item extends Option {
+    constructor(config) {
+        super(config);
+        this.replacements = new Map();
+        this.replacementArray = [];
+
+        if (this.replaceInputs)
+            this.replaceInputs.forEach(r => {
+                this.replacementArray.push({
+                    old: assetsMap.get(r.OldInput),
+                    new: assetsMap.get(r.NewInput)
+                });
+                this.replacements.set(r.OldInput, r.NewInput);
+            });
+
+        this.factories = this.factories.map(f => assetsMap.get(f)); 
+    }
+}
+
 function reset() {
     assetsMap.forEach(a => {
         if (a instanceof Product)
@@ -351,32 +401,34 @@ function reset() {
             a.existingBuildings(0);
         if (a instanceof PopulationLevel)
             a.amount(0);
+        if (a instanceof Item)
+            a.checked(false);
     });
 
     view.buildingMaterialsNeeds.forEach(b => b.factory().buildings(0));
     view.populationLevels.forEach(l => l.needs.forEach(n => {
         if (n.checked)
             n.checked(true);
-    }))
+    }));
 }
 
 function init() {
-     $(document).on("keydown", (evt)=>{
-      if(evt.altKey || evt.ctrlKey || evt.shiftKey)
-          return true;
+    $(document).on("keydown", (evt) => {
+        if (evt.altKey || evt.ctrlKey || evt.shiftKey)
+            return true;
 
-      var focused = false;
-      $(".ui-race-unit-name").filter(function() {
-        return (new RegExp(`^${evt.key}`, 'i')).test($(this).text());
-      }).each((i, ele) => {
-        focused = true;
-        return $(ele).closest('.ui-race-unit').find('input').focus().select()
-      });
-         
-      if(evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused){
-          let isDigit = evt.key >= "0" && evt.key <= "9";
-          return ['ArrowUp','ArrowDown','Backspace','Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
-      }
+        var focused = false;
+        $(".ui-race-unit-name").filter(function () {
+            return (new RegExp(`^${evt.key}`, 'i')).test($(this).text());
+        }).each((i, ele) => {
+            focused = true;
+            return $(ele).closest('.ui-race-unit').find('input').focus().select()
+        });
+
+        if (evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused) {
+            let isDigit = evt.key >= "0" && evt.key <= "9";
+            return ['ArrowUp', 'ArrowDown', 'Backspace', 'Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
+        }
     });
 
     for (let attr in texts) {
@@ -467,6 +519,21 @@ function init() {
 
     view.factories.forEach(f => f.referenceProducts());
 
+    for (let item of (params.items || [])) {
+        let i = new Item(item);
+        assetsMap.set(i.guid, i);
+        view.items.push(i);
+
+        i.factories.forEach(f => f.items.push(i));
+
+        if (localStorage) {
+            let id = i.guid + ".checked";
+            if (localStorage.getItem(id))
+                i.checked(parseInt(localStorage.getItem(id)));
+
+            i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
 
     for (let level of params.populationLevels) {
         let l = new PopulationLevel(level)
@@ -523,6 +590,8 @@ function init() {
             }
         }
     }
+
+
 
     ko.applyBindings(view, $(document.body)[0]);
 }
@@ -592,8 +661,8 @@ texts = {
         german: "Hilfe"
     },
     chooseFactories: {
-        english: "Choose Factory for each product",
-        german: "Wähle Fabrik für jedes Produkt"
+        english: "Modify Production Chains",
+        german: "Modifiziere Produktionsketten"
     },
     noFixedFactory: {
         english: "Automatic: same region as consumer",
@@ -613,7 +682,7 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt und die Menge der dargestellten Informationen angepasst werden.
 
-Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Auswahl der Fabrik, die ein bestimmtes Produkt produzieren soll. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
+Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Modifikation der Produktionsketten. In der oberen Hälfte kann die Fabrik ausgewählt werden, die die dargestellte Ware herstellen soll. In der unter Hälfte können Spezialisten aktiviert werden, welche die Eingangswaren der Fabriken verändern. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
 
 
 Haftungsausschluss:
@@ -642,7 +711,7 @@ Since construction materials share intermediate products with consumables they a
 
 When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language and customize the information presented by the calculator.
 
-The three cog wheels next to the settings dialog open a dialog to choose the factory that produces a certain good. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
+The three cog wheels next to the settings dialog open a dialog to modify the production chains. In the upper part, the factory can be chosen to produce the noted product. In the lower part, specialists that change the input for factories can be applied. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
 
 
 Disclaimer: 
