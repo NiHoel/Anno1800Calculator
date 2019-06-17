@@ -513,15 +513,6 @@ function init() {
                 f.percentBoost.subscribe(val => localStorage.setItem(id, val));
             }
 
-
-            {
-                let id = f.guid + ".extraAmount";
-                if (localStorage.getItem(id)) {
-                    f.extraAmount(parseFloat(localStorage.getItem(id)));
-                }
-                f.extraAmount.subscribe(val => localStorage.setItem(id, val));
-            }
-
             {
                 let id = f.guid + ".existingBuildings";
                 if (localStorage.getItem(id))
@@ -644,7 +635,18 @@ function init() {
         }
     }
 
-
+    // negative extra amount must be set after the demands of the population are generated
+    // otherwise it would be set to zero
+    for (let f of view.factories) {
+       
+        if (localStorage) {
+                let id = f.guid + ".extraAmount";
+                if (localStorage.getItem(id)) {
+                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+                }
+                f.extraAmount.subscribe(val => localStorage.setItem(id, val));
+        }
+    }
 
     ko.applyBindings(view, $(document.body)[0]);
 }
