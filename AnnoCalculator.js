@@ -391,6 +391,50 @@ class Item extends Option {
     }
 }
 
+class PopulationReader {
+
+    constructor() {
+        this.url = 'http://localhost:8000/AnnoServer/Population/';
+        // only ping the server when the website is run locally
+        if (window.location.protocol == 'file:' || !!window.location.host.replace(/localhost|127\.0\.0\.1/i, '')) {
+            console.log('waiting for responses from ' + this.url);
+            this.requestInterval = setInterval(this.handleResponse.bind(this), 1000);
+        }
+    }
+
+    async handleResponse() {
+        const response = await fetch(this.url);
+        const myJson = await response.json(); //extract JSON from the http response
+        console.log('answer: ', myJson);
+        if (myJson) {
+            view.populationLevels.forEach(function (element) {
+                element.amount(0);
+            });
+            if (myJson.farmers) {
+                view.populationLevels[0].amount(myJson.farmers);
+            }
+            if (myJson.workers) {
+                view.populationLevels[1].amount(myJson.workers);
+            }
+            if (myJson.artisans) {
+                view.populationLevels[2].amount(myJson.artisans);
+            }
+            if (myJson.engineers) {
+                view.populationLevels[3].amount(myJson.engineers);
+            }
+            if (myJson.investors) {
+                view.populationLevels[4].amount(myJson.investors);
+            }
+            if (myJson.jornaleros) {
+                view.populationLevels[5].amount(myJson.jornaleros);
+            }
+            if (myJson.orbreros) {
+                view.populationLevels[6].amount(myJson.orbreros);
+            }
+        }
+    }
+}
+
 function reset() {
     assetsMap.forEach(a => {
         if (a instanceof Product)
@@ -413,6 +457,7 @@ function reset() {
 }
 
 function init() {
+    // use key inputs for focus
     $(document).on("keydown", (evt) => {
         if (evt.altKey || evt.ctrlKey || evt.shiftKey)
             return true;
@@ -431,6 +476,7 @@ function init() {
         }
     });
 
+    // parse the parameters
     for (let attr in texts) {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
     }
@@ -594,6 +640,10 @@ function init() {
 
 
     ko.applyBindings(view, $(document.body)[0]);
+
+
+    // listen for the server providing the population count
+    window.reader = new PopulationReader();
 }
 
 function removeSpaces(string) {
@@ -774,40 +824,4 @@ options = {
     }
 }
 
-var requestInterval = setInterval(
-    () => {
-        const userAction = async () => {
-            console.log('starting request');
-            const response = await fetch('http://localhost:8000/AnnoServer/Population/');
-            const myJson = await response.json(); //extract JSON from the http response
-            console.log('answer: ', myJson);
-			if(myJson){
-				view.populationLevels.forEach(function(element){
-					element.amount(0);
-				});
-            if (myJson.farmers) {
-                view.populationLevels[0].amount(myJson.farmers);
-            }
-            if (myJson.workers) {
-                view.populationLevels[1].amount(myJson.workers);
-            }
-            if (myJson.artisans) {
-                view.populationLevels[2].amount(myJson.artisans);
-            }
-			if (myJson.engineers) {
-                view.populationLevels[3].amount(myJson.engineers);
-            }
-            if (myJson.investors) {
-                view.populationLevels[4].amount(myJson.investors);
-            }
-            if (myJson.jornaleros) {
-                view.populationLevels[5].amount(myJson.jornaleros);
-            }
-			 if (myJson.orbreros) {
-                view.populationLevels[6].amount(myJson.orbreros);
-            }}
-        };
-        userAction();
 
-
-    }, 1000);
