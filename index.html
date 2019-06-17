@@ -156,6 +156,42 @@
         </div>
     </div>
     <!-- #/factory-choose-dialog -->
+    <!-- #download-dialog -->
+    <div id="download-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: texts.download.name">Downloads</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <tr>
+                            <td data-bind="text: texts.downloadCalculator.name"></td>
+                            <td>
+                                <a role="button" href="https://github.com/NiHoel/Anno1800Calculator/releases/latest" class="btn btn-secondary">
+                                    <span class="fa fa-download"> </span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td> 
+                                <span data-bind="text: texts.downloadCalculatorServer.name"></span>
+                                <a href="https://github.com/Dejauxvue/AnnoCalculatorServer">https://github.com/Dejauxvue/AnnoCalculatorServer</a>
+                            </td>
+                            <td>
+                                <a role="button" href="https://github.com/Dejauxvue/AnnoCalculatorServer/releases/latest" class="btn btn-secondary">
+                                    <span class="fa fa-download"> </span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#download-dialog -->
     <div id="content" data-bind="visible: true" style="display:none">
         <div class="fixed-top" style="padding-right: 17px;">
             <div class="btn-group float-right">
@@ -168,9 +204,9 @@
                 <button data-toggle="modal" data-target="#help-dialog" class="btn btn-secondary">
                     <span class="fa fa-question-circle-o"> </span>
                 </button>
-                <a role="button" href="https://github.com/NiHoel/Anno1800Calculator/archive/v1.4.zip" class="btn btn-secondary">
+                <button data-toggle="modal" data-target="#download-dialog" class="btn btn-secondary">
                     <span class="fa fa-download"> </span>
-                </a>
+                </button>
             </div>
         </div>
         <fieldset class="ui-fieldset" id="inhabitants-view">

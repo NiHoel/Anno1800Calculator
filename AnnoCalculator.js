@@ -718,6 +718,18 @@ texts = {
         english: "Automatic: same region as consumer",
         german: "Automatisch: gleichen Region wie Verbraucher"
     },
+    download: {
+        english: "Downloads",
+        german: "Downloads"
+    },
+    downloadCalculator: {
+        english: "Download the calculator (source code of this website) to run it locally.",
+        german: "Lade den Warenrechner (Quellcode dieser Seite) herunter, um ihn lokal auszuführen."
+    },
+    downloadCalculatorServer: {
+        english: "Download a standalone executable that reads the current population count while playing the game. If you then run the calculator locally (using the source code from above), the population count gets updated automatically. See the following link for more information: ",
+        german: "Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Wird der Warenrechner lokal ausgeführt (siehe obiger Quellcode), werden die Bevölkerungszahlen automatisch aktualisiert. Siehe folgenden Link für weitere Informationen: "
+    },
     helpContent: {
         german:
             `Verwendung: Trage die aktuellen oder angestrebten Einwohner pro Stufe in die oberste Reihe ein. Die Produktionsketten aktualisieren sich automatisch sobald man die Eingabe verlässt. Es werden nur diejenigen Fabriken angezeigt, die benötigt werden.
