@@ -125,11 +125,12 @@ class Factory extends NamedElement {
     }
 
     decrementBuildings() {
-        let nextBuildings = Math.floor(this.buildings());
+        let currentBuildings = Math.ceil(this.buildings() * 100) / 100;
+        var nextBuildings = Math.floor(currentBuildings);
         if (nextBuildings <= 0)
             return;
 
-        if (this.buildings() - nextBuildings < 0.01)
+        if (currentBuildings - nextBuildings < 0.01)
             nextBuildings = Math.floor(nextBuildings - 0.01);
         var nextBoost = Math.ceil(100 * this.boost() * this.buildings() / nextBuildings);
         if (nextBoost - parseInt(this.percentBoost()) < 1)
@@ -305,8 +306,11 @@ class BuildingMaterialsNeed extends Need {
         this.factory().add(this);
     }
 
-    updateAmount(buildings) {
-        this.amount(buildings * this.factory().tpmin * this.factory().boost());
+    updateAmount() {
+        var otherDemand = 0;
+        this.factory().demands.forEach(d => otherDemand += d == this ? 0 : d.amount());
+        var overProduction = this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() - otherDemand;
+        this.amount(Math.max(0, overProduction));
     }
 
     updateFixedProductFactory() { }
@@ -552,24 +556,20 @@ function init() {
 
     for (let p of view.categories[1].products) {
         for (let b of p.factories) {
-            if (b && b.demands.size == 0) {
+            if (b) {
                 b.editable = true;
                 let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p });
-                b.buildings = ko.observable(0);
-                b.buildings.subscribe(val => {
-                    if (!(typeof val === 'number'))
-                        val = parseFloat(val);
-                    n.updateAmount(val);
-                });
-                b.boost.subscribe(() => n.updateAmount(b.buildings()));
+                b.boost.subscribe(() => n.updateAmount());
+                b.existingBuildings.subscribe(() => n.updateAmount());
                 view.buildingMaterialsNeeds.push(n);
 
                 if (localStorage) {
-                    let id = b.guid + ".buildings";
-                    if (localStorage.getItem(id))
-                        b.buildings(parseInt(localStorage.getItem(id)));
+                    let oldId = b.guid + ".buildings";
+                    let id = b.guid + ".existingBuildings"
+                    if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                        b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
 
-                    b.buildings.subscribe(val => localStorage.setItem(id, val));
+                    b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
                 }
             }
         }
@@ -659,6 +659,14 @@ texts = {
     existingNumberOfBuildingsIs: {
         english: "Is:",
         german: "Ist:"
+    },
+    requiredNumberOfBuildings: {
+        english: "Required:",
+        german: "Benötigt:"
+    },
+    requiredNumberOfBuildingsDescription: {
+        english: "Required number of buildings to produce consumer products",
+        german: "Benötigte Gebäudeanzahl zur Produktion von Verbrauchsgütern"
     },
     tonsPerMinute: {
         english: "Production in Tons per Minute",
