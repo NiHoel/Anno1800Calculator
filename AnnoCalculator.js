@@ -413,23 +413,7 @@ function reset() {
 }
 
 function init() {
-    $(document).on("keydown", (evt) => {
-        if (evt.altKey || evt.ctrlKey || evt.shiftKey)
-            return true;
 
-        var focused = false;
-        $(".ui-race-unit-name").filter(function () {
-            return (new RegExp(`^${evt.key}`, 'i')).test($(this).text());
-        }).each((i, ele) => {
-            focused = true;
-            return $(ele).closest('.ui-race-unit').find('input').focus().select()
-        });
-
-        if (evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused) {
-            let isDigit = evt.key >= "0" && evt.key <= "9";
-            return ['ArrowUp', 'ArrowDown', 'Backspace', 'Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
-        }
-    });
 
     for (let attr in texts) {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
@@ -591,9 +575,41 @@ function init() {
         }
     }
 
-
-
+    
     ko.applyBindings(view, $(document.body)[0]);
+
+
+    var keyBindings = ko.computed(() => {
+        var bindings = new Map();
+
+        for (var l of view.populationLevels) {
+            for (var c of l.name().toLowerCase()) {
+                if (!bindings.has(c)) {
+                    bindings.set(c, $(`.ui-race-unit-name[race-unit-name=${l.name()}] ~ .input .input-group input`));
+                    break;
+                }
+            }
+        }
+
+        return bindings;
+    })
+
+    $(document).on("keydown", (evt) => {
+        if (evt.altKey || evt.ctrlKey || evt.shiftKey)
+            return true;
+
+        var focused = false;
+        var bindings = keyBindings();
+        if (bindings.has(evt.key)) {
+            focused = true;
+            bindings.get(evt.key).focus().select();
+        }
+        
+        if (evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused) {
+            let isDigit = evt.key >= "0" && evt.key <= "9";
+            return ['ArrowUp', 'ArrowDown', 'Backspace', 'Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
+        }
+    });
 }
 
 function removeSpaces(string) {
@@ -684,6 +700,7 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Modifikation der Produktionsketten. In der oberen Hälfte kann die Fabrik ausgewählt werden, die die dargestellte Ware herstellen soll. In der unter Hälfte können Spezialisten aktiviert werden, welche die Eingangswaren der Fabriken verändern. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
 
+Durch Eingabe des ersten (bzw. zweiten - bei Uneindeutigkeiten) Buchstaben des Bevölkerungsnames wird das zugehörige Eingabefeld fokussiert. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
 
 Haftungsausschluss:
 Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
@@ -713,6 +730,7 @@ When clicking on the cog wheel in the upper right corner of the screen the setti
 
 The three cog wheels next to the settings dialog open a dialog to modify the production chains. In the upper part, the factory can be chosen to produce the noted product. In the lower part, specialists that change the input for factories can be applied. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
 
+Press the key corresponding to the first (or second in case of ambiguities) letter of the name of a population level to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
 
 Disclaimer: 
 The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.

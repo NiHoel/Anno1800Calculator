@@ -185,7 +185,7 @@
                     <div data-bind="foreach: populationLevels">
                         <div class="ui-race-unit">
                             <div class="ui-race-unit-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
-                            <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked()"></div>
+                            <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked(), attr: {'race-unit-name' : name}"></div>
 
                             <div class="input text">
                                 <div class="input-group spinner mb-3">
