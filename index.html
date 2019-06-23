@@ -263,7 +263,7 @@
                                     </div>
                                     <div class="ui-fchain-item-count" data-bind="if: !$data.editable">
                                         <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? buildings().toFixed(2) : Math.ceil(buildings())"></span>
+                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
                                             <span>x</span>
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
@@ -299,7 +299,7 @@
                                         </div>
                                     </div>
                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <div class="ui-fchain-item-load"><span data-bind="text: parseFloat(amount()).toFixed(2)"></span><span> t/min</span></div>
+                                        <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
 
                                     </div>
                                 </div>
@@ -334,13 +334,13 @@
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? parseFloat(buildings()).toFixed(2) : Math.ceil(buildings())"></span>
+                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
                                         <span>x</span>
                                     </span>
                                 </div>
                                 <div class="ui-fchain-item-load">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <span data-bind="text: parseFloat(amount()).toFixed(2)"></span><span> t/min</span>
+                                        <span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span>
                                     </span>
                                 </div>
                                 <!--<div class="ui-fchain-item-loadbar"><div style="background-color:red; width:4px;"><img src="/img/pixel.gif" width="1" height="6"></div></div>-->
@@ -370,13 +370,13 @@
                             <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                             <div class="ui-fchain-item-count">
                                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? parseFloat(buildings()).toFixed(2) : Math.ceil(buildings())"></span>
+                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
                                     <span>x</span>
                                 </span>
                             </div>
                             <div class="ui-fchain-item-load">
                                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                    <span data-bind="text: parseFloat(amount()).toFixed(2)"></span><span> t/min</span>
+                                    <span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span>
                                 </span>
                             </div>
 
