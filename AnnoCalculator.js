@@ -459,7 +459,7 @@ function init() {
 
         var focused = false;
         $(".ui-race-unit-name").filter(function () {
-            return (new RegExp(`^${evt.key}`, 'i')).test($(this).text());
+            return $(this).text().toLocaleLowerCase().startsWith(evt.key);
         }).each((i, ele) => {
             focused = true;
             return $(ele).closest('.ui-race-unit').find('input').focus().select()
