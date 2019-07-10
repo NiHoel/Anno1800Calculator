@@ -141,11 +141,12 @@ class Factory extends NamedElement {
     }
 
     decrementBuildings() {
-        let nextBuildings = Math.floor(this.buildings());
+        let currentBuildings = Math.ceil(this.buildings() * 100) / 100;
+        var nextBuildings = Math.floor(currentBuildings);
         if (nextBuildings <= 0)
             return;
 
-        if (this.buildings() - nextBuildings < 0.01)
+        if (currentBuildings - nextBuildings < 0.01)
             nextBuildings = Math.floor(nextBuildings - 0.01);
         var nextBoost = Math.ceil(100 * this.boost() * this.buildings() / nextBuildings);
         if (nextBoost - parseInt(this.percentBoost()) < 1)
@@ -341,8 +342,11 @@ class BuildingMaterialsNeed extends Need {
         this.factory().add(this);
     }
 
-    updateAmount(buildings) {
-        this.amount(buildings * this.factory().tpmin * this.factory().boost());
+    updateAmount() {
+        var otherDemand = 0;
+        this.factory().demands.forEach(d => otherDemand += d == this ? 0 : d.amount());
+        var overProduction = this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() - otherDemand;
+        this.amount(Math.max(0, overProduction));
     }
 
     updateFixedProductFactory() { }
@@ -453,23 +457,7 @@ function reset() {
 }
 
 function init() {
-    $(document).on("keydown", (evt) => {
-        if (evt.altKey || evt.ctrlKey || evt.shiftKey)
-            return true;
 
-        var focused = false;
-        $(".ui-race-unit-name").filter(function () {
-            return $(this).text().toLocaleLowerCase().startsWith(evt.key);
-        }).each((i, ele) => {
-            focused = true;
-            return $(ele).closest('.ui-race-unit').find('input').focus().select()
-        });
-
-        if (evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused) {
-            let isDigit = evt.key >= "0" && evt.key <= "9";
-            return ['ArrowUp', 'ArrowDown', 'Backspace', 'Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
-        }
-    });
 
     for (let attr in texts) {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
@@ -617,28 +605,40 @@ function init() {
 
     for (let p of view.categories[1].products) {
         for (let b of p.factories) {
-            if (b && b.demands.size <= 1) {
+            if (b) {
                 b.editable = true;
                 let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p });
-                b.buildings = ko.observable(0);
-                b.buildings.subscribe(val => {
-                    if (!(typeof val === 'number'))
-                        val = parseFloat(val);
-                    n.updateAmount(val);
-                });
-                b.boost.subscribe(() => n.updateAmount(b.buildings()));
+                b.boost.subscribe(() => n.updateAmount());
+                b.existingBuildings.subscribe(() => n.updateAmount());
                 view.buildingMaterialsNeeds.push(n);
 
                 if (localStorage) {
-                    let id = b.guid + ".buildings";
-                    if (localStorage.getItem(id))
-                        b.buildings(parseInt(localStorage.getItem(id)));
+                    let oldId = b.guid + ".buildings";
+                    let id = b.guid + ".existingBuildings"
+                    if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                        b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
 
-                    b.buildings.subscribe(val => localStorage.setItem(id, val));
+                    b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
                 }
             }
         }
     }
+
+    
+    ko.applyBindings(view, $(document.body)[0]);
+
+
+    var keyBindings = ko.computed(() => {
+        var bindings = new Map();
+
+        for (var l of view.populationLevels) {
+            for (var c of l.name().toLowerCase()) {
+                if (!bindings.has(c)) {
+                    bindings.set(c, $(`.ui-race-unit-name[race-unit-name=${l.name()}] ~ .input .input-group input`));
+                    break;
+                }
+            }
+        }
 
     // negative extra amount must be set after the demands of the population are generated
     // otherwise it would be set to zero
@@ -652,8 +652,18 @@ function init() {
                 f.extraAmount.subscribe(val => localStorage.setItem(id, val));
         }
     }
-
-    ko.applyBindings(view, $(document.body)[0]);
+        var focused = false;
+        var bindings = keyBindings();
+        if (bindings.has(evt.key)) {
+            focused = true;
+            bindings.get(evt.key).focus().select();
+        }
+        
+        if (evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused) {
+            let isDigit = evt.key >= "0" && evt.key <= "9";
+            return ['ArrowUp', 'ArrowDown', 'Backspace', 'Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
+        }
+    });
 }
 
 function removeSpaces(string) {
@@ -704,6 +714,14 @@ texts = {
         english: "Is:",
         german: "Ist:"
     },
+    requiredNumberOfBuildings: {
+        english: "Required:",
+        german: "Benötigt:"
+    },
+    requiredNumberOfBuildingsDescription: {
+        english: "Required number of buildings to produce consumer products",
+        german: "Benötigte Gebäudeanzahl zur Produktion von Verbrauchsgütern"
+    },
     tonsPerMinute: {
         english: "Production in Tons per Minute",
         german: "Produktion in Tonnen pro Minute"
@@ -751,6 +769,7 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Modifikation der Produktionsketten. In der oberen Hälfte kann die Fabrik ausgewählt werden, die die dargestellte Ware herstellen soll. In der unter Hälfte können Spezialisten aktiviert werden, welche die Eingangswaren der Fabriken verändern. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
 
+Durch Eingabe des ersten (bzw. zweiten - bei Uneindeutigkeiten) Buchstaben des Bevölkerungsnames wird das zugehörige Eingabefeld fokussiert. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
 
 Haftungsausschluss:
 Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
@@ -780,6 +799,7 @@ When clicking on the cog wheel in the upper right corner of the screen the setti
 
 The three cog wheels next to the settings dialog open a dialog to modify the production chains. In the upper part, the factory can be chosen to produce the noted product. In the lower part, specialists that change the input for factories can be applied. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
 
+Press the key corresponding to the first (or second in case of ambiguities) letter of the name of a population level to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
 
 Disclaimer: 
 The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.
