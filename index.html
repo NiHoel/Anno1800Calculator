@@ -322,7 +322,7 @@
                                         <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
 
                                     </div>
-                                    <div class="ui-fchain-item-load" data-bind="if: !$data.editable">
+                                    <div class="ui-fchain-item-load" data-bind="if: !$data.editable, visible: $root.settings.additionalProduction.checked()">
 
                                         <div class="input-group spinner mb-3">
                                             <div class="input-group-prepend"><span class="input-group-text">+ </span> </div>
@@ -360,7 +360,7 @@
                                 </div>
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
-                                <div class="input-group mb-3 spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}">
+                                <div class="input-group mb-3 spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}, visible: $root.settings.consumptionModifier.checked()">
                                     <input class="form-control" type="text" value="100" min="1" data-bind="value: percentBoost" />
                                     <div class="input-group-append">
                                         <div class="input-group-btn-vertical">

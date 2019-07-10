@@ -746,12 +746,9 @@ texts = {
         english: "Automatic: same region as consumer",
         german: "Automatisch: gleichen Region wie Verbraucher"
     },
-    "consumptionModifier": {
-        "name": "Modify the percental amount of consumption for this tier and product",
-        "locaText": {
-            "english": "Modify the percental amount of consumption for this tier and product",
-            "german": "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe"
-        }
+    consumptionModifier: {
+        english: "Modify the percental amount of consumption for this tier and product",
+        german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe"
     },
     helpContent: {
         german:
@@ -836,6 +833,20 @@ options = {
         "locaText": {
             "english": "Highlight missing buildings",
             "german": "Fehlende Gebäude hervorheben"
+        }
+    },
+    "additionalProduction": {
+        "name": "Show input field for additional production",
+        "locaText": {
+            "english": "Show input field for additional production (negative values possible)",
+            "german": "Zeige Eingabefeld für Zusatzproduktion (negative Werte möglich)"
+        }
+    },
+    "consumptionModifier": {
+        "name": "Show input field for percental consumption modification",
+        "locaText": {
+            "english": "Show input field for percental consumption modification",
+            "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs"
         }
     },
     "hideNames": {
