@@ -627,6 +627,18 @@ function init() {
     
     ko.applyBindings(view, $(document.body)[0]);
 
+    // negative extra amount must be set after the demands of the population are generated
+    // otherwise it would be set to zero
+    for (let f of view.factories) {
+       
+        if (localStorage) {
+                let id = f.guid + ".extraAmount";
+                if (localStorage.getItem(id)) {
+                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+                }
+                f.extraAmount.subscribe(val => localStorage.setItem(id, val));
+        }
+    }
 
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
@@ -640,18 +652,13 @@ function init() {
             }
         }
 
-    // negative extra amount must be set after the demands of the population are generated
-    // otherwise it would be set to zero
-    for (let f of view.factories) {
-       
-        if (localStorage) {
-                let id = f.guid + ".extraAmount";
-                if (localStorage.getItem(id)) {
-                    f.extraAmount(parseFloat(localStorage.getItem(id)));
-                }
-                f.extraAmount.subscribe(val => localStorage.setItem(id, val));
-        }
-    }
+        return bindings;
+    })
+
+    $(document).on("keydown", (evt) => {
+        if (evt.altKey || evt.ctrlKey || evt.shiftKey)
+            return true;
+
         var focused = false;
         var bindings = keyBindings();
         if (bindings.has(evt.key)) {
