@@ -82,6 +82,8 @@ class Factory extends NamedElement {
         this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product});
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
+            if (isNaN(val))
+                this.extraAmount(0);
             let amount = parseFloat(this.amount());
             if (val < -amount)
                 this.extraAmount(-amount);
