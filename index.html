@@ -295,8 +295,8 @@
                                                 <input class="form-control" type="text" value="0" step="1" data-bind="value: existingBuildings" />
                                                 <div class="input-group-append">
                                                     <div class="input-group-btn-vertical">
-                                                        <button class="btn btn-default" type="button" data-bind="click: existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
-                                                        <button class="btn btn-default" type="button" data-bind="click: existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
                                                     </div>
                                                     <span class="input-group-text">x</span>
                                                 </div>

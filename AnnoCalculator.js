@@ -82,6 +82,7 @@ class Factory extends NamedElement {
         this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product});
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
+
             let amount = parseFloat(this.amount());
             if (val < -amount)
                 this.extraAmount(-amount);
@@ -362,7 +363,7 @@ class PopulationLevel extends NamedElement {
             if (n.tpmin > 0)
                 this.needs.push(new PopulationNeed(n));
         });
-        this.amount.subscribe(val => this.needs.forEach(n => n.updateAmount(parseInt(val))));
+        this.amount.subscribe(val =>this.needs.forEach(n => n.updateAmount(parseInt(val))));
     }
 
     incrementAmount() {
@@ -447,7 +448,6 @@ function reset() {
             a.checked(false);
     });
 
-    view.buildingMaterialsNeeds.forEach(b => b.factory().buildings(0));
     view.populationLevels.forEach(l => l.needs.forEach(n => {
         if (n.checked)
             n.checked(true);
@@ -503,7 +503,15 @@ function init() {
                 if (localStorage.getItem(id))
                     f.percentBoost(parseInt(localStorage.getItem(id)));
 
-                f.percentBoost.subscribe(val => localStorage.setItem(id, val));
+                f.percentBoost.subscribe(val => {
+                    val = parseInt(val);
+
+                    if (val == null || !isFinite(val) || isNaN(val)) {
+                        f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                        return;
+                    }
+                    localStorage.setItem(id, val)
+                });
             }
 
             {
@@ -575,7 +583,22 @@ function init() {
             if (localStorage.getItem(id))
                 l.amount(parseInt(localStorage.getItem(id)));
 
-            l.amount.subscribe(val => localStorage.setItem(id, val));
+            l.amount.subscribe(val => {
+                val = parseInt(val);
+
+                if (val == null || !isFinite(val) || isNaN(val)) {
+                    l.amount(parseInt(localStorage.getItem(id)) || 0);
+                    return;
+                }
+                localStorage.setItem(id, val);
+            });
+        } else {
+            l.amount.subscribe(val => {
+                if (val == null || !isFinite(val) || isNaN(val)) {
+                    l.amount(0);
+                    return;
+                }
+            });
         }
 
         for (let n of l.needs) {
@@ -587,11 +610,26 @@ function init() {
                 n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
 
                 id = `${l.guid}[${n.guid}].percentBoost`;
-                if (localStorage.getItem(id)) 
+                if (localStorage.getItem(id))
                     n.percentBoost(parseInt(localStorage.getItem(id)));
 
-                n.percentBoost.subscribe(val => localStorage.setItem(id, val));
+                n.percentBoost.subscribe(val => {
+                    val = parseInt(val);
 
+                    if (val == null || !isFinite(val) || isNaN(val)) {
+                        n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                        return;
+                    }
+                    localStorage.setItem(id, val);
+                });
+
+            } else {
+                n.percentBoost.subscribe(val => {
+                    if (val == null || !isFinite(val) || isNaN(val)) {
+                        n.percentBoost(100);
+                        return;
+                    }
+                });
             }
 
         }
@@ -632,11 +670,26 @@ function init() {
     for (let f of view.factories) {
        
         if (localStorage) {
-                let id = f.guid + ".extraAmount";
-                if (localStorage.getItem(id)) {
-                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+            let id = f.guid + ".extraAmount";
+            if (localStorage.getItem(id)) {
+                f.extraAmount(parseFloat(localStorage.getItem(id)));
+            }
+
+            f.extraAmount.subscribe(val => {
+                val = parseFloat(val);
+
+                if (val == null || !isFinite(val) || isNaN(val)) {
+                    f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
+                    return;
                 }
-                f.extraAmount.subscribe(val => localStorage.setItem(id, val));
+                localStorage.setItem(id, val);
+            });
+        } else {
+            f.extraAmount.subscribe(val => {
+                if (val == null || !isFinite(val) || isNaN(val)) {
+                    f.extraAmount(0);
+                }
+            });
         }
     }
 
