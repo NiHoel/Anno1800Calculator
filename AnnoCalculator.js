@@ -84,6 +84,7 @@ class Factory extends NamedElement {
             val = parseFloat(val);
             if (isNaN(val))
                 this.extraAmount(0);
+                val = 0;
             let amount = parseFloat(this.amount());
             if (val < -amount)
                 this.extraAmount(-amount);
