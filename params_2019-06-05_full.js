@@ -2014,7 +2014,7 @@ params =
 "InactiveAmount": 125
 },
 {
-"Product": 1010115,
+"Product": 1010367,
 "Amount": 25
 }
 ],
@@ -2984,7 +2984,7 @@ params =
 {
 "name": "agriculture_colony01_06 (Timber Yard)",
 "guid": 101260,
-"tpmin": 2,
+"tpmin": 4,
 "outputs": [
 {
 "Product": 120008,
@@ -3342,7 +3342,7 @@ params =
 {
 "name": "coastal_colony01_02 (Niter Coast Building)",
 "guid": 101303,
-"tpmin": 2,
+"tpmin": 0.5,
 "outputs": [
 {
 "Product": 1010232,
@@ -3384,7 +3384,7 @@ params =
 {
 "name": "factory_colony01_01 (Timber Factory)",
 "guid": 101261,
-"tpmin": 2,
+"tpmin": 4,
 "outputs": [
 {
 "Product": 1010196,
@@ -3570,7 +3570,7 @@ params =
 {
 "name": "factory_colony01_05 (Brick Factory)",
 "guid": 101268,
-"tpmin": 2,
+"tpmin": 1,
 "outputs": [
 {
 "Product": 1010205,
@@ -3972,7 +3972,7 @@ params =
 {
 "name": "heavy_colony01_01 (Oil Heavy Industry)",
 "guid": 1010561,
-"tpmin": 2,
+"tpmin": 4,
 "outputs": [
 {
 "Product": 1010566,
@@ -4014,7 +4014,7 @@ params =
 {
 "name": "mining_colony01_01 (Gold Ore Mine)",
 "guid": 101311,
-"tpmin": 2,
+"tpmin": 0.4,
 "outputs": [
 {
 "Product": 1010233,
@@ -4150,7 +4150,7 @@ params =
 {
 "name": "processing_colony01_03 (Inlay Processing)",
 "guid": 101296,
-"tpmin": 2,
+"tpmin": 1,
 "outputs": [
 {
 "Product": 1010242,
