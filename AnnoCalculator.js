@@ -1,4 +1,5 @@
 let versionCalculator = "v2.0";
+let EPSILON = 0.01
 
 products = new Map();
 assetsMap = new Map();
@@ -86,10 +87,10 @@ class Factory extends NamedElement {
             val = parseFloat(val);
 
             let amount = parseFloat(this.amount());
-            if (val < -amount)
-                this.extraAmount(-amount);
+            if (val < -Math.ceil(amount * 100) / 100)
+                this.extraAmount(- Math.ceil(amount * 100)/100);
             else
-                this.extraDemand.updateAmount(val);
+                this.extraDemand.updateAmount(Math.max(val, -amount));
         });
         this.extraDemand.updateAmount(parseFloat(this.extraAmount()));
     }
@@ -115,11 +116,29 @@ class Factory extends NamedElement {
 
     updateAmount() {
         var sum = 0;
-        this.demands.forEach(d => sum += d.amount());
-        if (sum < 0)
-            this.extraAmount(this.extraAmount() - sum);
-        else
-            this.amount(sum - this.extraAmount());
+        this.demands.forEach(d => {
+            var a = d.amount();
+//            if (a <= -EPSILON || a > 0)
+                sum += a;
+        });
+
+        if (sum < -EPSILON) {
+            if (sum < this.extraDemand.amount()) {
+                this.extraDemand.updateAmount(0);
+                this.amount(0);
+            } else {
+
+                this.extraDemand.updateAmount(this.extraDemand.amount() - sum);
+            }
+        }
+        else {
+            // for initialization before creation this.extraDemand
+            var extraDemand = this.extraDemand ? this.extraDemand.amount() : 0;
+            var val = Math.max(0, sum - extraDemand);
+            if (val < 1e-16)
+                val = 0;
+            this.amount(val);
+        }
 
     }
 
@@ -365,7 +384,12 @@ class PopulationLevel extends NamedElement {
             if (n.tpmin > 0)
                 this.needs.push(new PopulationNeed(n));
         });
-        this.amount.subscribe(val => this.needs.forEach(n => n.updateAmount(parseInt(val))));
+        this.amount.subscribe(val => {
+            if (val < 0)
+                this.amount(0);
+            else
+                this.needs.forEach(n => n.updateAmount(parseInt(val)))
+        });
     }
 
     incrementAmount() {
@@ -673,13 +697,17 @@ function init() {
 
         for (let n of l.needs) {
             if (localStorage) {
+                {
                     let id = `${l.guid}[${n.guid}].checked`;
                     if (localStorage.getItem(id))
                         n.checked(parseInt(localStorage.getItem(id)))
 
                     n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
 
-                    id = `${l.guid}[${n.guid}].percentBoost`;
+                }
+
+                {
+                    let id = `${l.guid}[${n.guid}].percentBoost`;
                     if (localStorage.getItem(id))
                         n.percentBoost(parseInt(localStorage.getItem(id)));
 
@@ -692,6 +720,7 @@ function init() {
                         }
                         localStorage.setItem(id, val);
                     });
+                }
 
             } else {
                 n.percentBoost.subscribe(val => {
