@@ -1,3 +1,5 @@
+let versionCalculator = "v2.0";
+
 products = new Map();
 assetsMap = new Map();
 view = {
@@ -51,11 +53,11 @@ class Factory extends NamedElement {
 
         this.amount = ko.observable(0);
         this.extraAmount = ko.observable(0);
- 
+
         this.percentBoost = ko.observable(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.demands = new Set();
-        this.buildings = ko.computed(() => Math.max(0,parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
+        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
@@ -79,7 +81,7 @@ class Factory extends NamedElement {
         if (!this.icon)
             this.icon = this.product.icon;
 
-        this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product});
+        this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product });
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
 
@@ -116,9 +118,9 @@ class Factory extends NamedElement {
         this.demands.forEach(d => sum += d.amount());
         if (sum < 0)
             this.extraAmount(this.extraAmount() - sum);
-        else 
+        else
             this.amount(sum - this.extraAmount());
-        
+
     }
 
 
@@ -363,7 +365,7 @@ class PopulationLevel extends NamedElement {
             if (n.tpmin > 0)
                 this.needs.push(new PopulationNeed(n));
         });
-        this.amount.subscribe(val =>this.needs.forEach(n => n.updateAmount(parseInt(val))));
+        this.amount.subscribe(val => this.needs.forEach(n => n.updateAmount(parseInt(val))));
     }
 
     incrementAmount() {
@@ -428,7 +430,7 @@ class Item extends Option {
                 this.replacements.set(r.OldInput, r.NewInput);
             });
 
-        this.factories = this.factories.map(f => assetsMap.get(f)); 
+        this.factories = this.factories.map(f => assetsMap.get(f));
     }
 }
 
@@ -436,16 +438,31 @@ class PopulationReader {
 
     constructor() {
         this.url = 'http://localhost:8000/AnnoServer/Population/';
+        this.notificationShown = false;
+        this.currentVersion;
+        this.recentVersion;
+
         // only ping the server when the website is run locally
-        if (window.location.protocol == 'file:' || !!window.location.host.replace(/localhost|127\.0\.0\.1/i, '')) {
+        if (isLocal()) {
             console.log('waiting for responses from ' + this.url);
             this.requestInterval = setInterval(this.handleResponse.bind(this), 1000);
+
+            $.getJSON("https://api.github.com/repos/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
+                this.recentVersion = release.tag_name;
+                this.checkVersion();
+            });
         }
     }
 
     async handleResponse() {
         const response = await fetch(this.url);
         const myJson = await response.json(); //extract JSON from the http response
+
+        if (myJson.version) {
+            this.currentVersion = myJson.version;
+            this.checkVersion();
+        }
+
         console.log('answer: ', myJson);
         if (myJson) {
             view.populationLevels.forEach(function (element) {
@@ -469,9 +486,23 @@ class PopulationReader {
             if (myJson.jornaleros) {
                 view.populationLevels[5].amount(myJson.jornaleros);
             }
-            if (myJson.orbreros) {
-                view.populationLevels[6].amount(myJson.orbreros);
+            if (myJson.obreros) {
+                view.populationLevels[6].amount(myJson.obreros);
             }
+        }
+    }
+
+    checkVersion() {
+        if (!this.notificationShown && this.recentVersion && this.currentVersion && this.recentVersion !== this.currentVersion) {
+            this.notificationShown = true;
+            $.notify({
+                // options
+                message: view.texts.serverUpdate.name()
+            }, {
+                    // settings
+                    type: 'warning',
+                    placement: { align: 'center' }
+                });
         }
     }
 }
@@ -501,12 +532,6 @@ function reset() {
 }
 
 function init() {
-
-
-    // parse the parameters
-    for (let attr in texts) {
-        view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
-    }
 
     view.settings.options = [];
     for (let attr in options) {
@@ -648,25 +673,25 @@ function init() {
 
         for (let n of l.needs) {
             if (localStorage) {
-                let id = `${l.guid}[${n.guid}].checked`;
-                if (localStorage.getItem(id))
-                    n.checked(parseInt(localStorage.getItem(id)))
+                    let id = `${l.guid}[${n.guid}].checked`;
+                    if (localStorage.getItem(id))
+                        n.checked(parseInt(localStorage.getItem(id)))
 
-                n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                    n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
 
-                id = `${l.guid}[${n.guid}].percentBoost`;
-                if (localStorage.getItem(id))
-                    n.percentBoost(parseInt(localStorage.getItem(id)));
+                    id = `${l.guid}[${n.guid}].percentBoost`;
+                    if (localStorage.getItem(id))
+                        n.percentBoost(parseInt(localStorage.getItem(id)));
 
-                n.percentBoost.subscribe(val => {
-                    val = parseInt(val);
+                    n.percentBoost.subscribe(val => {
+                        val = parseInt(val);
 
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
-                        return;
-                    }
-                    localStorage.setItem(id, val);
-                });
+                        if (val == null || !isFinite(val) || isNaN(val)) {
+                            n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                            return;
+                        }
+                        localStorage.setItem(id, val);
+                    });
 
             } else {
                 n.percentBoost.subscribe(val => {
@@ -707,13 +732,13 @@ function init() {
         }
     }
 
-    
+
     ko.applyBindings(view, $(document.body)[0]);
 
     // negative extra amount must be set after the demands of the population are generated
     // otherwise it would be set to zero
     for (let f of view.factories) {
-       
+
         if (localStorage) {
             let id = f.guid + ".extraAmount";
             if (localStorage.getItem(id)) {
@@ -763,7 +788,7 @@ function init() {
             focused = true;
             bindings.get(evt.key).focus().select();
         }
-        
+
         if (evt.target.tagName === 'INPUT' && !isNaN(parseInt(evt.key)) || focused) {
             let isDigit = evt.key >= "0" && evt.key <= "9";
             return ['ArrowUp', 'ArrowDown', 'Backspace', 'Delete'].includes(evt.key) || isDigit || evt.key === "." || evt.key === ",";
@@ -781,12 +806,52 @@ function removeSpaces(string) {
     return string.replace(/\W/g, "");
 }
 
+function isLocal() {
+    return window.location.protocol == 'file:' || !!window.location.host.replace(/localhost|127\.0\.0\.1/i, '');
+}
+
 $(document).ready(function () {
+    // parse the parameters
+    for (let attr in texts) {
+        view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
+    }
+
     $.getJSON("https://api.github.com/repos/NiHoel/Anno1800Calculator/releases/latest").done((release) => {
         $('#download-calculator-button').attr("href", release.zipball_url);
+
+        if (isLocal()) {
+            if (release.tag_name !== versionCalculator) {
+                $.notify({
+                    // options
+                    message: view.texts.calculatorUpdate.name()
+                }, {
+                        // settings
+                        type: 'warning',
+                        placement: { align: 'center' }
+                    });
+            }
+        }
+
+        if (localStorage) {
+            if (localStorage.getItem("versionCalculator") != versionCalculator) {
+                if (view.texts.newFeature.name() && view.texts.newFeature.name().length)
+                    $.notify({
+                        // options
+                        message: view.texts.newFeature.name()
+                    }, {
+                            // settings
+                            type: 'success',
+                            placement: { align: 'center' },
+                            timer: 10000
+                    });
+            }
+
+            localStorage.setItem("versionCalculator", versionCalculator);
+        }
+     
     });
 
-    $.getJSON("https://github.com/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
+    $.getJSON("https://api.github.com/repos/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
         $('#download-calculator-server-button').attr("href", release.assets[0].browser_download_url);
     });
 
@@ -803,7 +868,9 @@ $(document).ready(function () {
             console.log(e);
             $('#params-dialog').modal("show");
         }
-    })
+    });
+
+
 })
 
 texts = {
@@ -879,6 +946,18 @@ texts = {
         english: "Download a standalone executable that reads the current population count while playing the game. If you then run the calculator locally (using the source code from above), the population count gets updated automatically. See the following link for more information: ",
         german: "Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Wird der Warenrechner lokal ausgeführt (siehe obiger Quellcode), werden die Bevölkerungszahlen automatisch aktualisiert. Siehe folgenden Link für weitere Informationen: "
     },
+    serverUpdate: {
+        english: "A new server version is available. Click the download button.",
+        german: "Eine neue Serverversion ist verfügbar. Klicke auf den Downloadbutton."
+    },
+    calculatorUpdate: {
+        english: "A new calculator version is available. Click the download button.",
+        german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
+    },
+    newFeature: {
+        english: "New feature: Automatically read the population count from the game. Click the download button for more information.",
+        german: "Neue Funktion: Automatisches Auslesen der Bevölkerungszahl aus dem Spiel. Klicke auf den Downloadbutton für weitere Informationen."
+    },
     helpContent: {
         german:
             `Verwendung: Trage die aktuellen oder angestrebten Einwohner pro Stufe in die oberste Reihe ein. Die Produktionsketten aktualisieren sich automatisch sobald man die Eingabe verlässt. Es werden nur diejenigen Fabriken angezeigt, die benötigt werden.
@@ -897,6 +976,8 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 Durch Eingabe des ersten (bzw. zweiten - bei Uneindeutigkeiten) Buchstaben des Bevölkerungsnames wird das zugehörige Eingabefeld fokussiert. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
 
+Über den Downloadbutton kann dieser Rechner sowie eine zusätzliche Serveranwendung heruntergeladen werden. Mit der Serveranwendung lassen sich die Bevölkerungszahlen automatisch aus dem Spiel auslesen. Ich danke meinem Kollegen Josua Bloeß für die Umsetzung.
+
 Haftungsausschluss:
 Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
 Dies sind insbesondere, aber nicht ausschließlich alle Icons der Bevölkerung, Waren und Gegenstände sowie die Daten der Produktionsketten und die Verbrachswerte der Bevölkerung.
@@ -908,7 +989,7 @@ Autor:
 Nico Höllerich
 
 Fehler und Verbesserungen:
-Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf Github (https://github.com/NiHoel/Anno1800Calculator/issues)`,
+Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
 
         english:
             `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed. 
@@ -927,6 +1008,8 @@ The three cog wheels next to the settings dialog open a dialog to modify the pro
 
 Press the key corresponding to the first (or second in case of ambiguities) letter of the name of a population level to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
 
+Pressing the download button one can download this calculator and an additional server application. The server application automatically reads the population count from the game. I thank my colleague Josua Bloeß for the implementation.
+
 Disclaimer: 
 The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.
 These are especially but not exclusively all the icons of population, goods and items and the data of production chains and the consumptions values of population.
@@ -938,7 +1021,7 @@ Author:
 Nico Höllerich
 
 Bugs and improvements:
-If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on Github (https://github.com/NiHoel/Anno1800Calculator/issues)`
+If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`
     }
 }
 
