@@ -469,7 +469,7 @@ class PopulationReader {
         // only ping the server when the website is run locally
         if (isLocal()) {
             console.log('waiting for responses from ' + this.url);
-            this.requestInterval = setInterval(this.handleResponse.bind(this), 1000);
+            this.requestInterval = setInterval(this.handleResponse.bind(this), 2000);
 
             $.getJSON("https://api.github.com/repos/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
                 this.recentVersion = release.tag_name;
@@ -482,6 +482,9 @@ class PopulationReader {
         const response = await fetch(this.url);
         const myJson = await response.json(); //extract JSON from the http response
 
+        if (!myJson)
+            return;
+        
         if (myJson.version) {
             this.currentVersion = myJson.version;
             this.checkVersion();
