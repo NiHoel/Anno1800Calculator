@@ -947,6 +947,7 @@ function installImportConfigListener() {
                         localStorage.clear();
                         for (var a in config)
                             localStorage.setItem(a, config[a]);
+                        localStorage.setItem("versionCalculator", versionCalculator);
                         location.reload();
 
                     } else {
