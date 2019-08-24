@@ -1,4 +1,4 @@
-let versionCalculator = "v2.0";
+let versionCalculator = "v2.1";
 let EPSILON = 0.01
 
 products = new Map();
@@ -1104,8 +1104,8 @@ Siehe folgenden Link für weitere Informationen: `
         german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
     },
     newFeature: {
-        english: "New feature: Automatically read the population count from the game. Click the download button for more information.",
-        german: "Neue Funktion: Automatisches Auslesen der Bevölkerungszahl aus dem Spiel. Klicke auf den Downloadbutton für weitere Informationen."
+        english: "New features: Automatically read the population count from the game and import / export configuration. Click the download button for more information.",
+        german: "Neue Funktionen: Automatisches Auslesen der Bevölkerungszahl aus dem Spiel und Import / Export der Konfiguration. Klicke auf den Downloadbutton für weitere Informationen."
     },
     helpContent: {
         german:
