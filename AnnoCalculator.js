@@ -45,6 +45,13 @@ class Option extends NamedElement {
     }
 }
 
+class Island {
+    constructor(config = {}) {
+        this.name = ko.observable(config.name ? config.name : "Anno 1800 Calculator");
+        this.name.subscribe(val => { window.document.title = val; });
+    }
+}
+
 class Factory extends NamedElement {
     constructor(config) {
         super(config);
@@ -577,6 +584,25 @@ function init() {
     }
     view.settings.languages = params.languages;
 
+    view.settings.island = new Island();
+    if (localStorage) {
+        {
+            let id = "islandName";
+            if (localStorage.getItem(id))
+                view.settings.island.name(localStorage.getItem(id));
+
+            view.settings.island.name.subscribe(val => localStorage.setItem(id, val));
+        }
+
+        {
+            let id = "language";
+            if (localStorage.getItem(id))
+                view.settings.language(localStorage.getItem(id));
+
+            view.settings.language.subscribe(val => localStorage.setItem(id, val));
+        }
+    }
+
     for (let region of params.regions) {
         let r = new Region(region);
         assetsMap.set(r.guid, r);
@@ -814,6 +840,9 @@ function init() {
         if (evt.altKey || evt.ctrlKey || evt.shiftKey)
             return true;
 
+        if (evt.target.tagName === 'INPUT' && evt.target.type === "text")
+            return true;
+
         var focused = false;
         var bindings = keyBindings();
         if (bindings.has(evt.key)) {
@@ -1014,6 +1043,10 @@ texts = {
         english: "Language",
         german: "Sprache"
     },
+    islandName: {
+        english: "Island name",
+        german: "Inselname"
+    },
     settings: {
         english: "Settings",
         german: "Einstellungen"
@@ -1106,13 +1139,13 @@ Each card displays the name of the factory, the icon of the produced good, the b
 
 Since construction materials share intermediate products with consumables they are explicitly listed (unlike in calculators for previous Annos) to better plan the production of mines. The number of factories must be entered manually.
 
-When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language and customize the information presented by the calculator.
+When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language, give the browser tab a name and customize the information presented by the calculator.
 
 The three cog wheels next to the settings dialog open a dialog to modify the production chains. In the upper part, the factory can be chosen to produce the noted product. In the lower part, specialists that change the input for factories can be applied. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
 
 Press the key corresponding to the first (or second in case of ambiguities) letter of the name of a population level to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
 
-Pressing the download button one can download this calculator and an additional server application. The server application automatically reads the population count from the game. I thank my colleague Josua Bloeß for the implementation.
+Pressing the download button one can download the configuration, this calculator and an additional server application. The server application automatically reads the population count from the game. I thank my colleague Josua Bloeß for the implementation.
 
 Disclaimer: 
 The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.

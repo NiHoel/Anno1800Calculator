@@ -74,6 +74,13 @@
 
                             <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
                         </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: texts.islandName.name">Language</span>
+                            </div>
+
+                            <input name="islandName" class="form-control" id="language" type="text" data-bind="value: settings.island.name" />
+                        </div>
                     </form>
                 </div>
             </div>
