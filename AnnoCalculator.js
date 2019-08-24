@@ -842,12 +842,25 @@ function isLocal() {
     return window.location.protocol == 'file:' || /localhost|127\.0\.0\.1/.test( window.location.host.replace);
 }
 
-$(document).ready(function () {
-    // parse the parameters
-    for (let attr in texts) {
-        view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
-    }
+function exportConfig() {
+    var saveData = (function () {
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        return function (data, fileName) {
+            var blob = new Blob([JSON.stringify(data, null, 4)], { type: "text/json" }),
+                url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        };
+    }());
 
+    saveData(localStorage, "Anno1800CalculatorConfig.json");
+}
+
+function checkAndShowNotifications() {
     $.getJSON("https://api.github.com/repos/NiHoel/Anno1800Calculator/releases/latest").done((release) => {
         $('#download-calculator-button').attr("href", release.zipball_url);
 
@@ -875,18 +888,73 @@ $(document).ready(function () {
                             type: 'success',
                             placement: { align: 'center' },
                             timer: 10000
-                    });
+                        });
             }
 
             localStorage.setItem("versionCalculator", versionCalculator);
         }
-     
-    });
 
+    });
+}
+
+function installImportConfigListener() {
+    if (localStorage) {
+        $('#config-selector').on('change', event => {
+            event.preventDefault();
+            if (!event.target.files || !event.target.files[0])
+                return;
+
+            let file = event.target.files[0];
+            console.log(file);
+            var fileReader = new FileReader();
+
+            fileReader.onload = function (ev) {
+                let text = ev.target.result || ev.currentTarget.result;
+
+                try {
+                    let config = JSON.parse(text);
+
+                    if (localStorage) {
+                        localStorage.clear();
+                        for (var a in config)
+                            localStorage.setItem(a, config[a]);
+                        location.reload();
+
+                    } else {
+                        console.error("No local storage accessible to write result into.");
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+            fileReader.onerror = function (err) {
+                console.error(err);
+            };
+
+            fileReader.readAsText(file);
+        });
+    }
+}
+
+$(document).ready(function () {
+    // parse the parameters
+    for (let attr in texts) {
+        view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
+    }
+
+    // check version of calculator - display update and new featur notification
+    checkAndShowNotifications();
+
+    //update links of download buttons
     $.getJSON("https://api.github.com/repos/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
         $('#download-calculator-server-button').attr("href", release.assets[0].browser_download_url);
     });
 
+    installImportConfigListener();
+
+
+    //load parameters
     if (window.params == null)
         $('#params-dialog').modal("show");
     else
@@ -969,6 +1037,10 @@ texts = {
     download: {
         english: "Downloads",
         german: "Downloads"
+    },
+    downloadConfig: {
+        english: "Import / Export configuration.",
+        german: "Konfiguration importieren / exportieren."
     },
     downloadCalculator: {
         english: "Download the calculator (source code of this website) to run it locally.",

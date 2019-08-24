@@ -167,22 +167,36 @@
 
                 </div>
                 <div class="modal-body">
-                    <table>
+                    <table class="table">
+                        <tr>
+                            <td data-bind="text: texts.downloadConfig.name"></td>
+                            <td>
+                                <div class="btn-group float-right">
+                                    <label class="btn btn-secondary" id="import-config-button" role="button" href="#" for="config-selector">
+                                        <input id="config-selector" type="file" style="display: none;">
+                                        <span class="fa fa-upload"> </span>
+                                    </label>
+                                    <label data-bind="click: () => exportConfig()" id="export-config-button" role="button" href="#" class="btn btn-secondary">
+                                        <span class="fa fa-download"> </span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <td data-bind="text: texts.downloadCalculator.name"></td>
                             <td>
-                                <a id="download-calculator-button" role="button" href="https://github.com/NiHoel/Anno1800Calculator/releases/latest" class="btn btn-secondary">
+                                <a id="download-calculator-button" role="button" href="https://github.com/NiHoel/Anno1800Calculator/releases/latest" class="btn btn-secondary float-right">
                                     <span class="fa fa-download"> </span>
                                 </a>
                             </td>
                         </tr>
                         <tr>
-                            <td> 
+                            <td>
                                 <span data-bind="text: texts.downloadCalculatorServer.name"></span>
                                 <a href="https://github.com/Dejauxvue/AnnoCalculatorServer">https://github.com/Dejauxvue/AnnoCalculatorServer</a>
                             </td>
                             <td>
-                                <a id="download-calculator-server-button" role="button" href="https://github.com/Dejauxvue/AnnoCalculatorServer/releases/latest" class="btn btn-secondary">
+                                <a id="download-calculator-server-button" role="button" href="https://github.com/Dejauxvue/AnnoCalculatorServer/releases/latest" class="btn btn-secondary float-right">
                                     <span class="fa fa-download"> </span>
                                 </a>
                             </td>
