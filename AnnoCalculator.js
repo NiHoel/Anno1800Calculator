@@ -1076,12 +1076,24 @@ texts = {
         german: "Konfiguration importieren / exportieren."
     },
     downloadCalculator: {
-        english: "Download the calculator (source code of this website) to run it locally.",
-        german: "Lade den Warenrechner (Quellcode dieser Seite) herunter, um ihn lokal auszuführen."
+        english: "Download the calculator (source code of this website) to run it locally. To do so, extract the archive and double click index.html.",
+        german: "Lade den Warenrechner (Quellcode dieser Seite) herunter, um ihn lokal auszuführen. Zum Ausführen, extrahiere das Archiv und doppelklicke auf index.html. "
     },
     downloadCalculatorServer: {
-        english: "Download a standalone executable that reads the current population count while playing the game. If you then run the calculator locally (using the source code from above), the population count gets updated automatically. See the following link for more information: ",
-        german: "Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Wird der Warenrechner lokal ausgeführt (siehe obiger Quellcode), werden die Bevölkerungszahlen automatisch aktualisiert. Siehe folgenden Link für weitere Informationen: "
+        english: `Download a standalone executable that reads the current population count while playing the game. Usage:
+1. Download server application and calculator (using the source code from above).
+2. Start Anno 1800 with the graphics setting "Windowed Full Screen".
+3. Start server (Server.exe) and open downloaded calculator (index.html) - make sure that Anno does not get minimized.
+4. Expand the population statistics (global or island) to update the values in the calculator.
+
+ See the following link for more information: `,
+        german: `Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Verwendung:
+1. Lade die Serveranwendung und den Warenrechner (siehe obiger Quellcode) herunter.
+2. Starte Anno 1800 mit der Graphikeinstellung "Vollbild im Fenstermodus".
+3. Führe den Server (Server.exe) aus und öffne den heruntergeladenen Warenrechner (index.html) - stelle sicher, dass Anno nicht minimiert wird.
+4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus, um die Werte im Warenrechner zu aktualisieren.
+
+Siehe folgenden Link für weitere Informationen: `
     },
     serverUpdate: {
         english: "A new server version is available. Click the download button.",
