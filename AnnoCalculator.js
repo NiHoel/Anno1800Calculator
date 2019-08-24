@@ -886,7 +886,7 @@ function exportConfig() {
         };
     }());
 
-    saveData(localStorage, "Anno1800CalculatorConfig.json");
+    saveData(localStorage, (view.settings.island.name() || "Anno1800CalculatorConfig") + ".json");
 }
 
 function checkAndShowNotifications() {
