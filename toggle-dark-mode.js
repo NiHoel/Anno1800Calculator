@@ -8,34 +8,10 @@
     ".btn-light": "btn-dark",
   };
 
-  const changes = Object.keys(classAdditions).map((key) => ([
-    () => $(key).addClass(classAdditions[key]),
-    () => $(key).removeClass(classAdditions[key]),
-  ]));
+  const makeDark = () => Object.keys(classAdditions).forEach((key) => $(key).addClass(classAdditions[key]));
+  const makeLight = () => Object.keys(classAdditions).reverse().forEach((key) => $(key).removeClass(classAdditions[key]));
 
-  function makeDark() {
-    for (let i = 0; i < changes.length; i++) {
-      changes[i][0]();
-    }
-  }
-
-  function makeLight() {
-    for (let i = changes.length - 1; i >= 0; i--) {
-      changes[i][1]();
-    }
-  }
-
-  var isLight = true;
-
-  function toggleDarkMode() {
-    if (isLight) {
-      makeDark();
-      isLight = false;
-    } else {
-      makeLight();
-      isLight = true;
-    }
-  }
+  const toggleDarkMode = () => $("body").is(".bg-dark") ? makeLight() : makeDark();
 
   window.toggleDarkMode = toggleDarkMode;
 }
