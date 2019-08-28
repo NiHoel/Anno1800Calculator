@@ -491,7 +491,7 @@ class PopulationReader {
 
         if (!myJson)
             return;
-        
+
         if (myJson.version) {
             this.currentVersion = myJson.version;
             this.checkVersion();
@@ -1142,7 +1142,7 @@ Fehler und Verbesserungen:
 Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
 
         english:
-            `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed. 
+            `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed.
 
 The row below displays the workforce that is required to run all buildings (rounded towards the next complete factory).
 
@@ -1160,7 +1160,7 @@ Press the key corresponding to the first (or second in case of ambiguities) lett
 
 Pressing the download button one can download the configuration, this calculator and an additional server application. The server application automatically reads the population count from the game. I thank my colleague Josua Bloeß for the implementation.
 
-Disclaimer: 
+Disclaimer:
 The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.
 These are especially but not exclusively all the icons of population, goods and items and the data of production chains and the consumptions values of population.
 
@@ -1233,5 +1233,3 @@ options = {
         }
     }
 }
-
-

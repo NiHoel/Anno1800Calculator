@@ -25,6 +25,7 @@
 
     <script type="text/javascript" src="AnnoCalculator.js"></script>
     <script type="text/javascript" src="params_2019-06-05_full.js"></script>
+    <script type="text/javascript" src="toggle-dark-mode.js"></script>
 </head>
 <body>
     <!-- #params-dialog -->
@@ -217,6 +218,9 @@
     <div id="content" data-bind="visible: true" style="display:none">
         <div class="fixed-top" style="padding-right: 17px;">
             <div class="btn-group float-right">
+                <button onclick="toggleDarkMode()" class="btn btn-secondary">
+                    <span class="fa fa-adjust"> </span>
+                </button>
                 <button data-toggle="modal" data-target="#settings-dialog" class="btn btn-secondary">
                     <span class="fa fa-cog"> </span>
                 </button>
@@ -386,7 +390,7 @@
                                             <div class="input-group-prepend"><span class="input-group-text">+ </span> </div>
                                             <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
                                         </div>
-                                     
+
                                     </div>
                                 </div>
 

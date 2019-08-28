@@ -285,10 +285,10 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
     -webkit-appearance: none;
 }
 
-input[type=number]::-webkit-inner-spin-button { 
+input[type=number]::-webkit-inner-spin-button {
   -moz-appearance: textfield;
   appearance: textfield;
-  margin: 0; 
+  margin: 0;
 }
 
 .inactive {
@@ -300,18 +300,23 @@ input[type=number]::-webkit-inner-spin-button {
     display: inline-block;
 }
 
-    .strike-through::after {
-        position: absolute;
-        content: "";
-        left: 0;
-        top: 50%;
-        right: 0;
-        border-top: 3px solid;
-        border-top-color: currentcolor;
-        border-color: #CECECE;
-        -webkit-transform: rotate(-30deg);
-        -moz-transform: rotate(-30deg);
-        -ms-transform: rotate(--30deg);
-        -o-transform: rotate(-30deg);
-        transform: rotate(-30deg);
-    }
+.strike-through::after {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 50%;
+    right: 0;
+    border-top: 3px solid;
+    border-top-color: currentcolor;
+    border-color: #CECECE;
+    -webkit-transform: rotate(-30deg);
+    -moz-transform: rotate(-30deg);
+    -ms-transform: rotate(--30deg);
+    -o-transform: rotate(-30deg);
+    transform: rotate(-30deg);
+}
+
+/* dark-mode styles */
+.bg-darker {
+    background: #222;
+}
