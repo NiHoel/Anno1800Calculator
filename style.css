@@ -320,3 +320,8 @@ input[type=number]::-webkit-inner-spin-button {
 .bg-darker {
     background: #222;
 }
+
+.ui-fchain-item.danger.bg-dark {
+    border-color: #A66A6A;
+    background: #DB7979!important;
+}

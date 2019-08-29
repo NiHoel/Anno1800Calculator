@@ -6,6 +6,7 @@
     ".input-group-text, .modal-content": "bg-dark text-light",
     ".btn-default": "btn-dark btn-outline-light",
     ".btn-light": "btn-dark",
+    ".ui-fchain-item": "bg-dark",
   };
 
   const makeDark = () => Object.keys(classAdditions).forEach((key) => $(key).addClass(classAdditions[key]));
