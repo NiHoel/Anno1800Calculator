@@ -468,7 +468,7 @@ class Item extends Option {
 class PopulationReader {
 
     constructor() {
-        this.url = 'http://localhost:8000/AnnoServer/Population/';
+        this.url = 'http://localhost:8000/AnnoServer/Population';
         this.notificationShown = false;
         this.currentVersion;
         this.recentVersion;
@@ -486,44 +486,54 @@ class PopulationReader {
     }
 
     async handleResponse() {
-        const response = await fetch(this.url);
-        const myJson = await response.json(); //extract JSON from the http response
+        const response = await fetch(this.url + "?lang=" + view.settings.language());
+        const json = await response.json(); //extract JSON from the http response
 
-        if (!myJson)
+        if (!json)
             return;
 
-        if (myJson.version) {
-            this.currentVersion = myJson.version;
+        if (json.version) {
+            this.currentVersion = json.version;
             this.checkVersion();
         }
 
-        console.log('answer: ', myJson);
-        if (myJson) {
+
+        if (!json.version || json.version.startsWith("v1")) {
             view.populationLevels.forEach(function (element) {
                 element.amount(0);
             });
-            if (myJson.farmers) {
-                view.populationLevels[0].amount(myJson.farmers);
+            if (json.farmers) {
+                view.populationLevels[0].amount(json.farmers);
             }
-            if (myJson.workers) {
-                view.populationLevels[1].amount(myJson.workers);
+            if (json.workers) {
+                view.populationLevels[1].amount(json.workers);
             }
-            if (myJson.artisans) {
-                view.populationLevels[2].amount(myJson.artisans);
+            if (json.artisans) {
+                view.populationLevels[2].amount(json.artisans);
             }
-            if (myJson.engineers) {
-                view.populationLevels[3].amount(myJson.engineers);
+            if (json.engineers) {
+                view.populationLevels[3].amount(json.engineers);
             }
-            if (myJson.investors) {
-                view.populationLevels[4].amount(myJson.investors);
+            if (json.investors) {
+                view.populationLevels[4].amount(json.investors);
             }
-            if (myJson.jornaleros) {
-                view.populationLevels[5].amount(myJson.jornaleros);
+            if (json.jornaleros) {
+                view.populationLevels[5].amount(json.jornaleros);
             }
-            if (myJson.obreros) {
-                view.populationLevels[6].amount(myJson.obreros);
+            if (json.obreros) {
+                view.populationLevels[6].amount(json.obreros);
             }
-        }
+        } else {
+			for(let key in json){
+				let asset = assetsMap.get(parseInt(key));
+				if(asset instanceof PopulationLevel)
+					asset.amount(json[key]);
+				else if(asset instanceof Factory){
+					asset.existingBuildings(json[key].exsitingBuildings);
+					asset.percentBoost(json[key].percentBoost);
+				}
+			}
+		}
     }
 
     checkVersion() {
