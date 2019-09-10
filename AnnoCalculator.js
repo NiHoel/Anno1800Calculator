@@ -318,7 +318,7 @@ class PopulationNeed extends Need {
     constructor(config) {
         super(config);
 
-        this.inhabitants = 0;
+        this.residents = 0;
 
         this.percentBoost = ko.observable(100);
         this.percentBoost.subscribe(val => {
@@ -327,7 +327,7 @@ class PopulationNeed extends Need {
                 this.percentBoost(1);
         })
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-        this.boost.subscribe(() => this.updateAmount(this.inhabitants));
+        this.boost.subscribe(() => this.updateAmount(this.residents));
 
         this.checked = ko.observable(true);
         this.banned = ko.computed(() => {
@@ -345,9 +345,9 @@ class PopulationNeed extends Need {
         });
     }
 
-    updateAmount(inhabitants) {
-        this.inhabitants = inhabitants;
-        this.optionalAmount(this.tpmin * inhabitants * this.boost());
+    updateAmount(residents) {
+        this.residents = residents;
+        this.optionalAmount(this.tpmin * residents * this.boost());
         if (!this.banned())
             this.amount(this.optionalAmount());
     }
@@ -526,11 +526,16 @@ class PopulationReader {
         } else {
 			for(let key in json){
 				let asset = assetsMap.get(parseInt(key));
-				if(asset instanceof PopulationLevel)
-					asset.amount(json[key]);
+                if (asset instanceof PopulationLevel) {
+                    if (json[key].amount) {
+                        asset.amount(json[key].amount);
+                    }
+                }
 				else if(asset instanceof Factory){
-					asset.existingBuildings(json[key].exsitingBuildings);
-					asset.percentBoost(json[key].percentBoost);
+					if(json[key].existingBuildings)
+						asset.existingBuildings(parseInt(json[key].existingBuildings));
+					if(json[key].percentBoost)
+						asset.percentBoost(parseInt(json[key].percentBoost));
 				}
 			}
 		}
@@ -558,11 +563,13 @@ function reset() {
         if (a instanceof Factory) {
             a.percentBoost(100);
             a.extraAmount(0);
+			a.existingBuildings(0);
         }
-        if (a instanceof Factory)
-            a.existingBuildings(0);
-        if (a instanceof PopulationLevel)
+ 
+        if (a instanceof PopulationLevel){
+			a.existingBuildings(0);
             a.amount(0);
+		}
         if (a instanceof Item)
             a.checked(false);
     });
@@ -1014,9 +1021,9 @@ $(document).ready(function () {
 })
 
 texts = {
-    inhabitants: {
-        english: "Inhabitants",
-        german: "Bevölkerung"
+    residents: {
+        english: "Residents",
+        german: "Bewohner"
     },
     workforce: {
         english: "Required Workforce",
@@ -1152,7 +1159,7 @@ Fehler und Verbesserungen:
 Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
 
         english:
-            `Usage: Enter the current or desired number of inhabitants per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed.
+            `Usage: Enter the current or desired number of residents per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed.
 
 The row below displays the workforce that is required to run all buildings (rounded towards the next complete factory).
 
