@@ -1,23 +1,54 @@
 let versionCalculator = "v2.2";
-let EPSILON = 0.01
+let EPSILON = 0.01;
+let ALL_ISLANDS = "All Islands";
 
-products = new Map();
-assetsMap = new Map();
+
 view = {
-    regions: [],
-    populationLevels: [],
-    factories: [],
-    categories: [],
-    workforce: [],
-    buildingMaterialsNeeds: [],
-    multiFactoryProducts: [],
-    items: [],
     settings: {
         language: ko.observable(navigator.language.startsWith("de") ? "german" : "english")
     },
     texts: {}
 };
 
+class Storage {
+    constructor(key) {
+        this.key = key;
+        var text = localStorage.getItem(key);
+        this.json = text ? JSON.parse(text) : {};
+    }
+
+    setItem(itemKey, value) {
+        this.json[itemKey] = value;
+        this._save();
+    }
+
+    getItem(itemKey) {
+        return this.json[itemKey];
+    }
+
+    removeItem(itemKey) {
+        delete this.json.itemKey;
+        this._save();
+    }
+
+    key(index) {
+        var i = 0;
+        for (let attr in this.json)
+            if (i++ == index)
+                return attr;
+
+        return null;
+    }
+
+    clear() {
+        this.json = {}
+        this._save();
+    }
+
+    _save() {
+        localStorage.setItem(this.key, JSON.stringify(this.json, null, 4));
+    }
+}
 
 class NamedElement {
     constructor(config) {
@@ -46,14 +77,281 @@ class Option extends NamedElement {
 }
 
 class Island {
-    constructor(config = {}) {
-        this.name = ko.observable(config.name ? config.name : "Anno 1800 Calculator");
-        this.name.subscribe(val => { window.document.title = val; });
+    constructor(params, localStorage) {
+        if (localStorage instanceof Storage)
+            this.name = ko.observable(localStorage.key);
+        else {
+            this.name = ko.computed(() => view.texts.allIslands.name());
+        }
+
+        var assetsMap = new Map();
+
+        this.regions = [];
+        this.populationLevels = [];
+        this.factories = [];
+        this.categories = [];
+        this.workforce = [];
+        this.buildingMaterialsNeeds = [];
+        this.multiFactoryProducts = [];
+        this.items = [];
+
+        for (let region of params.regions) {
+            let r = new Region(region, assetsMap);
+            assetsMap.set(r.guid, r);
+            this.regions.push(r);
+        }
+
+        for (let workforce of params.workforce) {
+            let w = new Workforce(workforce, assetsMap)
+            assetsMap.set(w.guid, w);
+            this.workforce.push(w);
+        }
+
+        for (let factory of params.factories) {
+            let f = new Factory(factory, assetsMap)
+            assetsMap.set(f.guid, f);
+            this.factories.push(f);
+
+            if (localStorage) {
+                {
+                    let id = f.guid + ".percentBoost";
+                    if (localStorage.getItem(id))
+                        f.percentBoost(parseInt(localStorage.getItem(id)));
+
+                    f.percentBoost.subscribe(val => {
+                        val = parseInt(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val)) {
+                            f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                            return;
+                        }
+                        localStorage.setItem(id, val)
+                    });
+                }
+
+                {
+                    let id = f.guid + ".existingBuildings";
+                    if (localStorage.getItem(id))
+                        f.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                }
+            }
+        }
+        let products = [];
+        for (let product of params.products) {
+            if (product.producers && product.producers.length) {
+                let p = new Product(product, assetsMap);
+
+                products.push(p);
+                assetsMap.set(p.guid, p);
+
+                if (p.factories.length > 1)
+                    this.multiFactoryProducts.push(p);
+
+                if (localStorage) {
+                    {
+                        let id = p.guid + ".percentBoost";
+                        if (localStorage.getItem(id)) {
+                            let b = parseInt(localStorage.getItem(id))
+                            p.factories.forEach(f => f.percentBoost(b));
+                            localStorage.removeItem(id);
+                        }
+                    }
+
+
+                    {
+                        let id = p.guid + ".fixedFactory";
+                        if (localStorage.getItem(id))
+                            p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
+                        p.fixedFactory.subscribe(f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
+                    }
+                }
+            }
+        }
+
+        this.factories.forEach(f => f.referenceProducts(assetsMap));
+
+        for (let item of (params.items || [])) {
+            let i = new Item(item, assetsMap);
+            assetsMap.set(i.guid, i);
+            this.items.push(i);
+
+            i.factories.forEach(f => f.items.push(i));
+
+            if (localStorage) {
+                let id = i.guid + ".checked";
+                if (localStorage.getItem(id))
+                    i.checked(parseInt(localStorage.getItem(id)));
+
+                i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+            }
+        }
+
+        for (let level of params.populationLevels) {
+            let l = new PopulationLevel(level, assetsMap)
+            assetsMap.set(l.guid, l);
+            this.populationLevels.push(l);
+
+            if (localStorage) {
+                {
+                    let id = l.guid + ".amount";
+                    if (localStorage.getItem(id))
+                        l.amount(parseInt(localStorage.getItem(id)));
+
+                    l.amount.subscribe(val => {
+                        val = parseInt(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val)) {
+                            l.amount(parseInt(localStorage.getItem(id)) || 0);
+                            return;
+                        }
+                        localStorage.setItem(id, val);
+                    });
+                }
+                {
+                    let id = l.guid + ".existingBuildings";
+                    if (localStorage.getItem(id))
+                        l.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                    l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
+                }
+            } else {
+                l.amount.subscribe(val => {
+                    if (val == null || !isFinite(val) || isNaN(val)) {
+                        l.amount(0);
+                        return;
+                    }
+                });
+            }
+
+            for (let n of l.needs) {
+                if (localStorage) {
+                    {
+                        let id = `${l.guid}[${n.guid}].checked`;
+                        if (localStorage.getItem(id))
+                            n.checked(parseInt(localStorage.getItem(id)))
+
+                        n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+
+                    }
+
+                    {
+                        let id = `${l.guid}[${n.guid}].percentBoost`;
+                        if (localStorage.getItem(id))
+                            n.percentBoost(parseInt(localStorage.getItem(id)));
+
+                        n.percentBoost.subscribe(val => {
+                            val = parseInt(val);
+
+                            if (val == null || !isFinite(val) || isNaN(val)) {
+                                n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                                return;
+                            }
+                            localStorage.setItem(id, val);
+                        });
+                    }
+
+                } else {
+                    n.percentBoost.subscribe(val => {
+                        if (val == null || !isFinite(val) || isNaN(val)) {
+                            n.percentBoost(100);
+                            return;
+                        }
+                    });
+                }
+
+            }
+        }
+
+        for (var category of params.productFilter) {
+            let c = new ProductCategory(category, assetsMap);
+            assetsMap.set(c.guid, c);
+            this.categories.push(c);
+        }
+
+        for (let p of this.categories[1].products) {
+            for (let b of p.factories) {
+                if (b) {
+                    b.editable = true;
+                    let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
+                    b.boost.subscribe(() => n.updateAmount());
+                    b.existingBuildings.subscribe(() => n.updateAmount());
+                    this.buildingMaterialsNeeds.push(n);
+
+                    if (localStorage) {
+                        let oldId = b.guid + ".buildings";
+                        let id = b.guid + ".existingBuildings"
+                        if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                            b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
+
+                        b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                    }
+                }
+            }
+        }
+
+        // negative extra amount must be set after the demands of the population are generated
+        // otherwise it would be set to zero
+        for (let f of this.factories) {
+
+            if (localStorage) {
+                let id = f.guid + ".extraAmount";
+                if (localStorage.getItem(id)) {
+                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+                }
+
+                f.extraAmount.subscribe(val => {
+                    val = parseFloat(val);
+
+                    if (val == null || !isFinite(val) || isNaN(val)) {
+                        f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
+                        return;
+                    }
+                    localStorage.setItem(id, val);
+                });
+            } else {
+                f.extraAmount.subscribe(val => {
+                    if (val == null || !isFinite(val) || isNaN(val)) {
+                        f.extraAmount(0);
+                    }
+                });
+            }
+        }
+
+        this.assetsMap = assetsMap;
+        this.products = products;
+    }
+
+    reset() {
+        this.assetsMap.forEach(a => {
+            if (a instanceof Product)
+                a.fixedFactory(null);
+            if (a instanceof Factory) {
+                a.percentBoost(100);
+                a.extraAmount(0);
+                a.existingBuildings(0);
+            }
+
+            if (a instanceof PopulationLevel) {
+                a.existingBuildings(0);
+                a.amount(0);
+            }
+            if (a instanceof Item)
+                a.checked(false);
+        });
+
+        this.populationLevels.forEach(l => l.needs.forEach(n => {
+            if (n.checked)
+                n.checked(true);
+            if (n.percentBoost)
+                n.percentBoost(100);
+        }));
     }
 }
 
 class Factory extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
 
         if (config.region)
@@ -69,7 +367,7 @@ class Factory extends NamedElement {
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
-        this.workforceDemand = this.getWorkforceDemand();
+        this.workforceDemand = this.getWorkforceDemand(assetsMap);
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
     }
 
@@ -81,7 +379,7 @@ class Factory extends NamedElement {
         return this.outputs || [];
     }
 
-    referenceProducts() {
+    referenceProducts(assetsMap) {
         this.getInputs().forEach(i => i.product = assetsMap.get(i.Product));
         this.getOutputs().forEach(i => i.product = assetsMap.get(i.Product));
 
@@ -89,7 +387,7 @@ class Factory extends NamedElement {
         if (!this.icon)
             this.icon = this.product.icon;
 
-        this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product });
+        this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product }, assetsMap);
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
 
@@ -106,11 +404,11 @@ class Factory extends NamedElement {
         return this.getOutputs()[0].product;
     }
 
-    getWorkforceDemand() {
+    getWorkforceDemand(assetsMap) {
         for (let m of this.maintenances) {
             let a = assetsMap.get(m.Product);
             if (a instanceof Workforce)
-                return new WorkforceDemand($.extend({ factory: this, workforce: a }, m));
+                return new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
         }
     }
 
@@ -193,7 +491,7 @@ class Factory extends NamedElement {
 }
 
 class Product extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
 
 
@@ -209,7 +507,7 @@ class Product extends NamedElement {
 }
 
 class Demand extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
 
         this.amount = ko.observable(0);
@@ -227,9 +525,9 @@ class Demand extends NamedElement {
                 var d;
                 let items = this.factory().items.filter(item => item.replacements.has(input.Product));
                 if (items.length)
-                    d = new DemandSwitch(this, input, items);
+                    d = new DemandSwitch(this, input, items, assetsMap);
                 else
-                    d = new Demand({ guid: input.Product, consumer: this });
+                    d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
 
                 this.amount.subscribe(val => d.updateAmount(val * input.Amount));
                 return d;
@@ -277,12 +575,12 @@ class Demand extends NamedElement {
 }
 
 class DemandSwitch {
-    constructor(consumer, input, items) {
+    constructor(consumer, input, items, assetsMap) {
         this.items = items;
 
         this.demands = [ // use array index to toggle
-            new Demand({ guid: input.Product, consumer: consumer }),
-            new Demand({ guid: items[0].replacements.get(input.Product), consumer: consumer })
+            new Demand({ guid: input.Product, consumer: consumer }, assetsMap),
+            new Demand({ guid: items[0].replacements.get(input.Product), consumer: consumer }, assetsMap)
         ];
         this.amount = 0;
 
@@ -300,8 +598,8 @@ class DemandSwitch {
 }
 
 class Need extends Demand {
-    constructor(config) {
-        super(config);
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
         this.allDemands = [];
 
         let treeTraversal = node => {
@@ -315,8 +613,8 @@ class Need extends Demand {
 }
 
 class PopulationNeed extends Need {
-    constructor(config) {
-        super(config);
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
 
         this.residents = 0;
 
@@ -362,8 +660,8 @@ class PopulationNeed extends Need {
 }
 
 class BuildingMaterialsNeed extends Need {
-    constructor(config) {
-        super(config);
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
 
         this.product = config.product;
         this.factory(config.factory);
@@ -382,14 +680,14 @@ class BuildingMaterialsNeed extends Need {
 }
 
 class PopulationLevel extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
         this.amount = ko.observable(0);
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
         config.needs.forEach(n => {
             if (n.tpmin > 0)
-                this.needs.push(new PopulationNeed(n));
+                this.needs.push(new PopulationNeed(n, assetsMap));
         });
         this.amount.subscribe(val => {
             if (val < 0)
@@ -409,14 +707,14 @@ class PopulationLevel extends NamedElement {
 }
 
 class ProductCategory extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
         this.products = config.products.map(p => assetsMap.get(p));
     }
 }
 
 class Workforce extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
         this.amount = ko.observable(0);
         this.demands = [];
@@ -434,7 +732,7 @@ class Workforce extends NamedElement {
 }
 
 class WorkforceDemand extends NamedElement {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
         this.amount = ko.observable(0);
         this.workforce.add(this);
@@ -447,7 +745,7 @@ class WorkforceDemand extends NamedElement {
 }
 
 class Item extends Option {
-    constructor(config) {
+    constructor(config, assetsMap) {
         super(config);
         this.replacements = new Map();
         this.replacementArray = [];
@@ -499,29 +797,29 @@ class PopulationReader {
 
 
         if (!json.version || json.version.startsWith("v1")) {
-            view.populationLevels.forEach(function (element) {
+            view.island().populationLevels.forEach(function (element) {
                 element.amount(0);
             });
             if (json.farmers) {
-                view.populationLevels[0].amount(json.farmers);
+                view.island().populationLevels[0].amount(json.farmers);
             }
             if (json.workers) {
-                view.populationLevels[1].amount(json.workers);
+                view.island().populationLevels[1].amount(json.workers);
             }
             if (json.artisans) {
-                view.populationLevels[2].amount(json.artisans);
+                view.island().populationLevels[2].amount(json.artisans);
             }
             if (json.engineers) {
-                view.populationLevels[3].amount(json.engineers);
+                view.island().populationLevels[3].amount(json.engineers);
             }
             if (json.investors) {
-                view.populationLevels[4].amount(json.investors);
+                view.island().populationLevels[4].amount(json.investors);
             }
             if (json.jornaleros) {
-                view.populationLevels[5].amount(json.jornaleros);
+                view.island().populationLevels[5].amount(json.jornaleros);
             }
             if (json.obreros) {
-                view.populationLevels[6].amount(json.obreros);
+                view.island().populationLevels[6].amount(json.obreros);
             }
         } else {
 			for(let key in json){
@@ -556,30 +854,83 @@ class PopulationReader {
     }
 }
 
-function reset() {
-    assetsMap.forEach(a => {
-        if (a instanceof Product)
-            a.fixedFactory(null);
-        if (a instanceof Factory) {
-            a.percentBoost(100);
-            a.extraAmount(0);
-			a.existingBuildings(0);
-        }
- 
-        if (a instanceof PopulationLevel){
-			a.existingBuildings(0);
-            a.amount(0);
-		}
-        if (a instanceof Item)
-            a.checked(false);
-    });
+class IslandManager{
+    constructor(params) {
+        let islandKey = "islandName";
+        let islandsKey = "islandNames";
 
-    view.populationLevels.forEach(l => l.needs.forEach(n => {
-        if (n.checked)
-            n.checked(true);
-        if (n.percentBoost)
-            n.percentBoost(100);
-    }));
+        this.islandNameInput = ko.observable();
+        this.params = params;
+
+
+        var islandNames = [];
+        if (localStorage && localStorage.getItem(islandsKey))
+            islandNames = JSON.parse(localStorage.getItem(islandsKey))
+
+        var islandName = localStorage.getItem(islandKey);
+        view.islands = ko.observableArray();
+        view.island = ko.observable();
+
+
+        for (var name of islandNames) {
+            var island = new Island(params, new Storage(name));
+            view.islands.push(island);
+
+            if (name == islandName)
+                view.island(island);
+        }
+
+        var allIslands = new Island(params, localStorage);
+        view.islands.unshift(allIslands);
+        if (!view.island())
+            view.island(allIslands);
+
+        if (localStorage) {
+            view.islands.subscribe(islands => {
+                let islandNames = JSON.stringify(islands.map(i => i.name()).filter(n => n != view.texts.allIslands.name()));
+                localStorage.setItem(islandsKey, islandNames)
+            });
+
+            view.island.subscribe(island => {
+                localStorage.setItem(islandKey, island.name())
+            });
+
+        }
+
+        this.islandExists = ko.computed(() => {
+            var name = this.islandNameInput();
+            if (!name || name == ALL_ISLANDS || name == view.texts.allIslands.name())
+                return true;
+
+            for (var island of view.islands()) {
+                if (island.name() == name)
+                    return true;
+            }
+
+            return false;
+        });
+    }
+
+    create() {
+        if (this.islandExists())
+            return;
+
+        var island = new Island(this.params, new Storage(this.islandNameInput()));
+        view.islands.push(island);
+        view.island(island);
+        this.islandNameInput(null);
+    }
+
+    delete() {
+        if (view.island().name() == ALL_ISLANDS || view.island().name() == view.texts.allIslands().name())
+            return;
+
+        var island = view.island();
+        view.island(view.islands()[0]);
+        view.islands.remove(island);
+        if (localStorage)
+            localStorage.removeItem(island.name());
+    }
 }
 
 function init() {
@@ -601,247 +952,29 @@ function init() {
     }
     view.settings.languages = params.languages;
 
-    view.settings.island = new Island();
+
+    view.islandManager = new IslandManager(params);
+
     if (localStorage) {
-        {
-            let id = "islandName";
-            if (localStorage.getItem(id))
-                view.settings.island.name(localStorage.getItem(id));
+        let id = "language";
+        if (localStorage.getItem(id))
+            view.settings.language(localStorage.getItem(id));
 
-            view.settings.island.name.subscribe(val => localStorage.setItem(id, val));
-        }
-
-        {
-            let id = "language";
-            if (localStorage.getItem(id))
-                view.settings.language(localStorage.getItem(id));
-
-            view.settings.language.subscribe(val => localStorage.setItem(id, val));
-        }
+        view.settings.language.subscribe(val => localStorage.setItem(id, val));
     }
 
-    for (let region of params.regions) {
-        let r = new Region(region);
-        assetsMap.set(r.guid, r);
-        view.regions.push(r);
-    }
-
-    for (let workforce of params.workforce) {
-        let w = new Workforce(workforce)
-        assetsMap.set(w.guid, w);
-        view.workforce.push(w);
-    }
-
-    for (let factory of params.factories) {
-        let f = new Factory(factory)
-        assetsMap.set(f.guid, f);
-        view.factories.push(f);
-
-        if (localStorage) {
-            {
-                let id = f.guid + ".percentBoost";
-                if (localStorage.getItem(id))
-                    f.percentBoost(parseInt(localStorage.getItem(id)));
-
-                f.percentBoost.subscribe(val => {
-                    val = parseInt(val);
-
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
-                        return;
-                    }
-                    localStorage.setItem(id, val)
-                });
-            }
-
-            {
-                let id = f.guid + ".existingBuildings";
-                if (localStorage.getItem(id))
-                    f.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-            }
-        }
-    }
-    let products = [];
-    for (let product of params.products) {
-        if (product.producers && product.producers.length) {
-            let p = new Product(product);
-
-            products.push(p);
-            assetsMap.set(p.guid, p);
-
-            if (p.factories.length > 1)
-                view.multiFactoryProducts.push(p);
-
-            if (localStorage) {
-                {
-                    let id = p.guid + ".percentBoost";
-                    if (localStorage.getItem(id)) {
-                        let b = parseInt(localStorage.getItem(id))
-                        p.factories.forEach(f => f.percentBoost(b));
-                        localStorage.removeItem(id);
-                    }
-                }
-
-
-                {
-                    let id = p.guid + ".fixedFactory";
-                    if (localStorage.getItem(id))
-                        p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
-                    p.fixedFactory.subscribe(f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
-                }
-            }
-        }
-    }
-
-    view.factories.forEach(f => f.referenceProducts());
-
-    for (let item of (params.items || [])) {
-        let i = new Item(item);
-        assetsMap.set(i.guid, i);
-        view.items.push(i);
-
-        i.factories.forEach(f => f.items.push(i));
-
-        if (localStorage) {
-            let id = i.guid + ".checked";
-            if (localStorage.getItem(id))
-                i.checked(parseInt(localStorage.getItem(id)));
-
-            i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-        }
-    }
-
-    for (let level of params.populationLevels) {
-        let l = new PopulationLevel(level)
-        assetsMap.set(l.guid, l);
-        view.populationLevels.push(l);
-
-        if (localStorage) {
-            let id = l.guid + ".amount";
-            if (localStorage.getItem(id))
-                l.amount(parseInt(localStorage.getItem(id)));
-
-            l.amount.subscribe(val => {
-                val = parseInt(val);
-
-                if (val == null || !isFinite(val) || isNaN(val)) {
-                    l.amount(parseInt(localStorage.getItem(id)) || 0);
-                    return;
-                }
-                localStorage.setItem(id, val);
-            });
-        } else {
-            l.amount.subscribe(val => {
-                if (val == null || !isFinite(val) || isNaN(val)) {
-                    l.amount(0);
-                    return;
-                }
-            });
-        }
-
-        for (let n of l.needs) {
-            if (localStorage) {
-                {
-                    let id = `${l.guid}[${n.guid}].checked`;
-                    if (localStorage.getItem(id))
-                        n.checked(parseInt(localStorage.getItem(id)))
-
-                    n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-
-                }
-
-                {
-                    let id = `${l.guid}[${n.guid}].percentBoost`;
-                    if (localStorage.getItem(id))
-                        n.percentBoost(parseInt(localStorage.getItem(id)));
-
-                    n.percentBoost.subscribe(val => {
-                        val = parseInt(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-
-            } else {
-                n.percentBoost.subscribe(val => {
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        n.percentBoost(100);
-                        return;
-                    }
-                });
-            }
-
-        }
-    }
-
-    for (category of params.productFilter) {
-        let c = new ProductCategory(category);
-        assetsMap.set(c.guid, c);
-        view.categories.push(c);
-    }
-
-    for (let p of view.categories[1].products) {
-        for (let b of p.factories) {
-            if (b) {
-                b.editable = true;
-                let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p });
-                b.boost.subscribe(() => n.updateAmount());
-                b.existingBuildings.subscribe(() => n.updateAmount());
-                view.buildingMaterialsNeeds.push(n);
-
-                if (localStorage) {
-                    let oldId = b.guid + ".buildings";
-                    let id = b.guid + ".existingBuildings"
-                    if (localStorage.getItem(id) || localStorage.getItem(oldId))
-                        b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
-
-                    b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                }
-            }
-        }
-    }
 
 
     ko.applyBindings(view, $(document.body)[0]);
 
-    // negative extra amount must be set after the demands of the population are generated
-    // otherwise it would be set to zero
-    for (let f of view.factories) {
+    view.island().name.subscribe(val => { window.document.title = val; });
 
-        if (localStorage) {
-            let id = f.guid + ".extraAmount";
-            if (localStorage.getItem(id)) {
-                f.extraAmount(parseFloat(localStorage.getItem(id)));
-            }
-
-            f.extraAmount.subscribe(val => {
-                val = parseFloat(val);
-
-                if (val == null || !isFinite(val) || isNaN(val)) {
-                    f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
-                    return;
-                }
-                localStorage.setItem(id, val);
-            });
-        } else {
-            f.extraAmount.subscribe(val => {
-                if (val == null || !isFinite(val) || isNaN(val)) {
-                    f.extraAmount(0);
-                }
-            });
-        }
-    }
+ 
 
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
 
-        for (var l of view.populationLevels) {
+        for (var l of view.island().populationLevels) {
             for (var c of l.name().toLowerCase()) {
                 if (!bindings.has(c)) {
                     bindings.set(c, $(`.ui-race-unit-name[race-unit-name=${l.name()}] ~ .input .input-group input`));
@@ -903,7 +1036,7 @@ function exportConfig() {
         };
     }());
 
-    saveData(localStorage, (view.settings.island.name() || "Anno1800CalculatorConfig") + ".json");
+    saveData(localStorage, (view.island.name() || "Anno1800CalculatorConfig") + ".json");
 }
 
 function checkAndShowNotifications() {
@@ -1021,6 +1154,10 @@ $(document).ready(function () {
 })
 
 texts = {
+    allIslands: {
+        english: "All Islands",
+        german: "Alle Inseln"
+    },
     residents: {
         english: "Residents",
         german: "Bewohner"
@@ -1062,8 +1199,12 @@ texts = {
         german: "Sprache"
     },
     islandName: {
-        english: "Island name",
-        german: "Inselname"
+        english: "New island name",
+        german: "Neuer Inselname"
+    },
+    selectedIsland: {
+        english: "Selected Island",
+        german: "Ausgewählte Insel"
     },
     settings: {
         english: "Settings",

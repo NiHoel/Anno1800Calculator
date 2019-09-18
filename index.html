@@ -77,10 +77,29 @@
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" data-bind="text: texts.islandName.name">Language</span>
+                                <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
                             </div>
 
-                            <input name="islandName" class="form-control" id="language" type="text" data-bind="value: settings.island.name" />
+                            <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.create(), disable: $root.islandManager.islandExists">
+                                    <span class="fa fa-plus"> </span>
+                                </button>
+
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: texts.selectedIsland.name">Select Island</span>
+                            </div>
+
+                            <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.name()"></select>
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.delete(), enable: $root.island().name() != $root.texts.allIslands.name() && $root.island().name() != ALL_ISLANDS">
+                                    <span class="fa fa-trash" > </span>
+                                </button>
+                                
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -116,7 +135,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div data-bind="foreach: view.multiFactoryProducts">
+                        <div data-bind="foreach: $root.island().multiFactoryProducts">
 
 
                             <div class="input-group mb-3">
@@ -132,7 +151,7 @@
                         </div>
                         <hr />
 
-                        <div data-bind="foreach: view.items">
+                        <div data-bind="foreach: $root.island().items">
                             <div class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
 
                                 <div class="ui-fchain-item-name" style="height: unset">
@@ -235,8 +254,12 @@
                 </button>
             </div>
         </div>
+        <!-- /top right buttons-->
+
+        <div data-bind="with: $root.island()">
+        <!-- population input field -->
         <fieldset class="ui-fieldset" id="residents-view">
-            <legend data-bind="text:texts.residents.name">Residents</legend>
+            <legend data-bind="text:$root.texts.residents.name">Residents</legend>
 
             <div style="display:flex;align-items:center;justify-content:space-between;">
 
@@ -244,7 +267,7 @@
                     <!-- <div class="ui-race-icon">
                         <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                     </div> -->
-                    <div data-bind="foreach: populationLevels">
+                    <div data-bind="foreach: $data.populationLevels">
                         <div class="ui-race-unit">
                             <div class="ui-race-unit-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                             <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked(), attr: {'race-unit-name' : name}"></div>
@@ -258,7 +281,7 @@
                         </div>
                     </div>
                 </div>
-                <btn class="btn btn-light float-right align-middle" onclick="reset()">Reset</btn>
+                <btn class="btn btn-light float-right align-middle" onclick="() => $root.island().reset()">Reset</btn>
             </div>
         </fieldset>
 
@@ -266,7 +289,7 @@
             <legend class="collapser" data-toggle="collapse" data-target="#workforce">
                 <span class="fa fa-chevron-right"></span>
                 <span class="fa fa-chevron-down"></span>
-                <span data-bind="text:texts.workforce.name"></span>
+                <span data-bind="text:$root.texts.workforce.name"></span>
             </legend>
 
             <div id="workforce" class="collapse show">
@@ -275,7 +298,7 @@
                     <!-- <div class="ui-race-icon">
                         <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                     </div> -->
-                    <div data-bind="foreach: workforce">
+                    <div data-bind="foreach: $data.workforce">
                         <div class="ui-race-unit">
                             <div class="ui-race-unit-icon"><img data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                             <!--<div class="ui-race-unit-name" data-bind="text: name"></div>-->
@@ -293,7 +316,7 @@
         </fieldset>
 
 
-        <div data-bind="foreach: categories">
+        <div data-bind="foreach: $data.categories">
             <fieldset class="ui-fieldset" id="categories-view">
                 <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#' + removeSpaces(name)}">
                     <span class="fa fa-chevron-right"></span>
@@ -302,8 +325,8 @@
                 </legend>
 
                 <div class="ui-fchain collapse show" data-bind="attr: {id:  removeSpaces(name)}">
-                    <div data-bind="foreach: products">
-                        <div data-bind="foreach: factories">
+                    <div data-bind="foreach: $data.products">
+                        <div data-bind="foreach: $data.factories">
                             <div>
 
                                 <div class="ui-fchain-item" data-bind="visible: amount() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
@@ -403,8 +426,8 @@
         </div>
 
 
-        <div data-bind="foreach: populationLevels">
-            <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount">
+        <div data-bind="foreach: $data.populationLevels">
+            <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: () => amount() || existingBuildings()">
                 <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  removeSpaces(name)}">
                     <span class="fa fa-chevron-right"></span>
                     <span class="fa fa-chevron-down"></span>
@@ -458,11 +481,11 @@
             <legend class="collapser" data-toggle="collapse" data-target="#building-materials-chains">
                 <span class="fa fa-chevron-right"></span>
                 <span class="fa fa-chevron-down"></span>
-                <span data-bind="text: categories[1].name"></span>
+                <span data-bind="text: $root.island().categories[1].name"></span>
             </legend>
-            <div class="collapse show" data-bind="foreach: buildingMaterialsNeeds" id="building-materials-chains">
+            <div class="collapse show" data-bind="foreach: $data.buildingMaterialsNeeds" id="building-materials-chains">
                 <div class="ui-fchain" data-bind="visible: amount">
-                    <div data-bind="foreach: allDemands">
+                    <div data-bind="foreach: $data.allDemands">
                         <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount">
                             ←
                         </div>
@@ -488,6 +511,7 @@
             </div>
         </fieldset>
 
+        </div>
     </div>
 </body>
 </html>
