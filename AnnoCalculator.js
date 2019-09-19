@@ -19,7 +19,7 @@ class Storage {
 
     setItem(itemKey, value) {
         this.json[itemKey] = value;
-        this._save();
+        this.save();
     }
 
     getItem(itemKey) {
@@ -28,7 +28,7 @@ class Storage {
 
     removeItem(itemKey) {
         delete this.json.itemKey;
-        this._save();
+        this.save();
     }
 
     key(index) {
@@ -42,10 +42,10 @@ class Storage {
 
     clear() {
         this.json = {}
-        this._save();
+        this.save();
     }
 
-    _save() {
+    save() {
         localStorage.setItem(this.key, JSON.stringify(this.json, null, 4));
     }
 }
@@ -78,11 +78,14 @@ class Option extends NamedElement {
 
 class Island {
     constructor(params, localStorage) {
-        if (localStorage instanceof Storage)
+        if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
-        else {
+            this.isAllIslands = function () { return false; };
+        } else {
             this.name = ko.computed(() => view.texts.allIslands.name());
+            this.isAllIslands = function () { return true; };
         }
+        this.storage = localStorage;
 
         var assetsMap = new Map();
 
@@ -871,6 +874,7 @@ class IslandManager{
         view.islands = ko.observableArray();
         view.island = ko.observable();
 
+        view.island.subscribe(isl => window.document.title = isl.name());
 
         for (var name of islandNames) {
             var island = new Island(params, new Storage(name));
@@ -885,10 +889,12 @@ class IslandManager{
         if (!view.island())
             view.island(allIslands);
 
+
+
         if (localStorage) {
             view.islands.subscribe(islands => {
-                let islandNames = JSON.stringify(islands.map(i => i.name()).filter(n => n != view.texts.allIslands.name()));
-                localStorage.setItem(islandsKey, islandNames)
+                let islandNames = JSON.stringify(islands.filter(i => !i.isAllIslands()).map(i => i.name()));
+                localStorage.setItem(islandsKey, islandNames);
             });
 
             view.island.subscribe(island => {
@@ -922,7 +928,7 @@ class IslandManager{
     }
 
     delete() {
-        if (view.island().name() == ALL_ISLANDS || view.island().name() == view.texts.allIslands().name())
+        if (view.island().name() == ALL_ISLANDS || view.island().isAllIslands())
             return;
 
         var island = view.island();
@@ -1036,7 +1042,7 @@ function exportConfig() {
         };
     }());
 
-    saveData(localStorage, (view.island.name() || "Anno1800CalculatorConfig") + ".json");
+    saveData(localStorage, ("Anno1800CalculatorConfig") + ".json");
 }
 
 function checkAndShowNotifications() {
@@ -1094,10 +1100,34 @@ function installImportConfigListener() {
                     let config = JSON.parse(text);
 
                     if (localStorage) {
-                        localStorage.clear();
-                        for (var a in config)
-                            localStorage.setItem(a, config[a]);
-                        localStorage.setItem("versionCalculator", versionCalculator);
+
+                        if (config.islandName && config.islandName != "Anno 1800 Calculator" &&
+                            !config.islandNames && !config[config.islandName]) {
+                            // import old, one island save
+                            delete config.versionCalculator;
+                            delete config.versionServer;
+
+                            view.islandManager.islandNameInput(config.islandName);
+                            view.islandManager.create();
+                            var island = view.islands().filter(i => i.name() == config.islandName)[0];
+                            island.storage.json = config;
+                            island.storage.save();
+                            localStorage.setItem("islandName", config.islandName);
+                        } else {
+                            localStorage.clear();
+                            for (var a in config)
+                                localStorage.setItem(a, config[a]);
+                            localStorage.setItem("versionCalculator", versionCalculator);
+
+                            if (!config.islandNames) { // old save, restore islands
+                                for (var island of view.islands()) {
+                                    if (!island.isAllIslands())
+                                        island.storage.save();
+                                }
+                                let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
+                                localStorage.setItem("islandNames", islandNames);
+                            }
+                        }
                         location.reload();
 
                     } else {
