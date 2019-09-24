@@ -1,4 +1,4 @@
-let versionCalculator = "v2.2";
+let versionCalculator = "v2.3";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -1286,8 +1286,8 @@ Siehe folgenden Link für weitere Informationen: `
         german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
     },
     newFeature: {
-        english: "New feature: Dark mode available. Click the button to the left of settings.",
-        german: "Neue Funktion: Dark-Mode verfügbar. Klicke auf den Button links neben den Einstellungen."
+        english: "New feature: Creation of multiple islands. Click the settings button.",
+        german: "Neue Funktion: Anlegen mehrerer Inseln. Klicke auf den Button Einstellungen."
     },
     helpContent: {
         german:
