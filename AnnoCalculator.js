@@ -212,13 +212,6 @@ class Island {
                         localStorage.setItem(id, val);
                     });
                 }
-                {
-                    let id = l.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
-                        l.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
-                }
             } else {
                 l.amount.subscribe(val => {
                     if (val == null || !isFinite(val) || isNaN(val)) {
