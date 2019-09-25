@@ -1,4 +1,4 @@
-let versionCalculator = "v2.3";
+let versionCalculator = "v2.4";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -273,16 +273,18 @@ class Island {
                     let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
                     b.boost.subscribe(() => n.updateAmount());
                     b.existingBuildings.subscribe(() => n.updateAmount());
+
                     this.buildingMaterialsNeeds.push(n);
 
                     if (localStorage) {
-                        let oldId = b.guid + ".buildings";
                         let id = b.guid + ".existingBuildings"
-                        if (localStorage.getItem(id) || localStorage.getItem(oldId))
-                            b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
+                        if (localStorage.getItem(id))
+                            b.existingBuildings(parseInt(localStorage.getItem(id)));
 
                         b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
                     }
+
+                    b.amount.subscribe(() => n.updateAmount());
                 }
             }
         }
@@ -315,6 +317,9 @@ class Island {
             }
         }
 
+        // force update once all pending notifications are processed
+        setTimeout(() => { view.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000); 
+
         this.assetsMap = assetsMap;
         this.products = products;
     }
@@ -330,7 +335,6 @@ class Island {
             }
 
             if (a instanceof PopulationLevel) {
-                a.existingBuildings(0);
                 a.amount(0);
             }
             if (a instanceof Item)
