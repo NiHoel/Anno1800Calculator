@@ -1,4 +1,4 @@
-let versionCalculator = "v2.4";
+let versionCalculator = "v2.5";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -318,7 +318,7 @@ class Island {
         }
 
         // force update once all pending notifications are processed
-        setTimeout(() => { view.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000); 
+        setTimeout(() => { this.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000); 
 
         this.assetsMap = assetsMap;
         this.products = products;
