@@ -291,6 +291,13 @@ input[type=number]::-webkit-inner-spin-button {
   margin: 0;
 }
 
+.subscript-icon {
+   vertical-align:bottom;
+   height: 20px;
+   width: 20px;
+   margin-left:-20px;
+}
+
 .inactive {
     color: grey;
 }
@@ -314,6 +321,20 @@ input[type=number]::-webkit-inner-spin-button {
     -ms-transform: rotate(--30deg);
     -o-transform: rotate(-30deg);
     transform: rotate(-30deg);
+}
+
+.help {
+    float: right;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .2;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
 }
 
 /* dark-mode styles */

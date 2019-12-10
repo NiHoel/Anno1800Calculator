@@ -91,6 +91,7 @@ class Island {
 
         this.regions = [];
         this.populationLevels = [];
+		this.consumers = [];
         this.factories = [];
         this.categories = [];
         this.workforce = [];
@@ -110,9 +111,26 @@ class Island {
             this.workforce.push(w);
         }
 
+        for (let consumer of params.powerPlants) {
+            let f = new Consumer(consumer, assetsMap)
+            assetsMap.set(f.guid, f);
+            this.consumers.push(f);
+
+            if (localStorage) {
+                {
+                    let id = f.guid + ".existingBuildings";
+                    if (localStorage.getItem(id))
+                        f.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                }
+            }
+        }
+
         for (let factory of params.factories) {
             let f = new Factory(factory, assetsMap)
             assetsMap.set(f.guid, f);
+			this.consumers.push(f);
             this.factories.push(f);
 
             if (localStorage) {
@@ -173,14 +191,14 @@ class Island {
             }
         }
 
-        this.factories.forEach(f => f.referenceProducts(assetsMap));
+        this.consumers.forEach(f => f.referenceProducts(assetsMap));
 
         for (let item of (params.items || [])) {
             let i = new Item(item, assetsMap);
             assetsMap.set(i.guid, i);
             this.items.push(i);
 
-            i.factories.forEach(f => f.items.push(i));
+            i.factories.forEach(f => {if(f)f.items.push(i)});
 
             if (localStorage) {
                 let id = i.guid + ".checked";
@@ -211,6 +229,13 @@ class Island {
                         }
                         localStorage.setItem(id, val);
                     });
+                }
+                {
+                    let id = l.guid + ".existingBuildings";
+                    if (localStorage.getItem(id))
+                        l.existingBuildings(parseInt(localStorage.getItem(id)));
+
+                    l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
                 }
             } else {
                 l.amount.subscribe(val => {
@@ -266,25 +291,36 @@ class Island {
             this.categories.push(c);
         }
 
+        for (let powerPlant of params.powerPlants){
+			var pl = assetsMap.get(powerPlant.guid);
+			this.categories[1].consumers.push(pl);
+			var pr = pl.getInputs()[0].product;
+			let n = new PowerPlantNeed({guid: pr.guid, factory: pl, product: pr}, assetsMap);
+			pl.existingBuildings.subscribe(() => n.updateAmount());
+			n.updateAmount();
+		}
+
         for (let p of this.categories[1].products) {
+			if(p)
             for (let b of p.factories) {
                 if (b) {
                     b.editable = true;
                     let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
                     b.boost.subscribe(() => n.updateAmount());
                     b.existingBuildings.subscribe(() => n.updateAmount());
-
+                    b.amount.subscribe(() => n.updateAmount());
                     this.buildingMaterialsNeeds.push(n);
 
                     if (localStorage) {
+                        let oldId = b.guid + ".buildings";
                         let id = b.guid + ".existingBuildings"
-                        if (localStorage.getItem(id))
-                            b.existingBuildings(parseInt(localStorage.getItem(id)));
+                        if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                            b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
 
                         b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
                     }
 
-                    b.amount.subscribe(() => n.updateAmount());
+                    n.updateAmount();
                 }
             }
         }
@@ -328,13 +364,15 @@ class Island {
         this.assetsMap.forEach(a => {
             if (a instanceof Product)
                 a.fixedFactory(null);
+			if (a instanceof Consumer)
+				a.existingBuildings(0);
             if (a instanceof Factory) {
                 a.percentBoost(100);
                 a.extraAmount(0);
-                a.existingBuildings(0);
             }
 
             if (a instanceof PopulationLevel) {
+                a.existingBuildings(0);
                 a.amount(0);
             }
             if (a instanceof Item)
@@ -350,20 +388,18 @@ class Island {
     }
 }
 
-class Factory extends NamedElement {
-    constructor(config, assetsMap) {
+class Consumer extends NamedElement {
+	constructor(config, assetsMap) {
         super(config);
 
         if (config.region)
             this.region = assetsMap.get(config.region);
 
         this.amount = ko.observable(0);
-        this.extraAmount = ko.observable(0);
+		this.boost = ko.observable(1);
 
-        this.percentBoost = ko.observable(100);
-        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.demands = new Set();
-        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
+        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()))  / this.tpmin );
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
@@ -375,34 +411,11 @@ class Factory extends NamedElement {
         return this.inputs || [];
     }
 
-    getOutputs() {
-        return this.outputs || [];
-    }
 
     referenceProducts(assetsMap) {
         this.getInputs().forEach(i => i.product = assetsMap.get(i.Product));
-        this.getOutputs().forEach(i => i.product = assetsMap.get(i.Product));
-
-        this.product = this.getProduct();
-        if (!this.icon)
-            this.icon = this.product.icon;
-
-        this.extraDemand = new Demand({ guid: this.getOutputs()[0].Product }, assetsMap);
-        this.extraAmount.subscribe(val => {
-            val = parseFloat(val);
-
-            let amount = parseFloat(this.amount());
-            if (val < -Math.ceil(amount * 100) / 100)
-                this.extraAmount(- Math.ceil(amount * 100)/100);
-            else
-                this.extraDemand.updateAmount(Math.max(val, -amount));
-        });
-        this.extraDemand.updateAmount(parseFloat(this.extraAmount()));
     }
 
-    getProduct() {
-        return this.getOutputs()[0].product;
-    }
 
     getWorkforceDemand(assetsMap) {
         for (let m of this.maintenances) {
@@ -410,14 +423,19 @@ class Factory extends NamedElement {
             if (a instanceof Workforce)
                 return new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
         }
+		return {updateAmount: () => {}};
     }
 
     getRegionExtendedName() {
-        if (!this.region || this.product.factories.length <= 1)
+        if (!this.region || !this.product || this.product.factories.length <= 1)
             return this.name;
 
         return `${this.name()} (${this.region.name()})`;
     }
+
+    getIcon() {
+		return this.icon;
+	}
 
     updateAmount() {
         var sum = 0;
@@ -457,6 +475,56 @@ class Factory extends NamedElement {
         this.demands.delete(demand);
         this.updateAmount();
     }
+
+}
+
+class Factory extends Consumer {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+
+        this.extraAmount = ko.observable(0);
+        
+        this.percentBoost = ko.observable(100);
+        this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
+
+        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
+    }
+
+
+    getOutputs() {
+        return this.outputs || [];
+    }
+
+    referenceProducts(assetsMap) {
+		super.referenceProducts(assetsMap);
+        this.getOutputs().forEach(i => i.product = assetsMap.get(i.Product));
+
+        this.product = this.getProduct();
+        if (!this.icon)
+            this.icon = this.product.icon;
+
+        this.extraDemand = new Demand({ guid: this.product.guid }, assetsMap);
+        this.extraAmount.subscribe(val => {
+            val = parseFloat(val);
+            if (!isFinite(val))
+                this.extraAmount(0);
+
+            let amount = parseFloat(this.amount());
+            if (val < -Math.ceil(amount * 100) / 100)
+                this.extraAmount(- Math.ceil(amount * 100)/100);
+            else
+                this.extraDemand.updateAmount(Math.max(val, -amount));
+        });
+        this.extraDemand.updateAmount(parseFloat(this.extraAmount()));
+    }
+
+    getProduct() {
+        return this.getOutputs()[0] ? this.getOutputs()[0].product : null;
+    }
+
+    getIcon() {
+		return this.getProduct() ? this.getProduct().icon : super.getIcon();
+	}
 
     incrementBuildings() {
         if (this.buildings() <= 0 || parseInt(this.percentBoost()) <= 1)
@@ -513,6 +581,8 @@ class Demand extends NamedElement {
         this.amount = ko.observable(0);
 
         this.product = assetsMap.get(this.guid);
+		if(!this.product)
+			throw `No Product ${this.guid}`;
         this.factory = ko.observable(config.factory);
 
         if (this.product) {
@@ -679,10 +749,26 @@ class BuildingMaterialsNeed extends Need {
     updateFixedProductFactory() { }
 }
 
+class PowerPlantNeed extends Need {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+
+        this.factory(config.factory);
+        this.factory().add(this);
+    }
+
+    updateAmount() {
+        this.amount(this.factory().existingBuildings() * this.factory().tpmin);
+    }
+
+    updateFixedProductFactory() { }
+}
+
 class PopulationLevel extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
         this.amount = ko.observable(0);
+        this.existingBuildings = ko.observable(0);
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
         config.needs.forEach(n => {
@@ -692,9 +778,19 @@ class PopulationLevel extends NamedElement {
         this.amount.subscribe(val => {
             if (val < 0)
                 this.amount(0);
-            else
+            else if (!view.settings.existingBuildingsInput.checked())
                 this.needs.forEach(n => n.updateAmount(parseInt(val)))
         });
+        this.existingBuildings.subscribe(val => {
+            if (view.settings.existingBuildingsInput.checked())
+                this.needs.forEach(n => n.updateAmount(parseInt(val * config.fullHouse)))
+        })
+        view.settings.existingBuildingsInput.checked.subscribe(enabled => {
+            if (enabled)
+                this.existingBuildings(Math.max(this.existingBuildings(), Math.ceil(parseInt(this.amount()) / config.fullHouse)))
+            else
+                this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
+        })
     }
 
     incrementAmount() {
@@ -709,7 +805,8 @@ class PopulationLevel extends NamedElement {
 class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
-        this.products = config.products.map(p => assetsMap.get(p));
+        this.products = config.products.map(p => assetsMap.get(p)).filter(p => p != null);
+		this.consumers = [];
     }
 }
 
@@ -784,7 +881,12 @@ class PopulationReader {
     }
 
     async handleResponse() {
-        const response = await fetch(this.url + "?lang=" + view.settings.language());
+        var url_with_params = this.url + "?" +
+            jQuery.param({
+                lang: view.settings.language(),
+//                optimalProductivity: view.settings.optimalProductivity.checked()
+            });
+        const response = await fetch(url_with_params);
         const json = await response.json(); //extract JSON from the http response
 
         if (!json)
@@ -822,17 +924,48 @@ class PopulationReader {
                 view.island().populationLevels[6].amount(json.obreros);
             }
         } else {
-			for(let key in json){
-				let asset = assetsMap.get(parseInt(key));
-                if (asset instanceof PopulationLevel) {
-                    if (json[key].amount) {
-                        asset.amount(json[key].amount);
+
+            var island = null;
+            if (json.islandName) {
+                var best_match = 0;
+   
+                for (var isl of view.islands()) {
+                    if (json.islandName == ALL_ISLANDS && isl.isAllIslands()) {
+                        island = isl;
+                        break;
+                    }
+
+                    var match = this.lcs_length(isl.name(), json.islandName) / Math.max(isl.name().length, json.islandName.length);
+                    if (match > 0.66 && match > best_match)
+                    {
+                        island = isl;
+                        best_match = match;
                     }
                 }
-				else if(asset instanceof Factory){
-					if(json[key].existingBuildings)
+            }
+
+            if (!island)
+                return;
+
+            if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
+                return;
+
+
+			for(let key in json){
+				let asset = island.assetsMap.get(parseInt(key));
+                if (asset instanceof PopulationLevel) {
+                    if (json[key].amount && view.settings.populationLevelAmount.checked()) {
+                        asset.amount(json[key].amount);
+                    }
+                    if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
+                        view.settings.existingBuildingsInput.checked(true);
+                        asset.existingBuildings(json[key].existingBuildings);
+                    }
+                }
+				else if(asset instanceof Consumer){
+                    if (json[key].existingBuildings &&  view.settings.factoryExistingBuildings.checked())
 						asset.existingBuildings(parseInt(json[key].existingBuildings));
-					if(json[key].percentBoost)
+                    if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
 						asset.percentBoost(parseInt(json[key].percentBoost));
 				}
 			}
@@ -851,6 +984,38 @@ class PopulationReader {
                     placement: { align: 'center' }
                 });
         }
+    }
+
+    // Function to find length of Longest Common Subsequence of substring
+    // X[0..m-1] and Y[0..n-1]
+    // From https://www.techiedelight.com/longest-common-subsequence/
+    lcs_length( X,  Y) {
+        var m = X.length, n = Y.length;
+
+        // lookup table stores solution to already computed sub-problems
+        // i.e. lookup[i][j] stores the length of LCS of substring
+        // X[0..i-1] and Y[0..j-1]
+        var lookup = [];
+        for (var i = 0; i <= m; i++)
+            lookup.push(new Array(n+1).fill(0));
+
+        // fill the lookup table in bottom-up manner
+        for (var i = 1; i <= m; i++)
+        {
+            for (var j = 1; j <= n; j++)
+            {
+                // if current character of X and Y matches
+                if (X[i - 1] == Y[j - 1])
+                    lookup[i][j] = lookup[i - 1][j - 1] + 1;
+
+                // else if current character of X and Y don't match
+                else
+                    lookup[i][j] = Math.max(lookup[i - 1][j], lookup[i][j - 1]);
+            }
+        }
+
+        // LCS will be last entry in the lookup table
+        return lookup[m][n];
     }
 }
 
@@ -953,7 +1118,26 @@ function init() {
             o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
         }
     }
+
     view.settings.languages = params.languages;
+
+    view.settings.serverOptions = [];
+    for (let attr in serverOptions) {
+        let o = new Option(serverOptions[attr]);
+        o.id = attr;
+        if (attr != "optimalProductivity")
+            o.checked(true);
+        view.settings[attr] = o;
+        view.settings.serverOptions.push(o);
+
+        if (localStorage) {
+            let id = "serverSettings." + attr;
+            if (localStorage.getItem(id) != null)
+                o.checked(parseInt(localStorage.getItem(id)));
+
+            o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
 
 
     view.islandManager = new IslandManager(params);
@@ -1270,14 +1454,14 @@ texts = {
 1. Download server application and calculator (using the source code from above).
 2. Start Anno 1800 with the graphics setting "Windowed Full Screen".
 3. Start server (Server.exe) and open downloaded calculator (index.html) - make sure that Anno does not get minimized.
-4. Expand the population statistics (global or island) to update the values in the calculator.
+4. Expand the population statistics (global or island) or open the statistics screen (finance, production) to update the values in the calculator.
 
  See the following link for more information: `,
         german: `Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Verwendung:
 1. Lade die Serveranwendung und den Warenrechner (siehe obiger Quellcode) herunter.
 2. Starte Anno 1800 mit der Graphikeinstellung "Vollbild im Fenstermodus".
 3. Führe den Server (Server.exe) aus und öffne den heruntergeladenen Warenrechner (index.html) - stelle sicher, dass Anno nicht minimiert wird.
-4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus, um die Werte im Warenrechner zu aktualisieren.
+4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus oder öffne das Statistikmenü (Finanzen, Produktion), um die Werte im Warenrechner zu aktualisieren.
 
 Siehe folgenden Link für weitere Informationen: `
     },
@@ -1290,8 +1474,8 @@ Siehe folgenden Link für weitere Informationen: `
         german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
     },
     newFeature: {
-        english: "New feature: Creation of multiple islands. Click the settings button.",
-        german: "Neue Funktion: Anlegen mehrerer Inseln. Klicke auf den Button Einstellungen."
+        english: "New feature: Dark mode available. Click the button to the left of settings.",
+        german: "Neue Funktion: Dark-Mode verfügbar. Klicke auf den Button links neben den Einstellungen."
     },
     helpContent: {
         german:
@@ -1361,6 +1545,13 @@ If you encounter any bugs or inconveniences or if you want to suggest improvemen
 }
 
 options = {
+    "existingBuildingsInput": {
+        "name": "Input number of houses instead of residents",
+        "locaText": {
+            "english": "Input number of houses instead of residents",
+            "german": "Gib Anzahl an Häusern anstelle der Einwohner ein"
+        }
+    },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {
@@ -1415,6 +1606,51 @@ options = {
         "locaText": {
             "english": "Hide factory cards for construction material that is produced in the New world",
             "german": "Verberge die Fabrikkacheln für Baumaterial, das in der Neuen Welt produziert wird"
+        }
+    }
+}
+
+serverOptions = {
+    "populationLevelAmount": {
+        "name": "PopulationLevel Amount",
+        "locaText": {
+            "english": "Update residents count",
+            "german": "Aktualisiere Einwohneranzahl"
+        }
+    },
+    "populationLevelExistingBuildings": {
+        "name": "PopulationLevel ExistingBuildings",
+        "locaText": {
+            "english": "Update houses count",
+            "german": "Aktualisiere Häuseranzahl"
+        }
+    },
+    "factoryExistingBuildings": {
+        "name": "FactoryExistingBuildings",
+        "locaText": {
+            "english": "Update factories count",
+            "german": "Aktualisiere Fabrikanzahl"
+        }
+    },
+    "factoryPercentBoost": {
+        "name": "FactoryPercentBoost",
+        "locaText": {
+            "english": "Update productivity",
+            "german": "Aktualisiere Produktivität"
+        }
+    },
+/*    "optimalProductivity": {
+        "name": "Optimal Productivity",
+        "locaText": {
+            "english": "Read maximum possible productivity instead of current average",
+            "german": "Lies best mögliche Produktivität anstelle des gegenwärtigen Durchschnitts aus"
+        }
+    }, */
+    "updateSelectedIslandOnly": {
+        "name": "Update selected islands only",
+        "locaText": {
+            "english": "Restrict updates to the selected island",
+            "german": "Beschränke Updates auf die ausgewählte Insel"
         }
     }
 }

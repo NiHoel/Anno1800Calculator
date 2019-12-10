@@ -24,7 +24,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2019-06-05_full.js"></script>
+    <script type="text/javascript" src="params_2019-12-10_full.js"></script>
     <script type="text/javascript" src="toggle-dark-mode.js"></script>
 </head>
 <body>
@@ -52,7 +52,7 @@
     <!-- /#params-dialog -->
     <!-- #settings-dialog -->
     <div id="settings-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 data-bind="text: texts.settings.name">Settings</h4>
@@ -67,7 +67,7 @@
                                 <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
                             </div>
                         </div>
-
+                        <hr />
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
@@ -99,6 +99,14 @@
                                     <span class="fa fa-trash" > </span>
                                 </button>
                                 
+                            </div>
+                        </div>
+                        <hr />
+                        <h6>Server<button type="button" class="help" data-toggle="modal" data-target="#download-dialog">?</button></h6>
+                        <div data-bind="foreach: settings.serverOptions">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
                             </div>
                         </div>
                     </form>
@@ -234,6 +242,8 @@
         </div>
     </div>
     <!-- /#download-dialog -->
+
+    <!-- top right buttons -->
     <div id="content" data-bind="visible: true" style="display:none">
 
         <div class="fixed-top" style="padding-right: 17px;">
@@ -266,25 +276,36 @@
 
                     <div class="ui-race-input fleft">
                         <!-- <div class="ui-race-icon">
-                    <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                </div> -->
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
                         <div data-bind="foreach: $data.populationLevels">
                             <div class="ui-race-unit">
-                                <div class="ui-race-unit-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
+                                <div class="ui-race-unit-icon">
+                                    <img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }">
+                                    <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                    <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
+                                </div>
                                 <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked(), attr: {'race-unit-name' : name}"></div>
 
                                 <div class="input text">
                                     <div class="input-group spinner mb-3">
-                                        <input step="100" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' }" />
+                                        <div data-bind="if: !$root.settings.existingBuildingsInput.checked()">
+                                            <input step="100" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' };" />
+                                        </div>
+                                        <div data-bind="if: $root.settings.existingBuildingsInput.checked()">
+                                            <input step="10" class="form-control input-lg" type="number" value="0" data-bind="value: existingBuildings, attr: {title: 'Press '+name()[0]+' to focus' };" />
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                     <btn class="btn btn-light float-right align-middle" data-bind="click: () => $root.island().reset()">Reset</btn>
                 </div>
             </fieldset>
-
+            <!-- /population input field -->
+            <!-- required workforce field -->
             <fieldset class="ui-fieldset" id="workforce-view">
                 <legend class="collapser" data-toggle="collapse" data-target="#workforce">
                     <span class="fa fa-chevron-right"></span>
@@ -296,8 +317,8 @@
 
                     <div class="ui-race-input fleft">
                         <!-- <div class="ui-race-icon">
-                    <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                </div> -->
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
                         <div data-bind="foreach: $data.workforce">
                             <div class="ui-race-unit">
                                 <div class="ui-race-unit-icon"><img data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
@@ -307,14 +328,15 @@
                                 </div>
                             </div>
                         </div>
-
-
-
-                        <div class="clear"></div>
                     </div>
+
+
+
+                    <div class="clear"></div>
+                </div>
             </fieldset>
-
-
+            <!-- /required workforce field -->
+            <!-- required factories by category -->
             <div data-bind="foreach: $data.categories">
                 <fieldset class="ui-fieldset" id="categories-view">
                     <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#' + removeSpaces(name)}">
@@ -322,11 +344,13 @@
                         <span class="fa fa-chevron-down"></span>
                         <span data-bind="text:name"></span>
                     </legend>
+
                     <div class="ui-fchain collapse show" data-bind="attr: {id:  removeSpaces(name)}">
-                        <div data-bind="foreach: products">
-                            <div data-bind="foreach: factories">
+                        <div data-bind="foreach: $data.products">
+                            <div data-bind="foreach: $data.factories">
                                 <div>
-                                    <div class="ui-fchain-item" data-bind="visible: $data.amount() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
+
+                                    <div class="ui-fchain-item" data-bind="visible: amount() > 0 || existingBuildings() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
                                         <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                         <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
                                         <div class="ui-fchain-item-count">
@@ -417,6 +441,53 @@
                                 </div>
                             </div>
                         </div>
+                        <div data-bind="foreach: $data.consumers">
+
+                                    <div class="ui-fchain-item" data-bind="visible: !$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000, css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
+                                        <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                                        <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon, alt: name }"></div>
+                                        
+
+                                        <!-- buildings input  -->
+                                        <div class="ui-fchain-item-count">
+                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+
+                                                <div class="input-group mb-3 spinner">
+                                                    <input class="form-control" type="text" value="0" step="1" data-bind="value: existingBuildings" />
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-btn-vertical">
+                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
+                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
+                                                        </div>
+                                                        <span class="input-group-text">x</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- required buildings display -->
+                                        <div class="ui-fchain-item-count" data-bind="if: buildings() > existingBuildings()">
+                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
+                                                <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
+                                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
+                                                <span>x</span>
+                                                <div class="btn-group" role="group">
+                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable: buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                            <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
+
+                                        </div>
+                                    </div>
+
+                                
+                            
+                        </div>
                     </div>
                     <div class="clear"></div>
                 </fieldset>
@@ -424,7 +495,7 @@
             <!-- /required factories by category -->
             <!-- production chains by population level -->
             <div data-bind="foreach: $data.populationLevels">
-                <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount">
+                <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount || existingBuildings">
                     <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  removeSpaces(name)}">
                         <span class="fa fa-chevron-right"></span>
                         <span class="fa fa-chevron-down"></span>
@@ -472,21 +543,21 @@
                     </div>
                 </fieldset>
             </div>
-
-
+            <!-- /production chains by population level -->
+            <!-- production chains for building materials -->
             <fieldset class="ui-fieldset" id="construction-material-view">
                 <legend class="collapser" data-toggle="collapse" data-target="#building-materials-chains">
                     <span class="fa fa-chevron-right"></span>
                     <span class="fa fa-chevron-down"></span>
-                    <span data-bind="text: categories[1].name"></span>
+                    <span data-bind="text: $root.island().categories[1].name"></span>
                 </legend>
-                <div class="collapse show" data-bind="foreach: buildingMaterialsNeeds" id="building-materials-chains">
-                    <div class="ui-fchain" data-bind="visible: $data.amount">
-                        <div data-bind="foreach: allDemands">
+                <div class="collapse show" data-bind="foreach: $data.buildingMaterialsNeeds" id="building-materials-chains">
+                    <div class="ui-fchain" data-bind="visible: amount">
+                        <div data-bind="foreach: $data.allDemands">
                             <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount">
                                 ←
                             </div>
-                            <div class="ui-fchain-item" data-bind="visible: $data.amount">
+                            <div class="ui-fchain-item" data-bind="visible: amount">
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? product.icon : null, alt: product.name }"></div>
                                 <div class="ui-fchain-item-count">
@@ -507,7 +578,7 @@
                     <div class="clear"></div>
                 </div>
             </fieldset>
-
+            <!-- /production chains for building materials -->
         </div>
     </div>
 </body>
