@@ -1,4 +1,4 @@
-let versionCalculator = "v2.5";
+let versionCalculator = "v3.0";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -1474,8 +1474,8 @@ Siehe folgenden Link für weitere Informationen: `
         german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
     },
     newFeature: {
-        english: "New feature: Dark mode available. Click the button to the left of settings.",
-        german: "Neue Funktion: Dark-Mode verfügbar. Klicke auf den Button links neben den Einstellungen."
+        english: "New feature: Game Update 6 and power plants added.",
+        german: "Neue Funktion: Game Update 6 und Kraftwerke hinzugefügt."
     },
     helpContent: {
         german:
