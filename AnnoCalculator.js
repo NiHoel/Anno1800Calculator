@@ -1453,16 +1453,16 @@ texts = {
     downloadCalculatorServer: {
         english: `Download a standalone executable that reads the current population count while playing the game. Usage:
 1. Download server application and calculator (using the source code from above).
-2. Start Anno 1800 with the graphics setting "Windowed Full Screen".
-3. Start server (Server.exe) and open downloaded calculator (index.html) - make sure that Anno does not get minimized.
-4. Expand the population statistics (global or island) or open the statistics screen (finance, production) to update the values in the calculator.
+2. Start Anno 1800.
+3. Start server (Server.exe) and open downloaded calculator (index.html).
+4. Expand the population statistics (global or island) or open the statistics screen (finance, production, population) to update the values in the calculator.
 
  See the following link for more information: `,
         german: `Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Verwendung:
 1. Lade die Serveranwendung und den Warenrechner (siehe obiger Quellcode) herunter.
-2. Starte Anno 1800 mit der Graphikeinstellung "Vollbild im Fenstermodus".
-3. Führe den Server (Server.exe) aus und öffne den heruntergeladenen Warenrechner (index.html) - stelle sicher, dass Anno nicht minimiert wird.
-4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus oder öffne das Statistikmenü (Finanzen, Produktion), um die Werte im Warenrechner zu aktualisieren.
+2. Starte Anno 1800.
+3. Führe den Server (Server.exe) aus und öffne den heruntergeladenen Warenrechner (index.html).
+4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus oder öffne das Statistikmenü (Finanzen, Produktion, Bevölkerung), um die Werte im Warenrechner zu aktualisieren.
 
 Siehe folgenden Link für weitere Informationen: `
     },
@@ -1496,7 +1496,7 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 Durch Eingabe des ersten (bzw. zweiten - bei Uneindeutigkeiten) Buchstaben des Bevölkerungsnames wird das zugehörige Eingabefeld fokussiert. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
 
-Über den Downloadbutton kann dieser Rechner sowie eine zusätzliche Serveranwendung heruntergeladen werden. Mit der Serveranwendung lassen sich die Bevölkerungszahlen automatisch aus dem Spiel auslesen. Ich danke meinem Kollegen Josua Bloeß für die Umsetzung.
+Über den Downloadbutton kann dieser Rechner sowie eine zusätzliche Serveranwendung heruntergeladen werden. Mit der Serveranwendung lassen sich die Bevölkerungszahlen, Produktivitäten sowie Fabrikanzahl automatisch aus dem Statisitkmenü des Spiels auslesen. Ich danke meinem Kollegen Josua Bloeß für die Umsetzung.
 
 Haftungsausschluss:
 Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
@@ -1528,7 +1528,7 @@ The three cog wheels next to the settings dialog open a dialog to modify the pro
 
 Press the key corresponding to the first (or second in case of ambiguities) letter of the name of a population level to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
 
-Pressing the download button one can download the configuration, this calculator and an additional server application. The server application automatically reads the population count from the game. I thank my colleague Josua Bloeß for the implementation.
+Pressing the download button one can download the configuration, this calculator and an additional server application. The server application automatically reads the population, productivity and factory count from the statistics menu in the game. I thank my colleague Josua Bloeß for the implementation.
 
 Disclaimer:
 The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.
