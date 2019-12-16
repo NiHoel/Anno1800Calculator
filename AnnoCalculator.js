@@ -404,7 +404,7 @@ class Consumer extends NamedElement {
         this.items = [];
 
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
-        this.buildings.subscribe(val => this.workforceDemand.updateAmount(val));
+        this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
     }
 
     getInputs() {
@@ -488,6 +488,7 @@ class Factory extends Consumer {
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
+        this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.existingBuildings())));
     }
 
 
