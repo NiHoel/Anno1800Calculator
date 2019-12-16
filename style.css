@@ -57,26 +57,25 @@ h1 {
     }
 
 .ui-fieldset {
-    border: 1px solid #CECECE;
-    border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 15px;
+    border-top: 1px solid #CECECE;
+    margin: 15px;
+    margin-bottom: 20px;
 }
 
     .ui-fieldset legend {
         font-weight: bold;
         color: #000;
-        border: 1px solid #CECECE;
-        border-radius: 4px;
-        padding: 5px 10px;
         font-size: unset;
+        width:unset;
+        padding-right:5px;
     }
 
 .ui-fchain-item {
     float: left;
     width: 130px;
     margin-bottom: 10px;
-    border: 1px solid #CECECE;
+    margin-right: -1px;
+    border: 1px solid #00000031;
     border-radius: 4px;
     padding: 10px;
 }
@@ -345,4 +344,8 @@ input[type=number]::-webkit-inner-spin-button {
 .ui-fchain-item.danger.bg-dark {
     border-color: #A66A6A;
     background: #DB7979!important;
+}
+
+.ui-fchain-item.bg-dark {
+    border: 1px solid #ffffffce;
 }
