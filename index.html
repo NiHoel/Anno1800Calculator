@@ -499,19 +499,19 @@
             <!-- /required factories by category -->
             <!-- production chains by population level -->
             <div data-bind="foreach: $data.populationLevels">
-                <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount || existingBuildings">
+                <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount() || existingBuildings()">
                     <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  removeSpaces(name)}">
                         <span class="fa fa-chevron-right"></span>
                         <span class="fa fa-chevron-down"></span>
                         <span data-bind="text:name"></span>
                     </legend>
                     <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  removeSpaces(name)}">
-                        <div class="ui-fchain" data-bind="visible: optionalAmount, css:{inactive: banned}">
+                        <div class="ui-fchain" data-bind="visible: optionalAmount(), css:{inactive: banned}">
                             <div class="d-flex flex-wrap align-content-start" data-bind="foreach: allDemands">
-                                <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount">
+                                <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount()">
                                     ←
                                 </div>
-                                <div class="ui-fchain-item" data-bind="visible: ($data instanceof Need) || amount || ($data instanceof Need)">
+                                <div class="ui-fchain-item" data-bind="visible: ($data instanceof Need) || amount() || ($data instanceof Need)">
                                     <div class="float-right" data-bind="if: ($data instanceof Need)">
                                         <input type="checkbox" data-bind="checked: $data.checked">
                                     </div>

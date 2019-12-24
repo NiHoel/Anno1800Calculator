@@ -783,6 +783,8 @@ class PopulationLevel extends NamedElement {
                 this.needs.forEach(n => n.updateAmount(parseInt(val)))
         });
         this.existingBuildings.subscribe(val => {
+            val = parseInt(val);
+            this.existingBuildings(val);
             if (view.settings.existingBuildingsInput.checked())
                 this.needs.forEach(n => n.updateAmount(parseInt(val * config.fullHouse)))
         })
