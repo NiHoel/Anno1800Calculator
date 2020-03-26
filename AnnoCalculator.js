@@ -507,8 +507,10 @@ class Factory extends Consumer {
         this.extraDemand = new Demand({ guid: this.product.guid }, assetsMap);
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
-            if (!isFinite(val))
+            if (!isFinite(val) || val == null) {
                 this.extraAmount(0);
+                return;
+            }
 
             let amount = parseFloat(this.amount());
             if (val < -Math.ceil(amount * 100) / 100)
