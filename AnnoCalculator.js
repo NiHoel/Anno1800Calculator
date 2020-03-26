@@ -1479,8 +1479,8 @@ Siehe folgenden Link für weitere Informationen: `
         german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
     },
     newFeature: {
-        english: "New feature: Game Update 6 and power plants added.",
-        german: "Neue Funktion: Game Update 6 und Kraftwerke hinzugefügt."
+        english: "Repository for the server moved.",
+        german: "Repository des Servers hat sich geändert."
     },
     helpContent: {
         german:
