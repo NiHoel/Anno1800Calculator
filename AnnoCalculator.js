@@ -1,4 +1,4 @@
-let versionCalculator = "v3.1";
+let versionCalculator = "v3.2";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -878,7 +878,7 @@ class PopulationReader {
             console.log('waiting for responses from ' + this.url);
             this.requestInterval = setInterval(this.handleResponse.bind(this), 1000);
 
-            $.getJSON("https://api.github.com/repos/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
+            $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {
                 this.recentVersion = release.tag_name;
                 this.checkVersion();
             });
@@ -1343,7 +1343,7 @@ $(document).ready(function () {
     checkAndShowNotifications();
 
     //update links of download buttons
-    $.getJSON("https://api.github.com/repos/Dejauxvue/AnnoCalculatorServer/releases/latest").done((release) => {
+    $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {
         $('#download-calculator-server-button').attr("href", release.assets[0].browser_download_url);
     });
 
