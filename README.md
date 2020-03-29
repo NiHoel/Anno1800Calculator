@@ -6,6 +6,6 @@
 * [YouTube-Tutorial](https://www.youtube.com/watch?v=fxzYSh-92Ng)
 * To use the calculator go to the following website: https://nihoel.github.io/Anno1800Calculator/
 * To use it offline, download, unzip and open index.html with a browser: https://github.com/NiHoel/Anno1800Calculator/archive/v3.2.zip
-* An application that reads population, productivities and factory count from the game and enters it into the calculator can be found here: https://github.com/Dejauxvue/AnnoCalculatorServer
+* An application that reads population, productivities and factory count from the game and enters it into the calculator can be found here: https://github.com/NiHoel/Anno1800UXEnhancer
 * License: MIT
 * Author: Nico Höllerich
