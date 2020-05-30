@@ -114,6 +114,13 @@ h1 {
     margin-top: 5px;
 }
 
+.ui-fchain-item-module {
+    flex-flow: row;
+    display: flex;
+    margin-top: -14px;
+    margin-bottom: 14px;
+}
+
 .ui-fchain-item-load {
     font-size: 10px;
     margin-top: 5px;

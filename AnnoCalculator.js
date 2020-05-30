@@ -127,6 +127,12 @@ class Island {
             }
         }
 
+        for (let consumer of params.modules) {
+            let f = new Module(consumer, assetsMap);
+            assetsMap.set(f.guid, f);
+            this.consumers.push(f);
+        }
+
         for (let factory of params.factories) {
             let f = new Factory(factory, assetsMap)
             assetsMap.set(f.guid, f);
@@ -134,6 +140,15 @@ class Island {
             this.factories.push(f);
 
             if (localStorage) {
+                if (f.moduleChecked)
+                { // set moduleChecked before boost, otherwise boost would be increased
+                    let id = f.guid + ".module.checked";
+                    if (localStorage.getItem(id))
+                        f.moduleChecked(parseInt(localStorage.getItem(id)));
+
+                    f.moduleChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+
                 {
                     let id = f.guid + ".percentBoost";
                     if (localStorage.getItem(id))
@@ -192,6 +207,13 @@ class Island {
         }
 
         this.consumers.forEach(f => f.referenceProducts(assetsMap));
+
+        // setup demands induced by modules
+        for (let factory of params.factories) {
+            let f = assetsMap.get(factory.guid);
+            if(f.module)
+                f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
+        }
 
         for (let item of (params.items || [])) {
             let i = new Item(item, assetsMap);
@@ -478,6 +500,14 @@ class Consumer extends NamedElement {
 
 }
 
+class Module extends Consumer {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+        this.checked = ko.observable(false);
+        this.visible = !!config;
+    }
+}
+
 class Factory extends Consumer {
     constructor(config, assetsMap) {
         super(config, assetsMap);
@@ -487,7 +517,30 @@ class Factory extends Consumer {
         this.percentBoost = ko.observable(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
-        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost());
+        if (this.module) {
+            this.module = assetsMap.get(this.module);
+            this.moduleChecked = ko.observable(false);
+            this.moduleChecked.subscribe(checked => {
+                if (checked)
+                    this.percentBoost(this.percentBoost() + this.module.productivityUpgrade);
+                else {
+                    var val = Math.max(1, this.percentBoost() - this.module.productivityUpgrade);
+                    this.percentBoost(val);
+                }
+            })
+            //moduleDemand created in island constructor after referencing products
+        }
+            
+
+        this.buildings = ko.computed(() => {
+            var buildings = Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost();
+            if (this.moduleDemand)
+                if (this.moduleChecked())
+                    this.moduleDemand.updateAmount(buildings * this.module.tpmin);
+                else
+                    this.moduleDemand.updateAmount(0);
+            return buildings;
+        });
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.existingBuildings())));
     }
 
@@ -617,8 +670,8 @@ class Demand extends NamedElement {
 
     updateFixedProductFactory(f) {
         if (f == null) {
-            if (this.consumer) { // find factory in the same region as consumer
-                let region = this.consumer.factory().region;
+            if (this.consumer || this.region) { // find factory in the same region as consumer
+                let region = this.region || this.consumer.factory().region;
                 if (region) {
                     for (let fac of this.product.factories) {
                         if (fac.region === region) {

@@ -24,7 +24,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
 
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2020-01-06_full.js"></script>
+    <script type="text/javascript" src="params_2020-05-30_full.js"></script>
     <script type="text/javascript" src="toggle-dark-mode.js"></script>
 </head>
 <body>
@@ -96,9 +96,9 @@
                             <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.name()"></select>
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.delete(), enable: !$root.island().isAllIslands()">
-                                    <span class="fa fa-trash" > </span>
+                                    <span class="fa fa-trash"> </span>
                                 </button>
-                                
+
                             </div>
                         </div>
                         <hr />
@@ -246,7 +246,6 @@
         </div>
     </div>
     <!-- /#download-dialog -->
-
     <!-- top right buttons -->
     <div id="content" data-bind="visible: true" style="display:none">
 
@@ -280,8 +279,8 @@
 
                     <div class="ui-race-input fleft">
                         <!-- <div class="ui-race-icon">
-                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                    </div> -->
+                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                        </div> -->
                         <div data-bind="foreach: $data.populationLevels">
                             <div class="ui-race-unit">
                                 <div class="ui-race-unit-icon">
@@ -321,8 +320,8 @@
 
                     <div class="ui-race-input fleft">
                         <!-- <div class="ui-race-icon">
-                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                    </div> -->
+                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                        </div> -->
                         <div data-bind="foreach: $data.workforce">
                             <div class="ui-race-unit">
                                 <div class="ui-race-unit-icon"><img data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
@@ -370,6 +369,18 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+
+                                        <div class="ui-fchain-item-module" data-bind="if: !!$data.module">
+                                            <div style="flex: 100 1 auto;"></div>
+                                            <div class="custom-control custom-checkbox" style="flex: auto;">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
+                                                <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module' }" src-only style="vertical-align: top;">
+
+                                                </label>
+                                            </div>
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="flex: auto;">
+                                            <div style="flex: 100 1 auto;"></div>
                                         </div>
 
                                         <!-- buildings display for non-construction products -->
@@ -447,50 +458,50 @@
                         </div>
                         <div data-bind="foreach: $data.consumers">
 
-                                    <div class="ui-fchain-item" data-bind="visible: !$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000, css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
-                                        <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
-                                        <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon, alt: name }"></div>
-                                        
+                            <div class="ui-fchain-item" data-bind="visible: !$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000, css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
+                                <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                                <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon, alt: name }"></div>
 
-                                        <!-- buildings input  -->
-                                        <div class="ui-fchain-item-count">
-                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
 
-                                                <div class="input-group mb-3 spinner">
-                                                    <input class="form-control" type="text" value="0" step="1" data-bind="value: existingBuildings" />
-                                                    <div class="input-group-append">
-                                                        <div class="input-group-btn-vertical">
-                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
-                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
-                                                        </div>
-                                                        <span class="input-group-text">x</span>
-                                                    </div>
+                                <!-- buildings input  -->
+                                <div class="ui-fchain-item-count">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+
+                                        <div class="input-group mb-3 spinner">
+                                            <input class="form-control" type="text" value="0" step="1" data-bind="value: existingBuildings" />
+                                            <div class="input-group-append">
+                                                <div class="input-group-btn-vertical">
+                                                    <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
+                                                    <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
                                                 </div>
-
+                                                <span class="input-group-text">x</span>
                                             </div>
                                         </div>
 
-                                        <!-- required buildings display -->
-                                        <div class="ui-fchain-item-count" data-bind="if: buildings() > existingBuildings()">
-                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
-                                                <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
-                                                <span>x</span>
-                                                <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable: buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    </div>
+                                </div>
 
-                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                            <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
-
+                                <!-- required buildings display -->
+                                <div class="ui-fchain-item-count" data-bind="if: buildings() > existingBuildings()">
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
+                                        <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
+                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
+                                        <span>x</span>
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                            <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable: buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
                                         </div>
                                     </div>
+                                </div>
 
-                                
-                            
+                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                    <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
+
+                                </div>
+                            </div>
+
+
+
                         </div>
                     </div>
                     <div class="clear"></div>
