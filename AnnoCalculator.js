@@ -1,4 +1,4 @@
-let versionCalculator = "v3.2";
+let versionCalculator = "v3.3";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -440,7 +440,7 @@ class Consumer extends NamedElement {
 
 
     getWorkforceDemand(assetsMap) {
-        for (let m of this.maintenances) {
+        for (let m of this.maintenances || []) {
             let a = assetsMap.get(m.Product);
             if (a instanceof Workforce)
                 return new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
@@ -541,7 +541,6 @@ class Factory extends Consumer {
                     this.moduleDemand.updateAmount(0);
             return buildings;
         });
-        this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.existingBuildings())));
     }
 
 
@@ -828,7 +827,7 @@ class PopulationLevel extends NamedElement {
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
         config.needs.forEach(n => {
-            if (n.tpmin > 0)
+            if (n.tpmin > 0 && assetsMap.get(n.guid))
                 this.needs.push(new PopulationNeed(n, assetsMap));
         });
         this.amount.subscribe(val => {
@@ -1532,8 +1531,8 @@ Siehe folgenden Link für weitere Informationen: `
         german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
     },
     newFeature: {
-        english: "Repository for the server moved.",
-        german: "Repository des Servers hat sich geändert."
+        english: "Bright harvest Update.",
+        german: "Reiche-Ernte-Update."
     },
     helpContent: {
         german:
