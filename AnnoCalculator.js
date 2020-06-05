@@ -1,4 +1,4 @@
-let versionCalculator = "v3.3";
+let versionCalculator = "v3.4";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -427,6 +427,7 @@ class Consumer extends NamedElement {
 
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
         this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+        this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
     }
 
     getInputs() {
@@ -536,7 +537,7 @@ class Factory extends Consumer {
             var buildings = Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost();
             if (this.moduleDemand)
                 if (this.moduleChecked())
-                    this.moduleDemand.updateAmount(buildings * this.module.tpmin);
+                    this.moduleDemand.updateAmount(Math.max(Math.ceil(buildings), this.existingBuildings()) * this.module.tpmin);
                 else
                     this.moduleDemand.updateAmount(0);
             return buildings;
