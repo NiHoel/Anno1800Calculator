@@ -389,6 +389,8 @@ class Island {
 			if (a instanceof Consumer)
 				a.existingBuildings(0);
             if (a instanceof Factory) {
+                if (a.moduleChecked)
+                    a.moduleChecked(false);
                 a.percentBoost(100);
                 a.extraAmount(0);
             }
@@ -542,6 +544,8 @@ class Factory extends Consumer {
                     this.moduleDemand.updateAmount(0);
             return buildings;
         });
+
+        this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
     }
 
 
