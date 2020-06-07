@@ -342,13 +342,13 @@
             <!-- required factories by category -->
             <div data-bind="foreach: $data.categories">
                 <fieldset class="ui-fieldset" id="categories-view">
-                    <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#' + removeSpaces(name)}">
+                    <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#category-' + guid}">
                         <span class="fa fa-chevron-right"></span>
                         <span class="fa fa-chevron-down"></span>
                         <span data-bind="text:name"></span>
                     </legend>
 
-                    <div class="ui-fchain collapse show" data-bind="attr: {id:  removeSpaces(name)}">
+                    <div class="ui-fchain collapse show" data-bind="attr: {id:  'category-' + guid}">
                         <div data-bind="foreach: $data.products">
                             <div data-bind="foreach: $data.factories">
                                 <div>
@@ -511,12 +511,12 @@
             <!-- production chains by population level -->
             <div data-bind="foreach: $data.populationLevels">
                 <fieldset class="ui-fieldset" id="consumption-view" data-bind="visible: amount() || existingBuildings()">
-                    <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  removeSpaces(name)}">
+                    <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  guid}">
                         <span class="fa fa-chevron-right"></span>
                         <span class="fa fa-chevron-down"></span>
                         <span data-bind="text:name"></span>
                     </legend>
-                    <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  removeSpaces(name)}">
+                    <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  guid}">
                         <div class="ui-fchain" data-bind="visible: optionalAmount(), css:{inactive: banned}">
                             <div class="d-flex flex-wrap align-content-start" data-bind="foreach: allDemands">
                                 <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount()">
