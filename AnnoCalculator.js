@@ -1,4 +1,4 @@
-let versionCalculator = "v3.4";
+let versionCalculator = "v3.5";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
