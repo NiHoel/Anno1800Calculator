@@ -127,7 +127,7 @@ class Island {
             }
         }
 
-        for (let consumer of params.modules) {
+        for (let consumer of (params.modules || [])) {
             let f = new Module(consumer, assetsMap);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
@@ -1226,7 +1226,7 @@ function init() {
         for (var l of view.island().populationLevels) {
             for (var c of l.name().toLowerCase()) {
                 if (!bindings.has(c)) {
-                    bindings.set(c, $(`.ui-race-unit-name[race-unit-name=${l.name()}] ~ .input .input-group input`));
+                    bindings.set(c, $(`.ui-race-unit-name[race-unit-guid=${l.guid}] ~ .input .input-group input`));
                     break;
                 }
             }
@@ -1428,88 +1428,135 @@ $(document).ready(function () {
 
 texts = {
     allIslands: {
-        english: "All Islands",
-        german: "Alle Inseln"
+        "french": "Toutes les îles",
+        "english": "All Islands",
+        "italian": "Tutte le isole",
+        "chinese": "所有岛屿",
+        "spanish": "Todas las islas",
+        "japanese": "すべての島",
+        "taiwanese": "所有島嶼",
+        "polish": "Wszystkie wyspy",
+        "german": "Alle Inseln",
+        "korean": "모든 섬",
+        "russian": "Все острова"
     },
     residents: {
-        english: "Residents",
-        german: "Bewohner"
+        "french": "Résidents",
+        "english": "Residents",
+        "italian": "Residenti",
+        "chinese": "居民",
+        "spanish": "Residentes",
+        "japanese": "住民",
+        "taiwanese": "居民",
+        "polish": "Mieszkańcy",
+        "german": "Einwohner",
+        "korean": "주민",
+        "russian": "Жители"
     },
     workforce: {
         english: "Required Workforce",
-        german: "Benötigte Arbeitskraft"
+        german: "Benötigte Arbeitskraft",
+        korean: "필요한 인력"
     },
     productionBoost: {
-        english: "Production Boost",
-        german: "Produktionsboost"
+        "french": "Productivité",
+        "brazilian": "Production",
+        "english": "Productivity",
+        "portuguese": "Production",
+        "italian": "Produzione",
+        "chinese": "生产力",
+        "spanish": "Productividad",
+        "japanese": "生産性",
+        "taiwanese": "生產力",
+        "polish": "Wydajność",
+        "german": "Produktivität",
+        "korean": "생산성",
+        "russian": "Производительность"
     },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
-        german: "Benötigte Anzahl an Gebäuden"
+        german: "Benötigte Anzahl an Gebäuden",
+        korean: "필요한 건물 수"
     },
     existingNumberOfBuildings: {
         english: "Existing Number of Buildings",
-        german: "Vorhandene Anzahl an Gebäuden"
+        german: "Vorhandene Anzahl an Gebäuden",
+        korean: "현재 건물 수"
     },
     existingNumberOfBuildingsIs: {
         english: "Is:",
-        german: "Ist:"
+        german: "Ist:",
+        korean: "현재:"
     },
     requiredNumberOfBuildings: {
         english: "Required:",
-        german: "Benötigt:"
+        german: "Benötigt:",
+        korean: "필요:"
     },
     requiredNumberOfBuildingsDescription: {
         english: "Required number of buildings to produce consumer products",
-        german: "Benötigte Gebäudeanzahl zur Produktion von Verbrauchsgütern"
+        german: "Benötigte Gebäudeanzahl zur Produktion von Verbrauchsgütern",
+        korean: "소비재 생산에 필요한 건물 수"
     },
     tonsPerMinute: {
         english: "Production in Tons per Minute",
-        german: "Produktion in Tonnen pro Minute"
+        german: "Produktion in Tonnen pro Minute",
+        korean: "분당 생산량"
     },
     language: {
         english: "Language",
-        german: "Sprache"
+        german: "Sprache",
+        korean: "언어"
     },
     islandName: {
         english: "New island name",
-        german: "Neuer Inselname"
+        german: "Neuer Inselname",
+        korean: "새로운 섬 이름"
     },
     selectedIsland: {
         english: "Selected Island",
-        german: "Ausgewählte Insel"
+        german: "Ausgewählte Insel",
+        korean: "선택된 섬"
     },
     settings: {
         english: "Settings",
-        german: "Einstellungen"
+        german: "Einstellungen",
+        korean: "설정"
     },
     help: {
         english: "Help",
-        german: "Hilfe"
+        german: "Hilfe",
+        korean: "도움말"
     },
     chooseFactories: {
         english: "Modify Production Chains",
-        german: "Modifiziere Produktionsketten"
+        german: "Modifiziere Produktionsketten",
+        korean: "생산 체인 수정"
     },
     noFixedFactory: {
         english: "Automatic: same region as consumer",
-        german: "Automatisch: gleichen Region wie Verbraucher"
+        german: "Automatisch: gleichen Region wie Verbraucher",
+        korean: "자동 : 소비자와 동일한 지역"
     },
     consumptionModifier: {
         english: "Modify the percental amount of consumption for this tier and product",
-        german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe"
+        german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe",
+        korean: "이 계층 및 제품의 사용량(백분율)을 수정하십시요"
     },
     download: {
         english: "Downloads",
-        german: "Downloads"
+        german: "Downloads",
+        korean: "다운로드"
     },
     downloadConfig: {
         english: "Import / Export configuration.",
-        german: "Konfiguration importieren / exportieren."
+        german: "Konfiguration importieren / exportieren.",
+        korean: "설정 가져오기 / 내보내기"
     },
     downloadCalculator: {
         english: "Download the calculator (source code of this website) to run it locally. To do so, extract the archive and double click index.html.",
-        german: "Lade den Warenrechner (Quellcode dieser Seite) herunter, um ihn lokal auszuführen. Zum Ausführen, extrahiere das Archiv und doppelklicke auf index.html. "
+        german: "Lade den Warenrechner (Quellcode dieser Seite) herunter, um ihn lokal auszuführen. Zum Ausführen, extrahiere das Archiv und doppelklicke auf index.html.",
+        korean: "Anno 계산기 (이 웹 사이트의 소스 코드)를 다운로드 하여 로컬로 실행 하십시오. 압축을 풀고 index.html 실행 하십시오."
     },
     downloadCalculatorServer: {
         english: `Download a standalone executable that reads the current population count while playing the game. Usage:
