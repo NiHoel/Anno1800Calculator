@@ -1,14 +1,30 @@
-let versionCalculator = "v3.5";
+let versionCalculator = "v3.6";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
+var languageCodes = {
+    'en': 'english',
+    'de': 'german',
+    'fr': 'french',
+    'ru': 'russian',
+    'ko': 'korean',
+    'ja': 'japanese',
+    'zh': 'chinese',
+    'it': 'italien',
+    'es': 'spanish',
+    'pl': 'polish'
+}
 
 view = {
     settings: {
-        language: ko.observable(navigator.language.startsWith("de") ? "german" : "english")
+        language: ko.observable("english")
     },
     texts: {}
 };
+
+for (var code in languageCodes)
+    if (navigator.language.startsWith(code))
+        view.settings.language(languageCodes[code]);
 
 class Storage {
     constructor(key) {
@@ -827,10 +843,13 @@ class PowerPlantNeed extends Need {
 class PopulationLevel extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
+
+        this.hotkey = ko.observable(null);
         this.amount = ko.observable(0);
         this.existingBuildings = ko.observable(0);
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
+
         config.needs.forEach(n => {
             if (n.tpmin > 0 && assetsMap.get(n.guid))
                 this.needs.push(new PopulationNeed(n, assetsMap));
@@ -1223,10 +1242,18 @@ function init() {
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
 
+        var language = view.settings.language();
+        if (language == 'chinese' || language == 'korean' || language == 'japanese' || language == 'taiwanese') {
+            language = 'english';
+        }
+
         for (var l of view.island().populationLevels) {
-            for (var c of l.name().toLowerCase()) {
+            var name = l.locaText[language];
+
+            for (var c of name.toLowerCase()) {
                 if (!bindings.has(c)) {
                     bindings.set(c, $(`.ui-race-unit-name[race-unit-guid=${l.guid}] ~ .input .input-group input`));
+                    l.hotkey(c);
                     break;
                 }
             }
@@ -1473,6 +1500,21 @@ texts = {
         "korean": "생산성",
         "russian": "Производительность"
     },
+    reset: {
+        "english": "Reset",
+        "french": "Réinitialiser",
+        "german": "Zurücksetzen",
+        "korean": "재설정",
+        "portuguese": "Reset",
+        "brazilian": "Reset",
+        "taiwanese": "重設",
+        "chinese": "重设",
+        "spanish": "Reiniciar",
+        "italian": "Azzera",
+        "russian": "Сбросить",
+        "polish": "Wyzeruj",
+        "japanese": "リセット"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",
@@ -1572,23 +1614,34 @@ texts = {
 3. Führe den Server (Server.exe) aus und öffne den heruntergeladenen Warenrechner (index.html).
 4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus oder öffne das Statistikmenü (Finanzen, Produktion, Bevölkerung), um die Werte im Warenrechner zu aktualisieren.
 
-Siehe folgenden Link für weitere Informationen: `
+Siehe folgenden Link für weitere Informationen: `,
+        korean: `게임을 하는 동안 현재 인구 수를 읽는 실행 파일을 다운로드 하십시오. 방법:
+1. 서버 프로그램 및 계산기를 다운로드 하십시오. (위의 소스 코드 사용).
+2. Anno 1800을 실행 하십시오.
+3. 서버 (Server.exe)를 실행하고 다운로드한 Anno1800 계산기 (index.html)를 엽니다.
+4. 인구 통계 (모든 섬 또는 일부 섬)를 펼쳐서 열거나 통계 화면 (금융, 생산, 인구)을 열어 계산기의 값을 업데이트하십시오.
+  자세한 내용은 다음 링크를 참조하십시오: `
     },
     serverUpdate: {
         english: "A new server version is available. Click the download button.",
-        german: "Eine neue Serverversion ist verfügbar. Klicke auf den Downloadbutton."
+        german: "Eine neue Serverversion ist verfügbar. Klicke auf den Downloadbutton.",
+        korean: "새로운 서버 버전을 사용할 수 있습니다. 다운로드 버튼을 클릭하십시오."
     },
     calculatorUpdate: {
         english: "A new calculator version is available. Click the download button.",
-        german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton."
+        german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton.",
+        korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
         english: "Bright harvest Update.",
-        german: "Reiche-Ernte-Update."
+        german: "Reiche-Ernte-Update.",
+        korean: "선진농업 업데이트."
     },
     helpContent: {
         german:
             `Verwendung: Trage die aktuellen oder angestrebten Einwohner pro Stufe in die oberste Reihe ein. Die Produktionsketten aktualisieren sich automatisch sobald man die Eingabe verlässt. Es werden nur diejenigen Fabriken angezeigt, die benötigt werden.
+
+Der Buchstabe in eckigen Klammern vor dem Bevölkerungsnamen ist der Hotkey zum Fokussieren des Eingabefeldes. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
 
 In der darunterliegenden Reihe wird die Arbeitskraft angezeigt, die benötigt wird, um alle Gebäude zu betreiben (jeweils auf die nächste ganze Fabrik gerundet).
 
@@ -1601,8 +1654,6 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt und die Menge der dargestellten Informationen angepasst werden.
 
 Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Modifikation der Produktionsketten. In der oberen Hälfte kann die Fabrik ausgewählt werden, die die dargestellte Ware herstellen soll. In der unter Hälfte können Spezialisten aktiviert werden, welche die Eingangswaren der Fabriken verändern. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
-
-Durch Eingabe des ersten (bzw. zweiten - bei Uneindeutigkeiten) Buchstaben des Bevölkerungsnames wird das zugehörige Eingabefeld fokussiert. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
 
 Über den Downloadbutton kann dieser Rechner sowie eine zusätzliche Serveranwendung heruntergeladen werden. Mit der Serveranwendung lassen sich die Bevölkerungszahlen, Produktivitäten sowie Fabrikanzahl automatisch aus dem Statisitkmenü des Spiels auslesen. Ich danke meinem Kollegen Josua Bloeß für die Umsetzung.
 
@@ -1622,6 +1673,8 @@ Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschl
         english:
             `Usage: Enter the current or desired number of residents per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed.
 
+The letter in square brackets before the resident's name is the hotkey to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
+
 The row below displays the workforce that is required to run all buildings (rounded towards the next complete factory).
 
 Afterwards two big sections follow that are subdivided into smaller sections. The first one gives an overview of the required buildings sorted by the type of good that is produced. The second one lists the individual production chains for each population level. Clicking the heading collapses each section. Deselecting the checkbox leads to the need being excluded from the calculation.
@@ -1633,8 +1686,6 @@ Since construction materials share intermediate products with consumables they a
 When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language, give the browser tab a name and customize the information presented by the calculator.
 
 The three cog wheels next to the settings dialog open a dialog to modify the production chains. In the upper part, the factory can be chosen to produce the noted product. In the lower part, specialists that change the input for factories can be applied. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
-
-Press the key corresponding to the first (or second in case of ambiguities) letter of the name of a population level to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
 
 Pressing the download button one can download the configuration, this calculator and an additional server application. The server application automatically reads the population, productivity and factory count from the statistics menu in the game. I thank my colleague Josua Bloeß for the implementation.
 
@@ -1649,7 +1700,36 @@ Author:
 Nico Höllerich
 
 Bugs and improvements:
-If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`
+If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
+
+        korean:
+            `사용법 : 레벨 당 현재 또는 원하는 주민 수를 최상위 행에 입력하십시오. 
+주민 이름 앞에 사각 괄호 안에 있는 알파벳은 입력필드 단축키 입니다. 그곳에 화살표 키를 사용해서 인구를 줄이거나 높일 수 있습니다.
+
+생산 체인은 입력 필드를 벗어나면 자동으로 업데이트됩니다. 필요한 건물만 표시됩니다.
+아래 행에는 모든 건물을 운영하는 데 필요한 인력이 표시됩니다 (다음 완전한 공장으로 반올림).
+그 후 두 개의 큰 섹션이 이어지고 더 작은 섹션으로 세분됩니다. 첫 번째는 필요한 건물의 유형을 생산 된 제품 유형별로 정렬하여 보여줍니다. 
+두 번째는 각 인구 수준에 대한 개별 생산 체인을 나열합니다. 제목을 클릭하면 각 섹션이 축소됩니다. 네모 확인란을 선택 취소하면 계산에서 제외됩니다. 
+각 카드에는 건물 이름, 생산 된 제품의 아이콘, 건물 유형에 대한 생산성, 필요한 건물 수 및 분당 생산률이 표시됩니다. 
+건물 수에는 과잉 용량을 직접 표시하기 위해 소수점 이하 두 자리로 표시되어 있습니다. 그리고 우측에 두 개의 버튼이 있습니다. 모든 건물이 최대 용량으로 작동하고 한 개 이상 (+) 또는 한 개 미만 (-)이 필요하도록 생산성 조정을 시도합니다.
+건설재는 소모품과 중간 제품을 공유하므로 광산 생산 계획을 개선하기 위해 명시 적으로 표시됩니다. 팩토리 수는 수동으로 입력해야합니다.
+
+화면 오른쪽 상단에있는 톱니 바퀴를 클릭하면 설정 대화 상자가 열립니다. 거기에서 언어를 선택하고 브라우저 탭에 이름을 지정하고 Anno1800 계산기가 제공하는 정보를 사용자 정의 할 수 있습니다.
+설정 대화 상자 옆에있는 3 개의 톱니 바퀴는 생산 체인을 수정하는 대화 상자를 엽니다. 상단에는 제품을 생산하기 생산건물의 지역을 선택할 수 있습니다. 하단에는 생산건물의 생산성을 변경하는 전문가를 적용할 수 있습니다. 
+기본값은 소비자와 동일한 지역 정책이 선택됩니다. 예를 들어, 이는 데시 빌리 용 목재가 신세계에서 생산되고 재봉틀 용 목재는 구세계에서 생산됨을 의미합니다.
+
+다운로드 버튼을 누르면 설정,Anno1800 계산기 및 추가 서버 프로그램을 다운로드 할 수 있습니다. 
+서버 프로그램은 게임의 통계 메뉴에서 인구, 생산 및 재정-생산 건물을 자동으로 가져옵니다. 구현에 도움을 준 동료 Josua Bloeß에게 감사드립니다.
+
+추신:
+Anno1800 계산기는 어떠한 종류의 보증도 제공되지 않습니다. 이 프로그램은 Ubisoft Blue Byte가 어떤 종류의 보증도 하지 않았습니다. Anno 1800 게임의 모든 것은 Ubsioft의 자산 입니다.
+특히 인구, 상품 및 품목의 아이콘과 생산 체인 데이터 및 인구의 소비 가치를 모두 포함하는 것은 아닙니다.
+이 소프트웨어는 MIT 에게 라이센스가 있습니다.
+
+개발자:
+Nico Höllerich
+버그 및 개선 사항 :
+버그 나 불편한 점이 있거나 개선을 제안하려면 GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)에 문의하십시오`
     }
 }
 
@@ -1658,63 +1738,72 @@ options = {
         "name": "Input number of houses instead of residents",
         "locaText": {
             "english": "Input number of houses instead of residents",
-            "german": "Gib Anzahl an Häusern anstelle der Einwohner ein"
+            "german": "Gib Anzahl an Häusern anstelle der Einwohner ein",
+            "korean": "주민 수 대신 주택 수를 입력"
         }
     },
     "noOptionalNeeds": {
         "name": "Do not produce luxury goods",
         "locaText": {
             "english": "Do not produce luxury goods",
-            "german": "Keine Luxusgüter produzieren"
+            "german": "Keine Luxusgüter produzieren",
+            "korean": "사치품을 생산하지 않습니다."
         }
     },
     "decimalsForBuildings": {
         "name": "Show number of buildings with decimals",
         "locaText": {
             "english": "Show number of buildings with decimals",
-            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl"
+            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
+            "korean": "건물 수를 소수점 단위로 표시"
         }
     },
     "missingBuildingsHighlight": {
         "name": "Highlight missing buildings",
         "locaText": {
             "english": "Highlight missing buildings",
-            "german": "Fehlende Gebäude hervorheben"
+            "german": "Fehlende Gebäude hervorheben",
+            "korean": "부족한 건물 강조"
         }
     },
     "additionalProduction": {
         "name": "Show input field for additional production",
         "locaText": {
             "english": "Show input field for additional production (negative values possible)",
-            "german": "Zeige Eingabefeld für Zusatzproduktion (negative Werte möglich)"
+            "german": "Zeige Eingabefeld für Zusatzproduktion (negative Werte möglich)",
+            "korean": "추가 생산을 위한 입력 필드 표시 (음수 값 가능)"
         }
     },
     "consumptionModifier": {
         "name": "Show input field for percental consumption modification",
         "locaText": {
             "english": "Show input field for percental consumption modification",
-            "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs"
+            "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs",
+            "korean": "소비 수정(백분율)을 위한 입력 필드 표시"
         }
     },
     "hideNames": {
         "name": "Hide the names of products, factories, and population levels",
         "locaText": {
             "english": "Hide the names of products, factories, and population levels",
-            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen"
+            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen",
+            "korean": "제품, 건물명 및 인구 이름 숨기기"
         }
     },
     "hideProductionBoost": {
         "name": "Hide the input fields for production boost",
         "locaText": {
             "english": "Hide the input fields for production boost",
-            "german": "Verberge das Eingabefelder für Produktionsboosts"
+            "german": "Verberge das Eingabefelder für Produktionsboosts",
+            "korean": "생산성 입력 필드 숨기기"
         }
     },
     "hideNewWorldConstructionMaterial": {
         "name": "Hide factory cards for construction material that produce in the new world",
         "locaText": {
             "english": "Hide factory cards for construction material that is produced in the New world",
-            "german": "Verberge die Fabrikkacheln für Baumaterial, das in der Neuen Welt produziert wird"
+            "german": "Verberge die Fabrikkacheln für Baumaterial, das in der Neuen Welt produziert wird",
+            "korean": "새로운 지역(북극)에서 생산되는 건축 자재 숨기기"
         }
     }
 }
@@ -1724,42 +1813,48 @@ serverOptions = {
         "name": "PopulationLevel Amount",
         "locaText": {
             "english": "Update residents count",
-            "german": "Aktualisiere Einwohneranzahl"
+            "german": "Aktualisiere Einwohneranzahl",
+            "korean": "주민 수 가져오기"
         }
     },
     "populationLevelExistingBuildings": {
         "name": "PopulationLevel ExistingBuildings",
         "locaText": {
             "english": "Update houses count",
-            "german": "Aktualisiere Häuseranzahl"
+            "german": "Aktualisiere Häuseranzahl",
+            "korean": "주택 수 가져오기"
         }
     },
     "factoryExistingBuildings": {
         "name": "FactoryExistingBuildings",
         "locaText": {
             "english": "Update factories count",
-            "german": "Aktualisiere Fabrikanzahl"
+            "german": "Aktualisiere Fabrikanzahl",
+            "korean": "생산건물 수 가져오기"
         }
     },
     "factoryPercentBoost": {
         "name": "FactoryPercentBoost",
         "locaText": {
             "english": "Update productivity",
-            "german": "Aktualisiere Produktivität"
+            "german": "Aktualisiere Produktivität",
+            "korean": "생산성 가져오기"
         }
     },
-/*    "optimalProductivity": {
-        "name": "Optimal Productivity",
-        "locaText": {
-            "english": "Read maximum possible productivity instead of current average",
-            "german": "Lies best mögliche Produktivität anstelle des gegenwärtigen Durchschnitts aus"
-        }
-    }, */
+    /*    "optimalProductivity": {
+            "name": "Optimal Productivity",
+            "locaText": {
+                "english": "Read maximum possible productivity instead of current average",
+                "german": "Lies best mögliche Produktivität anstelle des gegenwärtigen Durchschnitts aus",
+                "korean": "평균 대신 최대 생산성을 가져오기"
+            }
+        }, */
     "updateSelectedIslandOnly": {
         "name": "Update selected islands only",
         "locaText": {
             "english": "Restrict updates to the selected island",
-            "german": "Beschränke Updates auf die ausgewählte Insel"
+            "german": "Beschränke Updates auf die ausgewählte Insel",
+            "korean": "선택한 섬만 가져오기"
         }
     }
 }

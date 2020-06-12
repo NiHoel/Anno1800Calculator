@@ -288,7 +288,10 @@
                                     <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
                                     <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
                                 </div>
-                                <div class="ui-race-unit-name" data-bind="text: name, visible: !$root.settings.hideNames.checked(), attr: {'race-unit-guid' : guid}"></div>
+                                <div class="ui-race-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'race-unit-guid' : guid}">
+                                    <span data-bind="visible: hotkey, text: hotkey() ? '[' + hotkey().toUpperCase() + '] ' : ''"></span>
+                                    <span data-bind="text: name"></span>
+                                </div>
 
                                 <div class="input text">
                                     <div class="input-group spinner mb-3">
@@ -304,7 +307,7 @@
                             </div>
                         </div>
                     </div>
-                    <btn class="btn btn-light float-right align-middle" data-bind="click: () => $root.island().reset()">Reset</btn>
+                    <btn class="btn btn-light float-right align-middle" data-bind="click: () => $root.island().reset(), text: $root.texts.reset.name()">Reset</btn>
                 </div>
             </fieldset>
             <!-- /population input field -->
