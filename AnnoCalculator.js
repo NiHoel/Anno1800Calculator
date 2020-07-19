@@ -553,6 +553,9 @@ class Factory extends Consumer {
 
         this.buildings = ko.computed(() => {
             var buildings = Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost();
+            if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
+                buildings *= this.module.additionalOutputCycle / (this.module.additionalOutputCycle + 1);
+
             if (this.moduleDemand)
                 if (this.moduleChecked())
                     this.moduleDemand.updateAmount(Math.max(Math.ceil(buildings), this.existingBuildings()) * this.module.tpmin);
@@ -675,7 +678,16 @@ class Demand extends NamedElement {
                 else
                     d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
 
-                this.amount.subscribe(val => d.updateAmount(val * input.Amount));
+                this.amount.subscribe(val => {
+                    var factory = this.factory();
+                    var amount = val * input.Amount;
+
+                    if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
+                        amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+
+                    d.updateAmount(amount)
+                });
+
                 return d;
             });
 
