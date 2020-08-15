@@ -107,7 +107,7 @@ class Island {
 
         this.regions = [];
         this.populationLevels = [];
-		this.consumers = [];
+        this.consumers = [];
         this.factories = [];
         this.categories = [];
         this.workforce = [];
@@ -152,12 +152,11 @@ class Island {
         for (let factory of params.factories) {
             let f = new Factory(factory, assetsMap)
             assetsMap.set(f.guid, f);
-			this.consumers.push(f);
+            this.consumers.push(f);
             this.factories.push(f);
 
             if (localStorage) {
-                if (f.moduleChecked)
-                { // set moduleChecked before boost, otherwise boost would be increased
+                if (f.moduleChecked) { // set moduleChecked before boost, otherwise boost would be increased
                     let id = f.guid + ".module.checked";
                     if (localStorage.getItem(id))
                         f.moduleChecked(parseInt(localStorage.getItem(id)));
@@ -227,7 +226,7 @@ class Island {
         // setup demands induced by modules
         for (let factory of params.factories) {
             let f = assetsMap.get(factory.guid);
-            if(f.module)
+            if (f.module)
                 f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
         }
 
@@ -236,7 +235,7 @@ class Island {
             assetsMap.set(i.guid, i);
             this.items.push(i);
 
-            i.factories.forEach(f => {if(f)f.items.push(i)});
+            i.factories.forEach(f => { if (f) f.items.push(i) });
 
             if (localStorage) {
                 let id = i.guid + ".checked";
@@ -329,38 +328,38 @@ class Island {
             this.categories.push(c);
         }
 
-        for (let powerPlant of params.powerPlants){
-			var pl = assetsMap.get(powerPlant.guid);
-			this.categories[1].consumers.push(pl);
-			var pr = pl.getInputs()[0].product;
-			let n = new PowerPlantNeed({guid: pr.guid, factory: pl, product: pr}, assetsMap);
-			pl.existingBuildings.subscribe(() => n.updateAmount());
-			n.updateAmount();
-		}
+        for (let powerPlant of params.powerPlants) {
+            var pl = assetsMap.get(powerPlant.guid);
+            this.categories[1].consumers.push(pl);
+            var pr = pl.getInputs()[0].product;
+            let n = new PowerPlantNeed({ guid: pr.guid, factory: pl, product: pr }, assetsMap);
+            pl.existingBuildings.subscribe(() => n.updateAmount());
+            n.updateAmount();
+        }
 
         for (let p of this.categories[1].products) {
-			if(p)
-            for (let b of p.factories) {
-                if (b) {
-                    b.editable = true;
-                    let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
-                    b.boost.subscribe(() => n.updateAmount());
-                    b.existingBuildings.subscribe(() => n.updateAmount());
-                    b.amount.subscribe(() => n.updateAmount());
-                    this.buildingMaterialsNeeds.push(n);
+            if (p)
+                for (let b of p.factories) {
+                    if (b) {
+                        b.editable = true;
+                        let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
+                        b.boost.subscribe(() => n.updateAmount());
+                        b.existingBuildings.subscribe(() => n.updateAmount());
+                        b.amount.subscribe(() => n.updateAmount());
+                        this.buildingMaterialsNeeds.push(n);
 
-                    if (localStorage) {
-                        let oldId = b.guid + ".buildings";
-                        let id = b.guid + ".existingBuildings"
-                        if (localStorage.getItem(id) || localStorage.getItem(oldId))
-                            b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
+                        if (localStorage) {
+                            let oldId = b.guid + ".buildings";
+                            let id = b.guid + ".existingBuildings"
+                            if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                                b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
 
-                        b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                            b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
+                        }
+
+                        n.updateAmount();
                     }
-
-                    n.updateAmount();
                 }
-            }
         }
 
         // negative extra amount must be set after the demands of the population are generated
@@ -392,7 +391,7 @@ class Island {
         }
 
         // force update once all pending notifications are processed
-        setTimeout(() => { this.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000); 
+        setTimeout(() => { this.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000);
 
         this.assetsMap = assetsMap;
         this.products = products;
@@ -402,8 +401,8 @@ class Island {
         this.assetsMap.forEach(a => {
             if (a instanceof Product)
                 a.fixedFactory(null);
-			if (a instanceof Consumer)
-				a.existingBuildings(0);
+            if (a instanceof Consumer)
+                a.existingBuildings(0);
             if (a instanceof Factory) {
                 if (a.moduleChecked)
                     a.moduleChecked(false);
@@ -429,17 +428,17 @@ class Island {
 }
 
 class Consumer extends NamedElement {
-	constructor(config, assetsMap) {
+    constructor(config, assetsMap) {
         super(config);
 
         if (config.region)
             this.region = assetsMap.get(config.region);
 
         this.amount = ko.observable(0);
-		this.boost = ko.observable(1);
+        this.boost = ko.observable(1);
 
         this.demands = new Set();
-        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount()))  / this.tpmin );
+        this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
@@ -464,7 +463,7 @@ class Consumer extends NamedElement {
             if (a instanceof Workforce)
                 return new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
         }
-		return {updateAmount: () => {}};
+        return { updateAmount: () => { } };
     }
 
     getRegionExtendedName() {
@@ -475,15 +474,15 @@ class Consumer extends NamedElement {
     }
 
     getIcon() {
-		return this.icon;
-	}
+        return this.icon;
+    }
 
     updateAmount() {
         var sum = 0;
         this.demands.forEach(d => {
             var a = d.amount();
-//            if (a <= -EPSILON || a > 0)
-                sum += a;
+            //            if (a <= -EPSILON || a > 0)
+            sum += a;
         });
 
         if (sum < -EPSILON) {
@@ -532,7 +531,7 @@ class Factory extends Consumer {
         super(config, assetsMap);
 
         this.extraAmount = ko.observable(0);
-        
+
         this.percentBoost = ko.observable(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
@@ -549,7 +548,7 @@ class Factory extends Consumer {
             })
             //moduleDemand created in island constructor after referencing products
         }
-            
+
 
         this.buildings = ko.computed(() => {
             var buildings = Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost();
@@ -573,7 +572,7 @@ class Factory extends Consumer {
     }
 
     referenceProducts(assetsMap) {
-		super.referenceProducts(assetsMap);
+        super.referenceProducts(assetsMap);
         this.getOutputs().forEach(i => i.product = assetsMap.get(i.Product));
 
         this.product = this.getProduct();
@@ -590,7 +589,7 @@ class Factory extends Consumer {
 
             let amount = parseFloat(this.amount());
             if (val < -Math.ceil(amount * 100) / 100)
-                this.extraAmount(- Math.ceil(amount * 100)/100);
+                this.extraAmount(- Math.ceil(amount * 100) / 100);
             else
                 this.extraDemand.updateAmount(Math.max(val, -amount));
         });
@@ -602,8 +601,8 @@ class Factory extends Consumer {
     }
 
     getIcon() {
-		return this.getProduct() ? this.getProduct().icon : super.getIcon();
-	}
+        return this.getProduct() ? this.getProduct().icon : super.getIcon();
+    }
 
     incrementBuildings() {
         if (this.buildings() <= 0 || parseInt(this.percentBoost()) <= 1)
@@ -660,8 +659,8 @@ class Demand extends NamedElement {
         this.amount = ko.observable(0);
 
         this.product = assetsMap.get(this.guid);
-		if(!this.product)
-			throw `No Product ${this.guid}`;
+        if (!this.product)
+            throw `No Product ${this.guid}`;
         this.factory = ko.observable(config.factory);
 
         if (this.product) {
@@ -670,26 +669,31 @@ class Demand extends NamedElement {
             if (this.consumer)
                 this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
 
-            this.demands = this.factory().getInputs().map(input => {
-                var d;
-                let items = this.factory().items.filter(item => item.replacements.has(input.Product));
-                if (items.length)
-                    d = new DemandSwitch(this, input, items, assetsMap);
-                else
-                    d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
+            if (this.product.differentFactoryInputs) {
+                this.demands = [new FactoryDemandSwitch(this, assetsMap)];
+                this.amount.subscribe(val => this.demands[0].updateAmount(val));
+            }
+            else
+                this.demands = this.factory().getInputs().map(input => {
+                    var d;
+                    let items = this.factory().items.filter(item => item.replacements.has(input.Product));
+                    if (items.length)
+                        d = new ItemDemandSwitch(this, input, items, assetsMap);
+                    else
+                        d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
 
-                this.amount.subscribe(val => {
-                    var factory = this.factory();
-                    var amount = val * input.Amount;
+                    this.amount.subscribe(val => {
+                        var factory = this.factory();
+                        var amount = val * input.Amount;
 
-                    if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
-                        amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+                        if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
+                            amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
 
-                    d.updateAmount(amount)
+                        d.updateAmount(amount)
+                    });
+
+                    return d;
                 });
-
-                return d;
-            });
 
 
             this.amount.subscribe(val => {
@@ -732,7 +736,7 @@ class Demand extends NamedElement {
     }
 }
 
-class DemandSwitch {
+class ItemDemandSwitch {
     constructor(consumer, input, items, assetsMap) {
         this.items = items;
 
@@ -751,6 +755,62 @@ class DemandSwitch {
             let checked = this.items.map(item => item.checked()).reduce((a, b) => a || b);
             d.updateAmount(checked == idx ? amount : 0)
         });
+    }
+
+}
+
+class FactoryDemandSwitch {
+    constructor(consumer, assetsMap) {
+        this.consumer = consumer;
+        this.factory = this.consumer.factory();
+
+        this.demands = [];
+        this.demandsMap = new Map();
+
+        for (var factory of consumer.product.factories) {
+            var factoryDemands = [];
+            for (var input of factory.getInputs()) {
+
+                var d;
+                let items = factory.items.filter(item => item.replacements.has(input.Product));
+                if (items.length)
+                    d = new ItemDemandSwitch(consumer, input, items, assetsMap);
+                else
+                    d = new Demand({ guid: input.Product, consumer: consumer }, assetsMap);
+
+                factoryDemands.push(d);
+                this.demands.push(d);
+            }
+
+            this.demandsMap.set(factory, factoryDemands);
+
+        }
+
+        this.amount = 0;
+
+        consumer.factory.subscribe(factory => this.updateAmount(this.amount));
+    }
+
+    updateAmount(amount) {
+        this.amount = amount;
+        var factory = this.consumer.factory();
+
+        if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
+            amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+
+        if (factory != this.factory) {
+            for (var d of this.demandsMap.get(this.factory)) {
+                d.updateAmount(0);
+            }
+        }
+
+        this.factory = factory;
+
+
+        for (var d of this.demandsMap.get(factory)) {
+            d.updateAmount(amount);
+        }
+
     }
 
 }
@@ -899,7 +959,7 @@ class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
         this.products = config.products.map(p => assetsMap.get(p)).filter(p => p != null);
-		this.consumers = [];
+        this.consumers = [];
     }
 }
 
@@ -977,7 +1037,7 @@ class PopulationReader {
         var url_with_params = this.url + "?" +
             jQuery.param({
                 lang: view.settings.language(),
-//                optimalProductivity: view.settings.optimalProductivity.checked()
+                //                optimalProductivity: view.settings.optimalProductivity.checked()
             });
         const response = await fetch(url_with_params);
         const json = await response.json(); //extract JSON from the http response
@@ -1021,7 +1081,7 @@ class PopulationReader {
             var island = null;
             if (json.islandName) {
                 var best_match = 0;
-   
+
                 for (var isl of view.islands()) {
                     if (json.islandName == ALL_ISLANDS && isl.isAllIslands()) {
                         island = isl;
@@ -1029,8 +1089,7 @@ class PopulationReader {
                     }
 
                     var match = this.lcs_length(isl.name(), json.islandName) / Math.max(isl.name().length, json.islandName.length);
-                    if (match > 0.66 && match > best_match)
-                    {
+                    if (match > 0.66 && match > best_match) {
                         island = isl;
                         best_match = match;
                     }
@@ -1044,8 +1103,8 @@ class PopulationReader {
                 return;
 
 
-			for(let key in json){
-				let asset = island.assetsMap.get(parseInt(key));
+            for (let key in json) {
+                let asset = island.assetsMap.get(parseInt(key));
                 if (asset instanceof PopulationLevel) {
                     if (json[key].amount && view.settings.populationLevelAmount.checked()) {
                         asset.amount(json[key].amount);
@@ -1055,14 +1114,14 @@ class PopulationReader {
                         asset.existingBuildings(json[key].existingBuildings);
                     }
                 }
-				else if(asset instanceof Consumer){
-                    if (json[key].existingBuildings &&  view.settings.factoryExistingBuildings.checked())
-						asset.existingBuildings(parseInt(json[key].existingBuildings));
+                else if (asset instanceof Consumer) {
+                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                        asset.existingBuildings(parseInt(json[key].existingBuildings));
                     if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
-						asset.percentBoost(parseInt(json[key].percentBoost));
-				}
-			}
-		}
+                        asset.percentBoost(parseInt(json[key].percentBoost));
+                }
+            }
+        }
     }
 
     checkVersion() {
@@ -1072,17 +1131,17 @@ class PopulationReader {
                 // options
                 message: view.texts.serverUpdate.name()
             }, {
-                    // settings
-                    type: 'warning',
-                    placement: { align: 'center' }
-                });
+                // settings
+                type: 'warning',
+                placement: { align: 'center' }
+            });
         }
     }
 
     // Function to find length of Longest Common Subsequence of substring
     // X[0..m-1] and Y[0..n-1]
     // From https://www.techiedelight.com/longest-common-subsequence/
-    lcs_length( X,  Y) {
+    lcs_length(X, Y) {
         var m = X.length, n = Y.length;
 
         // lookup table stores solution to already computed sub-problems
@@ -1090,13 +1149,11 @@ class PopulationReader {
         // X[0..i-1] and Y[0..j-1]
         var lookup = [];
         for (var i = 0; i <= m; i++)
-            lookup.push(new Array(n+1).fill(0));
+            lookup.push(new Array(n + 1).fill(0));
 
         // fill the lookup table in bottom-up manner
-        for (var i = 1; i <= m; i++)
-        {
-            for (var j = 1; j <= n; j++)
-            {
+        for (var i = 1; i <= m; i++) {
+            for (var j = 1; j <= n; j++) {
                 // if current character of X and Y matches
                 if (X[i - 1] == Y[j - 1])
                     lookup[i][j] = lookup[i - 1][j - 1] + 1;
@@ -1112,7 +1169,7 @@ class PopulationReader {
     }
 }
 
-class IslandManager{
+class IslandManager {
     constructor(params) {
         let islandKey = "islandName";
         let islandsKey = "islandNames";
@@ -1249,7 +1306,7 @@ function init() {
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
- 
+
 
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
@@ -1306,7 +1363,7 @@ function removeSpaces(string) {
 }
 
 function isLocal() {
-    return window.location.protocol == 'file:' || /localhost|127\.0\.0\.1/.test( window.location.host.replace);
+    return window.location.protocol == 'file:' || /localhost|127\.0\.0\.1/.test(window.location.host.replace);
 }
 
 function exportConfig() {
@@ -1337,10 +1394,10 @@ function checkAndShowNotifications() {
                     // options
                     message: view.texts.calculatorUpdate.name()
                 }, {
-                        // settings
-                        type: 'warning',
-                        placement: { align: 'center' }
-                    });
+                    // settings
+                    type: 'warning',
+                    placement: { align: 'center' }
+                });
             }
         }
 
@@ -1351,11 +1408,11 @@ function checkAndShowNotifications() {
                         // options
                         message: view.texts.newFeature.name()
                     }, {
-                            // settings
-                            type: 'success',
-                            placement: { align: 'center' },
-                            timer: 10000
-                        });
+                        // settings
+                        type: 'success',
+                        placement: { align: 'center' },
+                        timer: 10000
+                    });
             }
 
             localStorage.setItem("versionCalculator", versionCalculator);
