@@ -31,9 +31,16 @@ class Storage {
         this.key = key;
         var text = localStorage.getItem(key);
         this.json = text ? JSON.parse(text) : {};
+
+        this.length = 0;
+        for (var attr in this.json)
+            this.length = this.length + 1;
     }
 
     setItem(itemKey, value) {
+        if (this.json[itemKey] == null)
+            this.length = this.length + 1;
+
         this.json[itemKey] = value;
         this.save();
     }
@@ -43,7 +50,10 @@ class Storage {
     }
 
     removeItem(itemKey) {
-        delete this.json.itemKey;
+        if (this.json[itemKey] != null)
+            this.length = this.length - 1;
+
+        delete this.json[itemKey];
         this.save();
     }
 
@@ -59,6 +69,7 @@ class Storage {
     clear() {
         this.json = {}
         this.save();
+        this.length = 0;
     }
 
     save() {
@@ -102,6 +113,7 @@ class Island {
             this.isAllIslands = function () { return true; };
         }
         this.storage = localStorage;
+        var isNew = !localStorage.length;
 
         var assetsMap = new Map();
 
@@ -218,6 +230,9 @@ class Island {
                         p.fixedFactory.subscribe(f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
                     }
                 }
+
+                if (isNew && p.guid == 1010240)
+                    p.fixedFactory(assetsMap.get(1010318));
             }
         }
 
@@ -416,6 +431,9 @@ class Island {
             }
             if (a instanceof Item)
                 a.checked(false);
+
+            if (a.guid == 1010240)
+                a.fixedFactory(this.assetsMap.get(1010318));
         });
 
         this.populationLevels.forEach(l => l.needs.forEach(n => {
