@@ -541,9 +541,9 @@ class Factory extends Consumer {
             this.moduleChecked = ko.observable(false);
             this.moduleChecked.subscribe(checked => {
                 if (checked)
-                    this.percentBoost(this.percentBoost() + this.module.productivityUpgrade);
+                    this.percentBoost(parseInt(this.percentBoost()) + this.module.productivityUpgrade);
                 else {
-                    var val = Math.max(1, this.percentBoost() - this.module.productivityUpgrade);
+                    var val = Math.max(1, parseInt(this.percentBoost()) - this.module.productivityUpgrade);
                     this.percentBoost(val);
                 }
             })
