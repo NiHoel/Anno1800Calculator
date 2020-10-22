@@ -1,4 +1,4 @@
-let versionCalculator = "v3.7";
+let versionCalculator = "v3.8";
 let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
@@ -1728,9 +1728,9 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 8.1",
-        german: "Game Update 8.1",
-        korean: "게임 업데이트 8.1"
+        english: "Game Update 9 - Land of Lions",
+        german: "Game Update 9 - Land der Löwen",
+        korean: "게임 업데이트 9 - 사자의 땅"
     },
     helpContent: {
         german:
