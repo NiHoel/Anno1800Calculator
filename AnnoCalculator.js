@@ -718,7 +718,15 @@ class Demand extends NamedElement {
                 this.factory().updateAmount();
             });
 
-            this.buildings = ko.computed(() => parseFloat(this.amount()) / this.factory().tpmin / this.factory().boost());
+             this.buildings = ko.computed(() => {
+                var factory = this.factory();
+                var buildings = Math.max(0, parseFloat(this.amount())) / factory.tpmin / factory.boost();
+                
+                if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
+                    buildings *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+
+                return buildings;
+            });
         }
     }
 
