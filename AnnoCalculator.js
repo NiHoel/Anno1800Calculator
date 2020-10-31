@@ -236,15 +236,6 @@ class Island {
             }
         }
 
-        this.consumers.forEach(f => f.referenceProducts(assetsMap));
-
-        // setup demands induced by modules
-        for (let factory of params.factories) {
-            let f = assetsMap.get(factory.guid);
-            if (f.module)
-                f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
-        }
-
         for (let item of (params.items || [])) {
             let i = new Item(item, assetsMap);
             assetsMap.set(i.guid, i);
@@ -260,6 +251,18 @@ class Island {
                 i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
             }
         }
+
+        // must be set after items so that extraDemand is correctly handled
+        this.consumers.forEach(f => f.referenceProducts(assetsMap));
+
+        // setup demands induced by modules
+        for (let factory of params.factories) {
+            let f = assetsMap.get(factory.guid);
+            if (f.module)
+                f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
+        }
+
+
 
         for (let level of params.populationLevels) {
             let l = new PopulationLevel(level, assetsMap)
