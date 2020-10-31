@@ -570,11 +570,21 @@ class Factory extends Consumer {
             //moduleDemand created in island constructor after referencing products
         }
 
+        this.producedAmount = ko.computed(() => {
+            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
+
+            if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
+                amount *= this.module.additionalOutputCycle / (this.module.additionalOutputCycle + 1);
+
+            for (var buff of (this.buffs || []))
+                if (buff.checked())
+                    amount *= buff.additionalOutputCycle / (buff.additionalOutputCycle + 1);
+
+            return amount;
+        });
 
         this.buildings = ko.computed(() => {
-            var buildings = Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost();
-            if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
-                buildings *= this.module.additionalOutputCycle / (this.module.additionalOutputCycle + 1);
+            var buildings = this.producedAmount() / this.tpmin / this.boost();
 
             if (this.moduleDemand)
                 if (this.moduleChecked())
@@ -585,6 +595,8 @@ class Factory extends Consumer {
         });
 
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+
+
     }
 
 
@@ -1641,6 +1653,11 @@ texts = {
     tonsPerMinute: {
         english: "Production in Tons per Minute",
         german: "Produktion in Tonnen pro Minute",
+        korean: "분당 생산량"
+    },
+    producedAmount: {
+        english: "Plain building output after taking extra goods into account",
+        german: "Reiner Gebäudeoutput nach Berücksichtigung von Zusatzwaren",
         korean: "분당 생산량"
     },
     language: {

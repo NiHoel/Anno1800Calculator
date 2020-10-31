@@ -453,6 +453,12 @@
                                                 <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
                                             </div>
 
+                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.producedAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
+                                                <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(producedAmount()))/100"></span><span> t/min</span></div>
+                                            </div>
+
+
+
                                         </div>
                                     </div>
 
