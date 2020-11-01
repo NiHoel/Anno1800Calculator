@@ -126,6 +126,8 @@ class Island {
         this.buildingMaterialsNeeds = [];
         this.multiFactoryProducts = [];
         this.items = [];
+        this.replaceInputItems = [];
+        this.extraGoodItems = [];
 
         for (let region of params.regions) {
             let r = new Region(region, assetsMap);
@@ -254,18 +256,38 @@ class Island {
             assetsMap.set(i.guid, i);
             this.items.push(i);
 
-            i.factories.forEach(f => { if (f) f.items.push(i) });
+            if (i.replacements)
+                this.replaceInputItems.push(i);
+
+            if (i.additionalOutputs)
+                this.extraGoodItems.push(i);
 
             if (localStorage) {
-                let id = i.guid + ".checked";
-                if (localStorage.getItem(id))
-                    i.checked(parseInt(localStorage.getItem(id)));
+                let oldId = i.guid + ".checked";
+                var oldChecked = false;
+                if (localStorage.getItem(oldId))
+                    oldChecked = parseInt(localStorage.getItem(oldId));
 
-                i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                for (var equip of i.equipments) {
+                    let id = `${equip.factory.guid}[${i.guid}].checked`;
+
+                    if (oldChecked)
+                        equip.checked(true);
+
+                    if (localStorage.getItem(id))
+                        equip.checked(parseInt(localStorage.getItem(id)));
+
+                    equip.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+
+                localStorage.removeItem(oldId);
             }
         }
 
-
+        this.extraGoodItems.sort((a, b) => a.name() > b.name());
+        view.settings.language.subscribe(() => {
+            this.extraGoodItems.sort((a, b) => a.name() > b.name());
+        })
 
         // must be set after items so that extraDemand is correctly handled
         this.consumers.forEach(f => f.referenceProducts(assetsMap));
@@ -379,6 +401,8 @@ class Island {
                         b.boost.subscribe(() => n.updateAmount());
                         b.existingBuildings.subscribe(() => n.updateAmount());
                         b.amount.subscribe(() => n.updateAmount());
+                        if(b.palaceBuff)
+                            b.palaceBuffChecked.subscribe(() => n.updateAmount());
                         this.buildingMaterialsNeeds.push(n);
 
                         if (localStorage) {
@@ -478,6 +502,8 @@ class Consumer extends NamedElement {
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
+        this.producedAmount = ko.computed(() => this.amount());
+
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
         this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
@@ -575,6 +601,24 @@ class Factory extends Consumer {
         super(config, assetsMap);
 
         this.extraAmount = ko.observable(0);
+        this.extraGoods = ko.observableArray();
+        this.extraGoodsNonZero = ko.computed(() => {
+            var arr = this.extraGoods().filter(i => i.amount());
+
+            if (arr.length)
+                arr.push({
+                    amount: this.extraGoodsTotal
+                });
+
+            return arr;
+        });
+        this.extraGoodsTotal = ko.computed(() => {
+            var total = 0;
+            for (var i of (this.extraGoods() || []))
+                total += i.amount();
+
+            return total;
+        })
 
         this.percentBoost = ko.observable(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -695,6 +739,10 @@ class Factory extends Consumer {
     decrementPercentBoost() {
         this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
+
+    updateExtraGoods() {
+        this.extraAmount(- this.extraGoodsTotal());
+    }
 }
 
 class Product extends NamedElement {
@@ -756,7 +804,7 @@ class Demand extends NamedElement {
             else
                 this.demands = this.factory().getInputs().map(input => {
                     var d;
-                    let items = this.factory().items.filter(item => item.replacements.has(input.Product));
+                    let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
                     if (items.length)
                         d = new ItemDemandSwitch(this, input, items, assetsMap);
                     else
@@ -849,7 +897,7 @@ class FactoryDemandSwitch {
             for (var input of factory.getInputs()) {
 
                 var d;
-                let items = factory.items.filter(item => item.replacements.has(input.Product));
+                let items = factory.items.filter(item => item.replacements && item.replacements.has(input.Product));
                 if (items.length)
                     d = new ItemDemandSwitch(consumer, input, items, assetsMap);
                 else
@@ -967,7 +1015,14 @@ class BuildingMaterialsNeed extends Need {
     updateAmount() {
         var otherDemand = 0;
         this.factory().demands.forEach(d => otherDemand += d == this ? 0 : d.amount());
-        var overProduction = this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() - otherDemand;
+
+        var existingBuildingsOutput =
+            this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost();
+
+        if (this.factory().palaceBuff && this.factory().palaceBuffChecked())
+            existingBuildingsOutput *= 1 + 1 / this.factory().palaceBuff.additionalOutputCycle;
+
+        var overProduction = existingBuildingsOutput - otherDemand;
         this.amount(Math.max(0, overProduction));
     }
 
@@ -1071,13 +1126,15 @@ class WorkforceDemand extends NamedElement {
     }
 }
 
-class Item extends Option {
+class Item extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
-        this.replacements = new Map();
-        this.replacementArray = [];
 
-        if (this.replaceInputs)
+        if (this.replaceInputs) {
+            this.replacements = new Map();
+            this.replacementArray = [];
+
+
             this.replaceInputs.forEach(r => {
                 this.replacementArray.push({
                     old: assetsMap.get(r.OldInput),
@@ -1085,10 +1142,51 @@ class Item extends Option {
                 });
                 this.replacements.set(r.OldInput, r.NewInput);
             });
+        }
+
+        if (this.additionalOutputs) {
+            this.extraGoods = this.additionalOutputs.map(p => assetsMap.get(p.Product));
+        }
 
         this.factories = this.factories.map(f => assetsMap.get(f));
+        this.equipments = this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap))
     }
 }
+
+class EquippedItem extends Option {
+    constructor(config, assetsMap) {
+        super(config);
+
+        this.replacements = config.item.replacements;
+        this.replacementArray = config.item.replacementArray;
+
+        if (config.item.additionalOutputs) {
+            this.extraGoods = config.item.additionalOutputs.map(cfg => {
+                var config = $.extend(true, {}, cfg, { item: this, factory: this.factory });
+                return new ExtraGoodProduction(config, assetsMap);
+            })
+        }
+
+        this.factory.items.push(this);
+    }
+}
+
+class ExtraGoodProduction {
+    constructor(config, assetsMap) {
+        this.item = config.item;
+        this.factory = config.factory;
+
+        this.product = assetsMap.get(config.Product);
+        this.additionalOutputCycle = config.AdditionalOutputCycle;
+
+        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.producedAmount() / this.additionalOutputCycle);
+
+        for (var f of this.product.factories) {
+            f.extraGoods.push(this);
+        }
+    }
+}
+
 
 class PopulationReader {
 
@@ -1377,13 +1475,13 @@ function init() {
         view.settings.language.subscribe(val => localStorage.setItem(id, val));
     }
 
-
+    view.selectedFactory = ko.observable(view.island().factories[0]);
 
     ko.applyBindings(view, $(document.body)[0]);
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
-
+ 
 
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
@@ -1596,7 +1694,7 @@ $(document).ready(function () {
         }
     });
 
-
+    $('[data-toggle="popover"]').popover(); 
 })
 
 texts = {
@@ -1660,6 +1758,58 @@ texts = {
         "russian": "Сбросить",
         "polish": "Wyzeruj",
         "japanese": "リセット"
+    },
+    itemsEquipped: {
+        "english": "Items Equipped",
+        "chinese": "已装备物品",
+        "taiwanese": "已裝備物品",
+        "italian": "Oggetti in uso",
+        "spanish": "Objetos equipados",
+        "german": "Ausgerüstete Items",
+        "polish": "Przedmioty w użyciu",
+        "french": "Objets en stock",
+        "korean": "배치한 아이템",
+        "japanese": "装備したアイテム",
+        "russian": "Используемые предметы"
+    },
+    productionBuildings: {
+        "english": "Production Buildings",
+        "chinese": "生产建筑",
+        "taiwanese": "生產建築",
+        "italian": "Edifici produttivi",
+        "spanish": "Edificios de producción",
+        "german": "Produktionsgebäude",
+        "polish": "Budynki produkcyjne",
+        "french": "Bâtiments de production",
+        "korean": "생산 건물",
+        "japanese": "生産施設",
+        "russian": "Производственные здания"
+    },
+    extraGoods: {
+        "english": "Extra Goods",
+        "chinese": "额外货物",
+        "taiwanese": "額外貨物",
+        "italian": "Merci aggiuntive",
+        "spanish": "Bienes extra",
+        "german": "Zusatzwaren",
+        "polish": "Dodatkowe towary",
+        "french": "Marchandises supplémentaires",
+        "korean": "추가 물품",
+        "japanese": "追加品物",
+        "russian": "Дополнительные товары"
+    },
+    total: {
+        "english": "Total",
+        "chinese": "总计",
+        "taiwanese": "總計",
+        "italian": "Totale",
+        "spanish": "Total",
+        "german": "Gesamt",
+        "polish": "Razem",
+        "french": "Total",
+        "korean": "합계",
+        "japanese": "合計",
+        "russian": "Всего"
     },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",

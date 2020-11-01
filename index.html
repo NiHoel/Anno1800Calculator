@@ -63,6 +63,11 @@
                     <form>
                         <div data-bind="foreach: settings.options">
                             <div class="custom-control custom-checkbox">
+                                <span data-bind="if: $data.id == 'additionalProduction'" style="position: absolute;z-index: 1000;margin-left: calc(100% - 4rem);">
+                                    <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#item-equipment-dialog').modal(),500)" class="btn btn-light">
+                                        <span class="fa fa-cog"> </span>
+                                    </button>
+                                </span>
                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
                                 <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
                             </div>
@@ -138,7 +143,7 @@
     <!-- /#help-dialog -->
     <!-- #factory-choose-dialog -->
     <div id="factory-choose-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 data-bind="text: $root.texts.chooseFactories.name">Choose Factory for each Product</h4>
@@ -163,11 +168,11 @@
                         </div>
                         <hr />
 
-                        <div data-bind="foreach: $root.island().items">
+                        <div data-bind="foreach: $root.island().replaceInputItems">
                             <div class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
 
                                 <div class="ui-fchain-item-name" style="height: unset">
-                                    <div class="float-right">
+                                    <div data-bind="foreach: $data.equipments" class="float-right">
                                         <input type="checkbox" data-bind="checked: $data.checked">
                                     </div>
                                     <span data-bind="text: name"></span>
@@ -196,6 +201,68 @@
         </div>
     </div>
     <!-- #/factory-choose-dialog -->
+    <!-- #item-equipment-dialog -->
+    <div id="item-equipment-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: $root.texts.itemsEquipped.name">Items equipped</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead style="text-align: center">
+                        <th></th>
+                        <th></th>
+                        <th data-bind="text: $root.texts.productionBuildings.name">Production Buildings</th>
+                        <th data-bind="text: $root.texts.extraGoods.name">Extra Goods</th>
+                        </thead>
+                        <tbody data-bind="foreach: $root.island().extraGoodItems">
+                            <tr>
+                                <td><img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? icon : null}"></td> <!-- item icon -->
+                                <td data-bind="text: $data.name"></td> <!-- item name -->
+                                <td>
+                                    <span data-bind="foreach: $data.equipments" style="display: flex; flex-flow: wrap; justify-content: center">
+                                        <!-- icon factories -->
+
+
+                                        <span style="flex-basis: fit-content;">
+                                            <span class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
+                                                <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
+
+                                                </label>
+                                            </span>
+                                        </span>
+                                        <span style="flex-basis: fit-content;">
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon  : null, alt: $data.factory.name, for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                        </span>
+
+
+                                    </span>
+                                </td>
+                                <td>
+                                    <span data-bind="foreach: $data.extraGoods" style="display: flex; flex-flow: wrap;">
+                                        <!-- icon extra goods -->
+                                        <span style="flex: 100 1 auto;"></span>
+
+                                        <span style="flex: auto;">
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
+                                        </span>
+
+                                        <span style="flex: 100 1 auto;"></span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/item-equipment-dialog -->
     <!-- #download-dialog -->
     <div id="download-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -342,6 +409,103 @@
                 </div>
             </fieldset>
             <!-- /required workforce field -->
+            <!-- #factory-config-dialog -->
+            <div id="factory-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content" data-bind="with: $root.selectedFactory()">
+                        <div class="modal-header">
+                            <h4 data-bind="text: $data.name">Factory Name</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                        </div>
+                        <div class="modal-body">
+                            <h6 data-bind="text: $root.texts.itemsEquipped.name">Equipped Items</h6>
+                            <table class="table table-striped">
+                                <tbody data-bind="foreach: $data.items">
+                                    <tr>
+                                        <td>
+
+                                            <span class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
+                                                <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
+
+                                                </label>
+                                            </span>
+                                        </td>
+                                        <td><img src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"></td> <!-- item icon -->
+                                        <td data-bind="text: $data.name"></td> <!-- item name -->
+                                        <td>
+                                            <span data-bind="if: $data.item.extraGoods">
+                                                <span data-bind="foreach: $data.item.extraGoods" style="display: flex; flex-flow: wrap;">
+                                                    <!-- icon extra goods -->
+                                                    <span style="flex: 100 1 auto;"></span>
+
+                                                    <span style="flex: auto;">
+                                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
+                                                    </span>
+
+                                                    <span style="flex: 100 1 auto;"></span>
+                                                </span>
+                                            </span>
+                                            <div dat-bind="if: $data.replacementArray">
+                                                <div data-bind="foreach: $data.replacementArray">
+                                                    <div class="ui-fchain-item-icon-replacement">
+                                                        <span class="strike-through">
+                                                            <img src="" data-bind="attr: { src: $data.old.icon ? $data.old.icon : null, alt: $data.old.name }" width="30" height="30">
+                                                        </span>
+                                                        <div class="ui-replacement-spacer">
+                                                            →
+                                                        </div>
+                                                        <img src="" data-bind="attr: { src: $data.new.icon ? $data.new.icon : null, alt: $data.new.name }" width="30" height="30">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div data-bind="visible: $data.extraGoodsNonZero().length">
+                                <hr />
+
+                                <h6 data-bind="text: $root.texts.extraGoods.name">Extra Goods</h6>
+                                <table class="table table-striped">
+                                    <thead>
+                                    <th dat-bind="text: $root.texts.source.name">Source</th>
+                                    <th></th>
+                                    </thead>
+                                    <tbody data-bind="foreach: $data.extraGoodsNonZero">
+                                        <tr>
+
+                                            <td>
+                                                <div data-bind="if: $data.item">
+                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
+                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
+                                                </div>
+                                                <div data-bind="if: !$data.item">
+                                                    <span data-bind="$root.texts.total.name" style="font-weight: bold">Total</span>
+                                                </div>
+                                            </td> <!-- factory icon -->
+                                            <td>
+                                                <span data-bind="text: Math.ceil(100*parseFloat($data.amount()))/100"></span>
+                                                <span> t/min</span>
+
+                                                    <span data-bind="if: !$data.item" style="float: right;">
+                                                        <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $parent.updateExtraGoods()">
+                                                            <span class="fa fa-sign-in"> </span>
+                                                        </button>
+                                                    </span>
+
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #/factory-config-dialog -->
             <!-- required factories by category -->
             <div data-bind="foreach: $data.categories">
                 <fieldset class="ui-fieldset" id="categories-view">
@@ -358,8 +522,17 @@
 
                                     <div class="ui-fchain-item" data-bind="visible: amount() > 0 || existingBuildings() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
                                         <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
-                                        <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }"></div>
-                                        <div class="ui-fchain-item-count">
+                                        
+                                    <div class="ui-fchain-item-icon">
+                                        <div class="float-right" data-bind="if: $root.settings.additionalProduction.checked">
+                                            <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data)}" data-toggle="modal" data-target="#factory-config-dialog">
+                                                <span class="fa fa-sliders"></span>
+                                            </button>
+
+                                        </div>
+                                        <img src="" data-bind="attr: { src: $data.icon ? icon : null, alt: name }">
+                                    </div>
+                                    <div class="ui-fchain-item-boost">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
                                                 <div class="input-group mb-3 spinner">
                                                     <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
@@ -374,37 +547,8 @@
                                             </div>
                                         </div>
 
-                                        <div class="ui-fchain-item-module" data-bind="if: !!$data.module || !!$data.palaceBuff">
-                                            <div style="flex: 100 1 auto;"></div>
-
-                                            <!-- module -->
-                                            <div data-bind="if: !!$data.module" style="flex: auto;">
-                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.module">
-                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
-                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
-
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div data-bind="if: !!$data.module" style="flex: auto;">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                                            </div>
-
-                                            <!-- palace buff -->
-                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
-                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.palaceBuff">
-                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
-                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
-
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                                            </div>
-                                            <div style="flex: 100 1 auto;"></div>
-                                        </div>
-
+                                    <div class="ui-fchain-item-attribute-group">
+                                        <div>
                                         <!-- buildings display for non-construction products -->
                                         <div class="ui-fchain-item-count" data-bind="if: !$data.editable">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
@@ -460,18 +604,50 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                            </div>
+                                        <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
                                             <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
 
                                         </div>
-                                        <div class="ui-fchain-item-load" data-bind="if: !$data.editable, visible: $root.settings.additionalProduction.checked()">
 
+                                        <div class="ui-fchain-item-module" data-bind="if: !!$data.module || !!$data.palaceBuff">
+                                            <div style="flex: 100 1 auto;"></div>
+
+                                            <!-- module -->
+                                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.module">
+                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
+                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
+
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                            </div>
+
+                                            <!-- palace buff -->
+                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.palaceBuff">
+                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
+                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
+
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                            </div>
+                                            <div style="flex: 100 1 auto;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked()">
+                                        <div class="ui-fchain-item-extra-input">
                                             <div class="input-group spinner mb-3">
                                                 <div class="input-group-prepend"><span class="input-group-text">+ </span> </div>
                                                 <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
                                             </div>
-
+                                        </div>
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.producedAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
                                                 <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(producedAmount()))/100"></span><span> t/min</span></div>
                                             </div>

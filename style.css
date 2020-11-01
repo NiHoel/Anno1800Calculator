@@ -56,6 +56,10 @@ h1 {
         color: #FF0000;
     }
 
+.modal-xl {
+    max-width: 1140px;
+}
+
 .ui-fieldset {
     border-top: 1px solid #CECECE;
     margin: 15px;
@@ -107,18 +111,43 @@ h1 {
     max-width: calc(100% - 16px);
 }
 
-.ui-fchain-item-count {
+.ui-fchain-item-attribute-group {
+    display: flex;
+    flex-flow: column;
+    height: 5em;
+    justify-content: space-around;
+}
+
+.ui-fchain-item-attribute-group .mb-3 {
+    margin-bottom: 0rem !important;
+}
+
+.ui-fchain-item-boost {
     font-size: 12px;
     font-weight: bold;
     text-align: center;
     margin-top: 5px;
 }
 
+.ui-fchain-item-count {
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.ui-fchain-item-amount {
+    font-size: 12px;
+    text-align: center;
+}
+
 .ui-fchain-item-module {
     flex-flow: row;
     display: flex;
-    margin-top: -14px;
-    margin-bottom: 14px;
+}
+
+.ui-fchain-item-extra-input {
+    padding-top: 5px;
+    margin-bottom: -10px;
 }
 
 .ui-fchain-item-load {
