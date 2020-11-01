@@ -161,6 +161,11 @@ class Island {
             this.consumers.push(f);
         }
 
+        for (let buff of (params.palaceBuffs || [])) {
+            let f = new PalaceBuff(buff, assetsMap);
+            assetsMap.set(f.guid, f);
+        }
+
         for (let factory of params.factories) {
             let f = new Factory(factory, assetsMap)
             assetsMap.set(f.guid, f);
@@ -174,6 +179,14 @@ class Island {
                         f.moduleChecked(parseInt(localStorage.getItem(id)));
 
                     f.moduleChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+
+                if (f.palaceBuff) {
+                    let id = f.guid + ".palaceBuff.checked";
+                    if (localStorage.getItem(id))
+                        f.palaceBuffChecked(parseInt(localStorage.getItem(id)));
+
+                    f.palaceBuffChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
                 }
 
                 {
@@ -251,6 +264,8 @@ class Island {
                 i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
             }
         }
+
+
 
         // must be set after items so that extraDemand is correctly handled
         this.consumers.forEach(f => f.referenceProducts(assetsMap));
@@ -547,6 +562,14 @@ class Module extends Consumer {
     }
 }
 
+class PalaceBuff extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+    }
+
+
+}
+
 class Factory extends Consumer {
     constructor(config, assetsMap) {
         super(config, assetsMap);
@@ -570,17 +593,22 @@ class Factory extends Consumer {
             //moduleDemand created in island constructor after referencing products
         }
 
+        if (config.palaceBuff) {
+            this.palaceBuff = assetsMap.get(config.palaceBuff);
+            this.palaceBuffChecked = ko.observable(false);
+        }
+
         this.producedAmount = ko.computed(() => {
             var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
 
+            var factor = 1;
             if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
-                amount *= this.module.additionalOutputCycle / (this.module.additionalOutputCycle + 1);
+                factor += 1 / this.module.additionalOutputCycle;
 
-            for (var buff of (this.buffs || []))
-                if (buff.checked())
-                    amount *= buff.additionalOutputCycle / (buff.additionalOutputCycle + 1);
+            if (this.palaceBuff && this.palaceBuffChecked())
+                factor += 1 / this.palaceBuff.additionalOutputCycle;
 
-            return amount;
+            return amount / factor;
         });
 
         this.buildings = ko.computed(() => {
@@ -691,6 +719,7 @@ class Demand extends NamedElement {
 
         this.amount = ko.observable(0);
 
+
         this.product = assetsMap.get(this.guid);
         if (!this.product)
             throw `No Product ${this.guid}`;
@@ -699,12 +728,30 @@ class Demand extends NamedElement {
         if (this.product) {
             this.updateFixedProductFactory(this.product.fixedFactory());
             this.product.fixedFactory.subscribe(f => this.updateFixedProductFactory(f));
+
+            this.inputAmount = ko.computed(() => {
+                var amount = parseFloat(this.amount());
+
+                var factor = 1;
+
+                // make sure all observables are called when initializing this variable
+                var f = this.factory();
+                if (f.module && f.moduleChecked() && f.module.additionalOutputCycle)
+                    factor += 1 / f.module.additionalOutputCycle;
+
+                if (f.palaceBuff && f.palaceBuffChecked())
+                    factor += 1 / f.palaceBuff.additionalOutputCycle;
+
+                return amount / factor;
+
+            });
+
             if (this.consumer)
                 this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
 
             if (this.product.differentFactoryInputs) {
                 this.demands = [new FactoryDemandSwitch(this, assetsMap)];
-                this.amount.subscribe(val => this.demands[0].updateAmount(val));
+                this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
             }
             else
                 this.demands = this.factory().getInputs().map(input => {
@@ -715,15 +762,7 @@ class Demand extends NamedElement {
                     else
                         d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
 
-                    this.amount.subscribe(val => {
-                        var factory = this.factory();
-                        var amount = val * input.Amount;
-
-                        if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
-                            amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
-
-                        d.updateAmount(amount)
-                    });
+                    this.inputAmount.subscribe(val => d.updateAmount(val * input.Amount));
 
                     return d;
                 });
@@ -733,12 +772,9 @@ class Demand extends NamedElement {
                 this.factory().updateAmount();
             });
 
-             this.buildings = ko.computed(() => {
+            this.buildings = ko.computed(() => {
                 var factory = this.factory();
-                var buildings = Math.max(0, parseFloat(this.amount())) / factory.tpmin / factory.boost();
-                
-                if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
-                    buildings *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+                var buildings = Math.max(0, this.inputAmount()) / factory.tpmin / factory.boost();
 
                 return buildings;
             });

@@ -374,15 +374,34 @@
                                             </div>
                                         </div>
 
-                                        <div class="ui-fchain-item-module" data-bind="if: !!$data.module">
+                                        <div class="ui-fchain-item-module" data-bind="if: !!$data.module || !!$data.palaceBuff">
                                             <div style="flex: 100 1 auto;"></div>
-                                            <div class="custom-control custom-checkbox" style="flex: auto;">
-                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
-                                                <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module' }" src-only style="vertical-align: top;">
 
-                                                </label>
+                                            <!-- module -->
+                                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.module">
+                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
+                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
+
+                                                    </label>
+                                                </div>
                                             </div>
-                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="flex: auto;">
+                                            <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                            </div>
+
+                                            <!-- palace buff -->
+                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.palaceBuff">
+                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
+                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
+
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                            </div>
                                             <div style="flex: 100 1 auto;"></div>
                                         </div>
 
