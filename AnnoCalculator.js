@@ -401,6 +401,7 @@ class Island {
                         b.boost.subscribe(() => n.updateAmount());
                         b.existingBuildings.subscribe(() => n.updateAmount());
                         b.amount.subscribe(() => n.updateAmount());
+                        b.extraAmount.subscribe(() => n.updateAmount());
                         if(b.palaceBuff)
                             b.palaceBuffChecked.subscribe(() => n.updateAmount());
                         this.buildingMaterialsNeeds.push(n);
@@ -463,6 +464,8 @@ class Island {
             if (a instanceof Factory) {
                 if (a.moduleChecked)
                     a.moduleChecked(false);
+                if (a.palaceBuffChecked)
+                    a.palaceBuffChecked(false);
                 a.percentBoost(100);
                 a.extraAmount(0);
             }
@@ -472,7 +475,8 @@ class Island {
                 a.amount(0);
             }
             if (a instanceof Item)
-                a.checked(false);
+                for(var i of a.equipments)
+                    i.checked(false);
 
             if (a.guid == 1010240)
                 a.fixedFactory(this.assetsMap.get(1010318));
@@ -1023,7 +1027,7 @@ class BuildingMaterialsNeed extends Need {
             existingBuildingsOutput *= 1 + 1 / this.factory().palaceBuff.additionalOutputCycle;
 
         var overProduction = existingBuildingsOutput - otherDemand;
-        this.amount(Math.max(0, overProduction));
+        this.amount(Math.max(0, overProduction - EPSILON));
     }
 
     updateFixedProductFactory() { }
@@ -1126,7 +1130,7 @@ class WorkforceDemand extends NamedElement {
     }
 }
 
-class Item extends NamedElement {
+class Item extends Option {
     constructor(config, assetsMap) {
         super(config);
 
@@ -1149,7 +1153,10 @@ class Item extends NamedElement {
         }
 
         this.factories = this.factories.map(f => assetsMap.get(f));
-        this.equipments = this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap))
+        this.equipments =
+            this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap));
+
+        this.checked.subscribe(checked => this.equipments.forEach(e => e.checked(checked)));
     }
 }
 
@@ -1811,6 +1818,19 @@ texts = {
         "japanese": "合計",
         "russian": "Всего"
     },
+    "all": {
+        "english": "All",
+        "chinese": "全部",
+        "taiwanese": "全部",
+        "italian": "Tutti",
+        "spanish": "Todo",
+        "german": "Alle",
+        "polish": "Wszystko",
+        "french": "Toutes",
+        "korean": "모두",
+        "japanese": "すべて",
+        "russian": "Все"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",
@@ -2100,10 +2120,10 @@ options = {
         }
     },
     "hideNewWorldConstructionMaterial": {
-        "name": "Hide factory cards for construction material that produce in the new world",
+        "name": "Hide factory cards for construction material not produced in Europe",
         "locaText": {
-            "english": "Hide factory cards for construction material that is produced in the New world",
-            "german": "Verberge die Fabrikkacheln für Baumaterial, das in der Neuen Welt produziert wird",
+            "english": "Hide factory cards for construction material not produced in Europe",
+            "german": "Verberge die Fabrikkacheln für Baumaterial, das nicht in Europa produziert wird",
             "korean": "새로운 지역(북극)에서 생산되는 건축 자재 숨기기"
         }
     }

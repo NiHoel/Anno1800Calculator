@@ -114,7 +114,7 @@ h1 {
 .ui-fchain-item-attribute-group {
     display: flex;
     flex-flow: column;
-    height: 5em;
+    height: 5.5em;
     justify-content: space-around;
 }
 
