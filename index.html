@@ -352,18 +352,18 @@
 
                 <div style="display:flex;align-items:center;justify-content:space-between;">
 
-                    <div class="ui-race-input fleft">
-                        <!-- <div class="ui-race-icon">
+                    <div class="ui-tier-input fleft">
+                        <!-- <div class="ui-tier-icon">
                             <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                         </div> -->
                         <div data-bind="foreach: $data.populationLevels">
-                            <div class="ui-race-unit">
-                                <div class="ui-race-unit-icon">
+                            <div class="ui-tier-unit">
+                                <div class="ui-tier-unit-icon">
                                     <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                     <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
                                     <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
                                 </div>
-                                <div class="ui-race-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'race-unit-guid' : guid}">
+                                <div class="ui-tier-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'tier-unit-guid' : guid}">
                                     <span data-bind="visible: hotkey, text: hotkey() ? '[' + hotkey().toUpperCase() + '] ' : ''"></span>
                                     <span data-bind="text: name"></span>
                                 </div>
@@ -396,14 +396,14 @@
 
                 <div id="workforce" class="collapse show">
 
-                    <div class="ui-race-input fleft">
-                        <!-- <div class="ui-race-icon">
+                    <div class="ui-tier-input fleft">
+                        <!-- <div class="ui-tier-icon">
                             <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                         </div> -->
                         <div data-bind="foreach: $data.workforce">
-                            <div class="ui-race-unit">
-                                <div class="ui-race-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
-                                <!--<div class="ui-race-unit-name" data-bind="text: name"></div>-->
+                            <div class="ui-tier-unit">
+                                <div class="ui-tier-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
+                                <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
                                 <div class="ui-fchain-item-count">
                                     <span data-bind="text: amount"></span>
                                 </div>

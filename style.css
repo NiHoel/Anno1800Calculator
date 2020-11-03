@@ -176,24 +176,24 @@ h1 {
     line-height: 30px;
 }
 
-.ui-race-unit {
+.ui-tier-unit {
     float: left;
     margin-right: 15px;
 }
 
-.ui-race-unit-icon {
+.ui-tier-unit-icon {
 }
 
-.ui-race-icon {
+.ui-tier-icon {
     float: left;
     margin-right: 12px;
 }
 
-.ui-race-unit-name {
+.ui-tier-unit-name {
     font-weight: bold;
 }
 
-.ui-race-unit input {
+.ui-tier-unit input {
     width: 80px;
     border: 1px solid #CECECE;
     border-radius: 4px;
@@ -287,8 +287,8 @@ h1 {
     padding: 0.25rem;
 }
 
-.ui-race-unit  .form-control{
-    width: 5rem ;
+.ui-tier-unit  .form-control{
+    width: 6rem ;
 }
 
 .collapser {

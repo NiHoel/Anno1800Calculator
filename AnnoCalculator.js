@@ -1503,7 +1503,7 @@ function init() {
 
             for (var c of name.toLowerCase()) {
                 if (!bindings.has(c)) {
-                    bindings.set(c, $(`.ui-race-unit-name[race-unit-guid=${l.guid}] ~ .input .input-group input`));
+                    bindings.set(c, $(`.ui-tier-unit-name[tier-unit-guid=${l.guid}] ~ .input .input-group input`));
                     l.hotkey(c);
                     break;
                 }
