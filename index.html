@@ -88,19 +88,6 @@
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
-                            </div>
-
-                            <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.create(), disable: $root.islandManager.islandExists">
-                                    <span class="fa fa-plus"> </span>
-                                </button>
-
-                            </div>
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
                                 <span class="input-group-text" data-bind="text: texts.selectedIsland.name">Select Island</span>
                             </div>
 
@@ -420,20 +407,25 @@
 
                     <hr />
 
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
-                        </div>
+                    <form data-bind="submit: () => $root.islandManager.create()">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
+                            </div>
 
-                        <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.create(), disable: $root.islandManager.islandExists">
-                                <span class="fa fa-plus"> </span>
-                            </button>
+                            <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" data-bind="disable: $root.islandManager.islandExists">
+                                    <span class="fa fa-plus"> </span>
+                                </button>
 
+                            </div>
                         </div>
+                    </form>
+                    <div class="custom-control custom-checkbox mb-3">
+                        <input id="checkbox-show-island-on-creation" type="checkbox" class="custom-control-input" data-bind="checked: $root.islandManager.showIslandOnCreation.checked">
+                        <label class="custom-control-label" for="checkbox-show-island-on-creation" data-bind="text: $root.islandManager.showIslandOnCreation.name"></label>
                     </div>
-
 
                     <table class="table table-striped">
 
@@ -441,26 +433,62 @@
                             <tr>
                                 <td data-bind="text: $data"></td>
                                 <td>
-                                    <button class="btn btn-secondary btn-sm float-right" data-bind="click: () => $root.islandManager.create($data)">
+                                    <span class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.islandNameInput($data)">
+                                        <span class="fa fa-pencil"> </span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data)">
                                         <span class="fa fa-plus"> </span>
                                     </button>
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
 
                     <hr />
+                    <h6 data-bind="text: $root.texts.world.name">The World</h6>
                     <table class="table table-striped">
 
                         <tbody data-bind="foreach: $root.islands">
                             <tr>
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
+                                <td>
+                                    <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                        <span class="mr-3">
+                                            <img src="icon_residence.png" width="25" height="25" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                            <img src="icon_house.png" width="25" height="25" data-bind="visible: $root.settings.existingBuildingsInput.checked()">
+                                        </span>
+                                        <span data-bind="if: !$data.top2Population().length">0</span>
+                                        <span data-bind="foreach: $data.top2Population" style="display: flex; flex-flow: wrap; justify-content: center">
+                                            <span class="ui-tier-unit-icon" class="mr-1">
+                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
+                                            </span>
+                                            <span class="mr-3" data-bind="text: $root.settings.existingBuildingsInput.checked() ? $data.existingBuildings() : $data.amount()"></span>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                        <span class="mr-3">
+                                            <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                        </span>
+                                        <span data-bind="if: !$data.top5Factories().length">0</span>
+                                        <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                            <span class="mr-1">
+                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+
+                                            </span>
+                                            <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                        </span>
+                                    </div>
+                                </td>
                                 <td>
                                     <div class="float-right" data-bind="if: !$data.isAllIslands()">
-                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.delete($data)">
-                                        <span class="fa fa-trash"> </span>
-                                    </button>
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.delete($data)">
+                                            <span class="fa fa-trash"> </span>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>

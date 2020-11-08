@@ -463,6 +463,25 @@ class Island {
 
         this.assetsMap = assetsMap;
         this.products = products;
+
+
+        this.top2Population = ko.computed(() => {
+            var useHouses = view.settings.existingBuildingsInput.checked();
+            var comp = useHouses
+                ? (a, b) => a.existingBuildings() < b.existingBuildings()
+                : (a, b) => a.amount() < b.amount();
+
+            return [...this.populationLevels].sort(comp).slice(0,2).filter(l => useHouses ? l.existingBuildings() : l.amount());
+        });
+
+        this.top5Factories = ko.computed(() => {
+            var useBuildings = view.settings.missingBuildingsHighlight.checked();
+            var comp = useBuildings
+                ? (a, b) => a.existingBuildings() < b.existingBuildings()
+                : (a, b) => a.buildings() < b.buildings();
+
+            return [...this.factories].sort(comp).slice(0, 5).filter(f => useBuildings ? f.existingBuildings() : f.buildings());
+        });
     }
 
     reset() {
@@ -1489,6 +1508,11 @@ class IslandManager {
         this.unusedNames = ko.observableArray();
         this.serveNamesMap = new Map();
 
+        this.showIslandOnCreation = new Option({
+            name: "Show Island on Creation",
+            locaText: texts.showIslandOnCreation
+        });
+        this.showIslandOnCreation.checked(true);
 
         var islandNames = [];
         if (localStorage && localStorage.getItem(islandsKey))
@@ -1554,7 +1578,9 @@ class IslandManager {
         var island = new Island(this.params, new Storage(name));
         view.islands.push(island);
         this.sortIslands();
-        view.island(island);
+
+        if(this.showIslandOnCreation.checked())
+            view.island(island);
 
         this.serveNamesMap.set(name, island);
         var removedNames = this.unusedNames.remove(n => !isNaN(this.compareNames(n, name)));
@@ -1572,7 +1598,9 @@ class IslandManager {
         if (island.name() == ALL_ISLANDS || island.isAllIslands())
             return;
 
-        view.island(view.islands()[0]);
+        if(view.island() == island)
+            view.island(view.islands()[0]);
+
         view.islands.remove(island);
         if (localStorage)
             localStorage.removeItem(island.name());
@@ -1584,6 +1612,7 @@ class IslandManager {
 
         this.serveNamesMap.delete(island.name());
         this.unusedNames.push(island.name());
+        this.sortUnusedNames();
     }
 
     getByName(name) {
@@ -1612,6 +1641,7 @@ class IslandManager {
         }
 
         this.unusedNames.push(name);
+        this.sortUnusedNames();
     }
 
     compareNames(name1, name2) {
@@ -1634,6 +1664,10 @@ class IslandManager {
 
             return a.name() > b.name();
         })
+    }
+
+    sortUnusedNames() {
+        this.unusedNames.sort();
     }
 
     // Function to find length of Longest Common Subsequence of substring

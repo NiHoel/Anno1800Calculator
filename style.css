@@ -179,6 +179,9 @@ h1 {
 .ui-tier-unit {
     float: left;
     margin-right: 15px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }
 
 .ui-tier-unit-icon {

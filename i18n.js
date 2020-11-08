@@ -288,7 +288,7 @@ texts = {
     },
     showIslandOnCreation: {
         english: "After creating a new island display it",
-        german: "Nach dem Erstellen einer neuen Insel zeige diese an"
+        german: "Nach dem Erstellen einer neuen Insel diese anzeigen"
     },
     language: {
         "english": "Text Language",
