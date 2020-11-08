@@ -107,10 +107,10 @@ class Island {
     constructor(params, localStorage) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
-            this.isAllIslands = function () { return false; };
+            this.isAllIslands = function() { return false; };
         } else {
             this.name = ko.computed(() => view.texts.allIslands.name());
-            this.isAllIslands = function () { return true; };
+            this.isAllIslands = function() { return true; };
         }
         this.storage = localStorage;
         var isNew = !localStorage.length;
@@ -128,6 +128,7 @@ class Island {
         this.items = [];
         this.replaceInputItems = [];
         this.extraGoodItems = [];
+        this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
 
         for (let region of params.regions) {
             let r = new Region(region, assetsMap);
@@ -242,7 +243,8 @@ class Island {
                         let id = p.guid + ".fixedFactory";
                         if (localStorage.getItem(id))
                             p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
-                        p.fixedFactory.subscribe(f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
+                        p.fixedFactory.subscribe(
+                            f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
                     }
                 }
 
@@ -298,7 +300,6 @@ class Island {
             if (f.module)
                 f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
         }
-
 
 
         for (let level of params.populationLevels) {
@@ -402,7 +403,7 @@ class Island {
                         b.existingBuildings.subscribe(() => n.updateAmount());
                         b.amount.subscribe(() => n.updateAmount());
                         b.extraAmount.subscribe(() => n.updateAmount());
-                        if(b.palaceBuff)
+                        if (b.palaceBuff)
                             b.palaceBuffChecked.subscribe(() => n.updateAmount());
                         this.buildingMaterialsNeeds.push(n);
 
@@ -420,7 +421,27 @@ class Island {
                 }
         }
 
-        // negative extra amount must be set after the demands of the population are generated
+        for (let upgrade of params.goodConsumptionUpgrades) {
+            let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
+            assetsMap.set(u.guid, u);
+            this.allGoodConsumptionUpgrades.upgrades.push(u);
+
+            if (localStorage) {
+                let id = u.guid + ".checked";
+                if (localStorage.getItem(id))
+                    u.checked(parseInt(localStorage.getItem(id)));
+
+                u.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+            }
+        }
+
+        for (let level of this.populationLevels)
+            for (let need of level.needs) {
+                this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
+            }
+        
+
+    // negative extra amount must be set after the demands of the population are generated
         // otherwise it would be set to zero
         for (let f of this.factories) {
 
@@ -964,11 +985,12 @@ class PopulationNeed extends Need {
         super(config, assetsMap);
 
         this.residents = 0;
+        this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
         this.percentBoost = ko.observable(100);
         this.percentBoost.subscribe(val => {
-            val = parseInt(val);
-            if (val < 1)
+            val = parseFloat(val);
+            if (val <= 0)
                 this.percentBoost(1);
         })
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -1194,6 +1216,161 @@ class ExtraGoodProduction {
     }
 }
 
+class GoodConsumptionUpgrade extends Option{
+    constructor(config, assetsMap, levels) {
+        super(config, assetsMap);
+
+        this.entries = [];
+        this.entriesMap = new Map();
+        this.populationLevels = config.populationLevels.map(l => assetsMap.get(l));
+        this.populationLevelsSet = new Set(this.populationLevels);
+
+        for (var entry of config.goodConsumptionUpgrade) {
+            if (entry.AmountInPercent <= -100)
+                continue;
+
+            this.entries.push(new GoodConsumptionUpgradeEntry($.extend({ upgrade: this }, entry), assetsMap));
+            this.entriesMap.set(entry.ProvidedNeed, this.entries[this.entries.length - 1]);
+        }
+
+        for (var level of levels) {
+            if (!this.populationLevelsSet.has(level))
+                continue;
+
+            for (var need of level.needs) {
+                var entry = this.entriesMap.get(need.allDemands[0].product.guid);
+                if (entry)
+                    need.goodConsumptionUpgradeList.add(entry);
+            }
+        }
+    }
+}
+
+class NewspaperNeedConsumption {
+    constructor() {
+        this.selectedEffects = ko.observableArray();
+        this.allEffects = [];
+        this.amount = ko.observable(100);
+        this.selectedBuff = ko.observable(0);
+        this.selectableBuffs = ko.observableArray();
+
+        this.updateBuff();
+
+        this.selectedEffects.subscribe(() => this.updateBuff());
+
+        this.selectedEffects.subscribe(() => {
+            if (this.selectedEffects().length > 3)
+                this.selectedEffects.splice(0, 1)[0].checked(false);
+        });
+
+        this.amount = ko.computed(() => {
+            var sum = 0;
+            for (var effect of this.selectedEffects()) {
+                sum += effect.amount;
+            }
+
+            return sum * (1 + parseInt(this.selectedBuff()) / 100);
+        });
+    }
+
+    add(effect) {
+        this.allEffects.push(effect);
+        effect.checked.subscribe(checked => {
+            var idx = this.selectedEffects.indexOf(effect);
+            if (checked && idx != -1 || !checked && idx == -1)
+                return;
+
+            if (checked)
+                this.selectedEffects.push(effect);
+            else
+                this.selectedEffects.remove(effect);
+        });
+    }
+
+    updateBuff() {
+        var influenceCosts = 0;
+        for (var effect of this.selectedEffects()) {
+            influenceCosts += effect.influenceCosts;
+        }
+
+        var threeSelected = this.selectedEffects().length >= 3;
+        var selectedBuff = this.selectedBuff();
+
+        this.selectableBuffs.removeAll();
+        if (influenceCosts < 50)
+            this.selectableBuffs.push(0);
+        if (influenceCosts < 150 && (!threeSelected || !this.selectableBuffs().length))
+            this.selectableBuffs.push(7);
+        if (influenceCosts < 300 && (!threeSelected || !this.selectableBuffs().length))
+            this.selectableBuffs.push(15);
+        if (!threeSelected || !this.selectableBuffs().length)
+            this.selectableBuffs.push(25);
+
+        if (this.selectableBuffs.indexOf(selectedBuff) == -1)
+            this.selectedBuff(this.selectableBuffs()[0]);
+        else
+            this.selectedBuff(selectedBuff);
+    }
+}
+
+class NewspaperNeedConsumptionEntry extends Option {
+    constructor(config) {
+        super(config);
+
+        this.amount = config.articleEffects[0].ArticleValue;
+    }
+}
+
+class GoodConsumptionUpgradeEntry {
+    constructor(config, assetsMap) {
+        this.upgrade = config.upgrade;
+        this.product = assetsMap.get(config.ProvidedNeed);
+        this.amount = config.AmountInPercent;
+    }
+}
+
+class GoodConsumptionUpgradeList {
+    constructor(need) {
+        this.upgrades = [];
+        this.amount = ko.observable(100);
+        this.need = need;
+
+        this.updateAmount();
+        view.newspaperConsumption.amount.subscribe(() => this.updateAmount());
+    }
+
+    add(upgrade) {
+        this.upgrades.push(upgrade);
+        upgrade.upgrade.checked.subscribe(() => this.updateAmount());
+    }
+
+    updateAmount() {
+        var factor = (100 + view.newspaperConsumption.amount()) / 100;
+        for (var entry of this.upgrades) {
+            if (entry.upgrade.checked())
+                factor *= (100 + entry.amount) / 100;
+        }
+
+        this.amount(100 * factor);
+    }
+
+    apply() {
+        this.need.percentBoost(this.amount());
+    }
+}
+
+class GoodConsumptionUpgradeIslandList {
+    constructor() {
+        this.lists = [];
+        this.upgrades = [];
+    }
+
+    apply() {
+        for (var list of this.lists) {
+            list.apply();
+        }
+    }
+}
 
 class PopulationReader {
 
@@ -1292,7 +1469,6 @@ class PopulationReader {
                         asset.amount(json[key].amount);
                     }
                     if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
-                        view.settings.existingBuildingsInput.checked(true);
                         asset.existingBuildings(json[key].existingBuildings);
                     }
                 }
@@ -1435,6 +1611,7 @@ class IslandManager {
 
 function init() {
 
+    // set up options
     view.settings.options = [];
     for (let attr in options) {
         let o = new Option(options[attr]);
@@ -1471,7 +1648,30 @@ function init() {
         }
     }
 
+    // set up newspaper
+    view.newspaperConsumption = new NewspaperNeedConsumption();
+    if (localStorage) {
+        let id = "newspaperPropagandaBuff";
+        if (localStorage.getItem(id))
+            view.newspaperConsumption.selectedBuff(localStorage.getItem(id));
 
+        view.newspaperConsumption.selectedBuff.subscribe(val => localStorage.setItem(id, val));
+    }
+
+    for (var e of (params.newspaper || [])) {
+        var effect = new NewspaperNeedConsumptionEntry(e);
+        view.newspaperConsumption.add(effect);
+
+        if (localStorage) {
+            let id = effect.guid + ".checked";
+            if (localStorage.getItem(id) != null)
+                effect.checked(parseInt(localStorage.getItem(id)));
+
+            effect.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
+
+    // set up island management
     view.islandManager = new IslandManager(params);
 
     if (localStorage) {
@@ -1482,14 +1682,17 @@ function init() {
         view.settings.language.subscribe(val => localStorage.setItem(id, val));
     }
 
+    // set up modal dialogs
     view.selectedFactory = ko.observable(view.island().factories[0]);
+    view.selectedGoodConsumptionUpgradeList =
+        ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
 
     ko.applyBindings(view, $(document.body)[0]);
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
  
-
+    // set up key bindings
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
 
@@ -1542,6 +1745,14 @@ function removeSpaces(string) {
     if (typeof string === "function")
         string = string();
     return string.replace(/\W/g, "");
+}
+
+function formatPercentage(number) {
+    var str = (Math.ceil(10 * parseFloat(number)) / 10) + ' %';
+    if (number > 0)
+        str = '+' + str;
+
+    return str;
 }
 
 function isLocal() {
@@ -1830,6 +2041,72 @@ texts = {
         "korean": "모두",
         "japanese": "すべて",
         "russian": "Все"
+    },
+    "effect": {
+        "english": "Effect",
+        "chinese": "效果",
+        "taiwanese": "效果",
+        "italian": "Effetto",
+        "spanish": "Efecto",
+        "german": "Effekte",
+        "polish": "Efekt",
+        "french": "Effet",
+        "korean": "효과",
+        "japanese": "効果",
+        "russian": "Эффект"
+    },
+    "needConsumption": {
+        "english": "Need Consumption",
+        "chinese": "需求消耗程度",
+        "taiwanese": "需求消耗程度",
+        "italian": "Bisogno di consumo",
+        "spanish": "Consumo de necesidad",
+        "german": "Verbrauch der Bedürfnisse",
+        "polish": "Potrzebna konsumpcja",
+        "french": "Consommation du bien",
+        "korean": "물품 요구량",
+        "japanese": "需要の消費",
+        "russian": "Потребление"
+    },
+    "newspaper": {
+        "english": "Newspaper",
+        "chinese": "报纸",
+        "taiwanese": "報紙",
+        "italian": "Giornale",
+        "spanish": "Periódico",
+        "german": "Zeitung",
+        "polish": "Gazeta",
+        "french": "Journal",
+        "korean": "신문",
+        "japanese": "新聞",
+        "russian": "Газета"
+    },
+    "newspaperEffectiveness": {
+        "english": "Newspaper Effectiveness",
+        "chinese": "报纸效用",
+        "taiwanese": "報紙效用",
+        "italian": "Efficacia giornale",
+        "spanish": "Efectividad del periódico",
+        "german": "Effektivität der Zeitung",
+        "polish": "Skuteczność gazety",
+        "french": "Efficacité du journal",
+        "korean": "신문 효과",
+        "japanese": "新聞の効力",
+        "russian": "Эффективность газеты"
+    },
+    "reducedNeeds": {
+        "english": "Reduced Needs",
+        "guid": 21387,
+        "chinese": "减少需求物",
+        "taiwanese": "減少需求物",
+        "italian": "Bisogni ridotti",
+        "spanish": "Necesidades reducidas",
+        "german": "Bedürfnis-​Malus",
+        "polish": "Zredukowane potrzeby",
+        "french": "Besoins réduits",
+        "korean": "요구량 감소",
+        "japanese": "減少した需要",
+        "russian": "Сниженные потребности"
     },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
