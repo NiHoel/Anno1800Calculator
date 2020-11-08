@@ -412,6 +412,12 @@ input[type=number]::-webkit-inner-spin-button {
     border: 0;
 }
 
+.danger-icon {
+    position: absolute;
+    color: red;
+    z-index: 1000;
+}
+
 /* dark-mode styles */
 .bg-darker {
     background: #222;
@@ -432,4 +438,8 @@ input[type=number]::-webkit-inner-spin-button {
 
 .bg-light:not(.bg-dark) .icon-light {
     display: none;
+}
+
+.bg-dark .danger-icon {
+    color: #CB4141;
 }

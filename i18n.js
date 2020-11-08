@@ -244,6 +244,32 @@ texts = {
         "japanese": "世界",
         "russian": "Мир"
     },
+    "deleteAll": {
+        "english": "Delete All",
+        "chinese": "删除全部",
+        "taiwanese": "刪除全部",
+        "italian": "Cancella tutto",
+        "spanish": "Borrar todo",
+        "german": "Alles löschen",
+        "polish": "Skasuj wszystko",
+        "french": "Supprimer tout",
+        "korean": "모두 삭제",
+        "japanese": "すべて削除する",
+        "russian": "Удалить все"
+    },
+    "consumption": {
+        "english": "Consumption",
+        "chinese": "消耗",
+        "taiwanese": "消耗",
+        "italian": "Consumo",
+        "spanish": "Consumo",
+        "german": "Verbrauch",
+        "polish": "Konsumpcja",
+        "french": "Consommation",
+        "korean": "소비량",
+        "japanese": "消費",
+        "russian": "Потребление"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",
@@ -283,8 +309,12 @@ texts = {
         "russian": "Тонн в минуту (т./мин.)"
     },
     producedAmount: {
-        english: "Plain building output after taking extra goods into account",
-        german: "Reiner Gebäudeoutput nach Berücksichtigung von Zusatzwaren",
+        english: "Plain building output without extra goods",
+        german: "Reiner Gebäudeoutput ohne Zusatzwaren",
+    },
+    extraNeed: {
+        english: "Extra Need",
+        german: "Zusatzbedarf"
     },
     showIslandOnCreation: {
         english: "After creating a new island display it",

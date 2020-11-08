@@ -96,10 +96,10 @@ class Island {
     constructor(params, localStorage) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
-            this.isAllIslands = function() { return false; };
+            this.isAllIslands = function () { return false; };
         } else {
             this.name = ko.computed(() => view.texts.allIslands.name());
-            this.isAllIslands = function() { return true; };
+            this.isAllIslands = function () { return true; };
         }
         this.storage = localStorage;
         var isNew = !localStorage.length;
@@ -428,9 +428,9 @@ class Island {
             for (let need of level.needs) {
                 this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
             }
-        
 
-    // negative extra amount must be set after the demands of the population are generated
+
+        // negative extra amount must be set after the demands of the population are generated
         // otherwise it would be set to zero
         for (let f of this.factories) {
 
@@ -471,7 +471,7 @@ class Island {
                 ? (a, b) => a.existingBuildings() < b.existingBuildings()
                 : (a, b) => a.amount() < b.amount();
 
-            return [...this.populationLevels].sort(comp).slice(0,2).filter(l => useHouses ? l.existingBuildings() : l.amount());
+            return [...this.populationLevels].sort(comp).slice(0, 2).filter(l => useHouses ? l.existingBuildings() : l.amount());
         });
 
         this.top5Factories = ko.computed(() => {
@@ -504,7 +504,7 @@ class Island {
                 a.amount(0);
             }
             if (a instanceof Item)
-                for(var i of a.equipments)
+                for (var i of a.equipments)
                     i.checked(false);
 
             if (a.guid == 1010240)
@@ -666,7 +666,7 @@ class Factory extends Consumer {
                     var val = Math.max(1, parseInt(this.percentBoost()) - this.module.productivityUpgrade);
                     this.percentBoost(val);
                 }
-            })
+            });
             //moduleDemand created in island constructor after referencing products
         }
 
@@ -685,7 +685,9 @@ class Factory extends Consumer {
             if (this.palaceBuff && this.palaceBuffChecked())
                 factor += 1 / this.palaceBuff.additionalOutputCycle;
 
-            return amount / factor;
+            var existingBuildingsAmount = parseInt(this.existingBuildings()) * this.boost() * this.tpmin;
+
+            return Math.max(existingBuildingsAmount, amount / factor);
         });
 
         this.buildings = ko.computed(() => {
@@ -1224,7 +1226,7 @@ class ExtraGoodProduction {
     }
 }
 
-class GoodConsumptionUpgrade extends Option{
+class GoodConsumptionUpgrade extends Option {
     constructor(config, assetsMap, levels) {
         super(config, assetsMap);
 
@@ -1579,7 +1581,7 @@ class IslandManager {
         view.islands.push(island);
         this.sortIslands();
 
-        if(this.showIslandOnCreation.checked())
+        if (this.showIslandOnCreation.checked())
             view.island(island);
 
         this.serveNamesMap.set(name, island);
@@ -1587,7 +1589,7 @@ class IslandManager {
         for (var n of removedNames)
             this.serveNamesMap.set(n, island);
 
-        if(name == this.islandNameInput())
+        if (name == this.islandNameInput())
             this.islandNameInput(null);
     }
 
@@ -1598,7 +1600,7 @@ class IslandManager {
         if (island.name() == ALL_ISLANDS || island.isAllIslands())
             return;
 
-        if(view.island() == island)
+        if (view.island() == island)
             view.island(view.islands()[0]);
 
         view.islands.remove(island);
@@ -1701,7 +1703,48 @@ class IslandManager {
     }
 }
 
+class DarkMode {
+    constructor() {
+        this.checked = ko.observable(false);
+
+        this.classAdditions = {
+            "body": "bg-dark",
+            ".ui-fieldset legend, body": "text-light",
+            ".form-control": "text-light bg-dark bg-darker",
+            ".custom-select": "text-light bg-dark bg-darker",
+            ".input-group-text, .modal-content": "bg-dark text-light",
+            ".btn-default": "btn-dark btn-outline-light",
+            ".btn-light": "btn-dark",
+            ".ui-fchain-item": "bg-dark",
+            ".card": "bg-dark"
+        };
+
+        this.checked.subscribe(() => this.apply());
+
+        if (localStorage) {
+            let id = "darkMode.checked";
+            if (localStorage.getItem(id))
+                this.checked(parseInt(localStorage.getItem(id)));
+
+            this.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
+
+    toggle() {
+        this.checked(!this.checked());
+    }
+
+    apply() {
+        if (this.checked())
+            Object.keys(this.classAdditions).forEach((key) => $(key).addClass(this.classAdditions[key]));
+        else
+            Object.keys(this.classAdditions).reverse()
+                .forEach((key) => $(key).removeClass(this.classAdditions[key]));
+    }
+}
+
 function init() {
+    view.darkMode = new DarkMode();
 
     // set up options
     view.settings.options = [];
@@ -1783,7 +1826,6 @@ function init() {
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
- 
     // set up key bindings
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
@@ -1806,7 +1848,18 @@ function init() {
         }
 
         return bindings;
-    })
+    });
+
+    // use computed observable to be called after updating the DOM
+    this.darkModeFix = ko.computed(() => {
+        // subscribe to all components with a with-binding
+        view.island();
+        view.selectedFactory();
+        view.selectedGoodConsumptionUpgradeList();
+
+        view.darkMode.apply();
+        setTimeout(() => view.darkMode.apply(), 100);
+    });
 
     $(document).on("keydown", (evt) => {
         if (evt.altKey || evt.ctrlKey || evt.shiftKey)
@@ -1845,6 +1898,13 @@ function formatPercentage(number) {
         str = '+' + str;
 
     return str;
+}
+
+function factoryReset() {
+    if (localStorage)
+        localStorage.clear();
+
+    location.reload();
 }
 
 function isLocal() {
@@ -2004,5 +2064,5 @@ $(document).ready(function () {
         }
     });
 
-    $('[data-toggle="popover"]').popover(); 
+    $('[data-toggle="popover"]').popover();
 })

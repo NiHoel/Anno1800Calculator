@@ -26,7 +26,6 @@
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
     <script type="text/javascript" src="params_2020-10-22_full.js"></script>
-    <script type="text/javascript" src="toggle-dark-mode.js"></script>
 </head>
 <body>
     <!-- #params-dialog -->
@@ -513,8 +512,11 @@
                     </table>
 
                 </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-bind="text: $root.texts.deleteAll.name, click: factoryReset">Delete All</button>
             </div>
         </div>
+    </div>
     </div>
     <!-- #/island-management-dialog -->
     <!-- top right buttons -->
@@ -522,7 +524,7 @@
 
         <div class="fixed-top" style="padding-right: 17px;">
             <div class="btn-group float-right">
-                <button onclick="toggleDarkMode()" class="btn btn-secondary">
+                <button data-bind="click: () => $root.darkMode.toggle()" class="btn btn-secondary">
                     <span class="fa fa-adjust"> </span>
                 </button>
                 <button data-toggle="modal" data-target="#settings-dialog" class="btn btn-secondary">
@@ -623,21 +625,23 @@
 
                         </div>
                         <div class="modal-body">
+                            <div data-bind="visible: $data.items.length && $root.settings.additionalProduction.checked()">
                             <h6 data-bind="text: $root.texts.itemsEquipped.name">Equipped Items</h6>
                             <table class="table table-striped">
                                 <tbody data-bind="foreach: $data.items">
                                     <tr>
                                         <td>
-
+                                                <div style="display: flex">
                                             <span class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
                                                 <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
 
                                                 </label>
                                             </span>
+                                                    <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
+                                                    <span data-bind="text: $data.name"></span> <!-- item name -->
+                                                </div>
                                         </td>
-                                        <td><img src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"></td> <!-- item icon -->
-                                        <td data-bind="text: $data.name"></td> <!-- item name -->
                                         <td>
                                             <span data-bind="if: $data.item.extraGoods">
                                                 <span data-bind="foreach: $data.item.extraGoods" style="display: flex; flex-flow: wrap;">
@@ -668,8 +672,12 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div data-bind="visible: $data.extraGoodsNonZero().length">
+
                                 <hr />
+                            </div>
+
+                            <div data-bind="visible: $data.extraGoodsNonZero().length && $root.settings.additionalProduction.checked()">
+
 
                                 <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
                                 <table class="table table-striped">
@@ -700,14 +708,122 @@
                                         </tr>
                                     </tbody>
                                 </table>
+
+                                <hr />
                             </div>
+
+
+                            <table class="table table-striped">
+                                <tbody>
+                                    <tr>
+                                        <!-- boost -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.productionBoost.name"></span>
+                                        </td>
+                                        <td>
+                                            <div href="#" data-toggle="tooltip">
+                                                <div class="input-group mb-3 spinner">
+                                                    <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-btn-vertical">
+                                                            <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
+                                                            <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: parseInt(percentBoost()) > 1"><i class="fa fa-caret-down"></i></button>
+                        </div>
+                                                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-bind="visible: $root.settings.missingBuildingsHighlight.checked()">
+                                        <!-- existing buildings -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
+                                        </td>
+                                        <td>
+                                            <div href="#" data-toggle="tooltip">
+                                                <div class="input-group mb-3 spinner">
+                                                    <input class="form-control" type="text" value="100" data-bind="value: existingBuildings" />
+                                                    <div class="input-group-append">
+                                                        <div class="input-group-btn-vertical">
+                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings() + 1))"><i class="fa fa-caret-up"></i></button>
+                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings() - 1)), enable: parseInt(existingBuildings()) > 1"><i class="fa fa-caret-down"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                    <tr data-bind="visible: $root.settings.additionalProduction.checked()">
+                                        <!-- extra goods -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.extraNeed.name"></span>
+                                        </td>
+                                        <td>
+                                            <div class="input-group spinner mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">+ </span>
+                                                    <span data-bind="visible: $data.extraAmount() < -EPSILON - $data.extraGoodsTotal()">
+                                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                    </span>
+                                                </div>
+                                                <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-bind="if: $data.module && $data.moduleChecked()">
+                                        <!-- extra goods module -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.extraGoods.name"></span>
+                                            <span>: </span>
+                                            <span data-bind="text: $data.module.name"></span>
+                                        </td>
+                                        <td>
+                                            <div class="float-right">
+                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                                <span data-bind="text: Math.ceil(100*parseFloat($data.producedAmount() / $data.module.additionalOutputCycle))/100"></span><span> t/min</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr data-bind="if: $data.palaceBuff && $data.palaceBuffChecked()">
+                                        <!-- extra goods palace -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.extraGoods.name"></span>
+                                            <span>: </span>
+                                            <span data-bind="text: $data.palaceBuff.name"></span>
+                                        </td>
+                                        <td>
+                                            <div class="float-right">
+                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                                <span data-bind="text: Math.ceil(100*parseFloat($data.producedAmount() / $data.palaceBuff.additionalOutputCycle))/100"></span><span> t/min</span>
+                                                <div class="float-right">
+                                        </td>
+                                    </tr>
+                                    <tr data-bind="if: $data.module && $data.moduleChecked()">
+                                        <!-- consumption module -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.consumption.name"></span>
+                                            <span>: </span>
+                                            <span data-bind="text: $data.module.name"></span>
+                                        </td>
+                                        <td>
+                                            <div class="float-right">
+                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
+                                                <span data-bind="text: Math.ceil(100*$data.moduleDemand.amount())/100"></span><span> t/min</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
                         </div>
                     </div>
                 </div>
             </div>
             <!-- #/factory-config-dialog -->
             <!-- required factories by category -->
-            <div data-bind="foreach: $data.categories">
+            <div data-bind="foreach: { data: $data.categories, as: 'category'}">
                 <fieldset class="ui-fieldset" id="categories-view">
                     <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#category-' + guid}">
                         <span class="fa fa-chevron-right"></span>
@@ -721,7 +837,7 @@
                                 <div>
 
                                     <div class="ui-fchain-item" data-bind="visible: amount() > 0 || existingBuildings() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000), css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
-                                        <div class="ui-fchain-item-tr-button" data-bind="if: $root.settings.additionalProduction.checked">
+                                        <div class="ui-fchain-item-tr-button" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked()">
                                             <div>
                                             <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data)}" data-toggle="modal" data-target="#factory-config-dialog">
                                                 <span class="fa fa-sliders"></span>
@@ -814,8 +930,8 @@
                                             <!-- module -->
                                             <div data-bind="if: !!$data.module" style="flex: auto;">
                                                 <div class="custom-control custom-checkbox" data-bind="if: !!$data.module">
-                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: $data.guid + '-module' }">
-                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: category.guid + '-' + $data.guid + '-module' }">
+                                                        <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
 
                                                     </label>
                                                 </div>
@@ -827,8 +943,8 @@
                                             <!-- palace buff -->
                                             <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
                                                 <div class="custom-control custom-checkbox" data-bind="if: !!$data.palaceBuff">
-                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: $data.guid + '-palaceBuff' }">
-                                                    <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: category.guid + '-' + $data.guid + '-palaceBuff' }">
+                                                        <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
 
                                                     </label>
                                                 </div>
@@ -842,7 +958,12 @@
                                     <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked()">
                                         <div class="ui-fchain-item-extra-input">
                                             <div class="input-group spinner mb-3">
-                                                <div class="input-group-prepend"><span class="input-group-text">+ </span> </div>
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">+ </span>
+                                                        <span data-bind="visible: $data.extraAmount() < -EPSILON - $data.extraGoodsTotal()">
+                                                            <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                        </span>
+                                                    </div>
                                                 <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
                                             </div>
                                         </div>
