@@ -1426,22 +1426,13 @@ class PopulationReader {
             }
         } else {
 
+            for (var isl of (json.islands || [])) {
+                view.islandManager.registerName(isl.name);
+            }
+
             var island = null;
             if (json.islandName) {
-                var best_match = 0;
-
-                for (var isl of view.islands()) {
-                    if (json.islandName == ALL_ISLANDS && isl.isAllIslands()) {
-                        island = isl;
-                        break;
-                    }
-
-                    var match = this.lcs_length(isl.name(), json.islandName) / Math.max(isl.name().length, json.islandName.length);
-                    if (match > 0.66 && match > best_match) {
-                        island = isl;
-                        best_match = match;
-                    }
-                }
+                island = view.islandManager.getByName(json.islandName);
             }
 
             if (!island)
@@ -1485,10 +1476,170 @@ class PopulationReader {
         }
     }
 
+
+}
+
+class IslandManager {
+    constructor(params) {
+        let islandKey = "islandName";
+        let islandsKey = "islandNames";
+
+        this.islandNameInput = ko.observable();
+        this.params = params;
+        this.unusedNames = ko.observableArray();
+        this.serveNamesMap = new Map();
+
+
+        var islandNames = [];
+        if (localStorage && localStorage.getItem(islandsKey))
+            islandNames = JSON.parse(localStorage.getItem(islandsKey))
+
+        var islandName = localStorage.getItem(islandKey);
+        view.islands = ko.observableArray();
+        view.island = ko.observable();
+
+        view.island.subscribe(isl => window.document.title = isl.name());
+
+        for (var name of islandNames) {
+            var island = new Island(params, new Storage(name));
+            view.islands.push(island);
+            this.serveNamesMap.set(island.name(), island);
+
+            if (name == islandName)
+                view.island(island);
+        }
+
+        this.sortIslands();
+
+        var allIslands = new Island(params, localStorage);
+        view.islands.unshift(allIslands);
+        this.serveNamesMap.set(allIslands.name(), allIslands);
+        if (!view.island())
+            view.island(allIslands);
+
+
+
+        if (localStorage) {
+            view.islands.subscribe(islands => {
+                let islandNames = JSON.stringify(islands.filter(i => !i.isAllIslands()).map(i => i.name()));
+                localStorage.setItem(islandsKey, islandNames);
+            });
+
+            view.island.subscribe(island => {
+                localStorage.setItem(islandKey, island.name())
+            });
+
+        }
+
+        this.islandExists = ko.computed(() => {
+            var name = this.islandNameInput();
+            if (!name || name == ALL_ISLANDS || name == view.texts.allIslands.name())
+                return true;
+
+            return this.serveNamesMap.has(name) && this.serveNamesMap.get(name).name() == name;
+        });
+    }
+
+    create(name) {
+        if (name == null) {
+            if (this.islandExists())
+                return;
+
+            name = this.islandNameInput();
+        }
+
+        if (this.serveNamesMap.has(name) && this.serveNamesMap.get(name).name() == name)
+            return;
+
+        var island = new Island(this.params, new Storage(name));
+        view.islands.push(island);
+        this.sortIslands();
+        view.island(island);
+
+        this.serveNamesMap.set(name, island);
+        var removedNames = this.unusedNames.remove(n => !isNaN(this.compareNames(n, name)));
+        for (var n of removedNames)
+            this.serveNamesMap.set(n, island);
+
+        if(name == this.islandNameInput())
+            this.islandNameInput(null);
+    }
+
+    delete(island) {
+        if (island == null)
+            island = view.island();
+
+        if (island.name() == ALL_ISLANDS || island.isAllIslands())
+            return;
+
+        view.island(view.islands()[0]);
+        view.islands.remove(island);
+        if (localStorage)
+            localStorage.removeItem(island.name());
+
+        for (var entry of this.serveNamesMap.entries()) {
+            if (entry[1] == island)
+                this.serveNamesMap.set(entry[0], null);
+        }
+
+        this.serveNamesMap.delete(island.name());
+        this.unusedNames.push(island.name());
+    }
+
+    getByName(name) {
+        return this.serveNamesMap.get(name);
+    }
+
+    registerName(name) {
+        if (name == ALL_ISLANDS || this.serveNamesMap.has(name))
+            return;
+
+        var island = null;
+        var bestMatch = Math.Infinity;
+
+        for (var isl of this.islands()) {
+            var match = compareNames(isl.name(), name);
+            if (!isNaN(match) && match > bestMatch) {
+                island = isl;
+                bestMatch = match;
+            }
+        }
+
+        if (island) {
+            this.serveNamesMap.set(name, island);
+            this.unusedNames.remove(name);
+            return;
+        }
+
+        this.unusedNames.push(name);
+    }
+
+    compareNames(name1, name2) {
+        var totalLength = Math.max(name1.length, name2.length);
+        var minLcsLength = totalLength - Math.round(-0.677 + 1.51 * Math.log(totalLength));
+        var lcsLength = this.lcsLength(name1, name2);
+
+        if (lcsLength >= minLcsLength)
+            return lcsLength / totalLength;
+        else
+            return NaN;
+    }
+
+    sortIslands() {
+        view.islands.sort((a, b) => {
+            if (a.isAllIslands() || a.name() == ALL_ISLANDS)
+                return false;
+            else if (b.isAllIslands() || b.name() == ALL_ISLANDS)
+                return true;
+
+            return a.name() > b.name();
+        })
+    }
+
     // Function to find length of Longest Common Subsequence of substring
     // X[0..m-1] and Y[0..n-1]
     // From https://www.techiedelight.com/longest-common-subsequence/
-    lcs_length(X, Y) {
+    lcsLength(X, Y) {
         var m = X.length, n = Y.length;
 
         // lookup table stores solution to already computed sub-problems
@@ -1513,88 +1664,6 @@ class PopulationReader {
 
         // LCS will be last entry in the lookup table
         return lookup[m][n];
-    }
-}
-
-class IslandManager {
-    constructor(params) {
-        let islandKey = "islandName";
-        let islandsKey = "islandNames";
-
-        this.islandNameInput = ko.observable();
-        this.params = params;
-
-
-        var islandNames = [];
-        if (localStorage && localStorage.getItem(islandsKey))
-            islandNames = JSON.parse(localStorage.getItem(islandsKey))
-
-        var islandName = localStorage.getItem(islandKey);
-        view.islands = ko.observableArray();
-        view.island = ko.observable();
-
-        view.island.subscribe(isl => window.document.title = isl.name());
-
-        for (var name of islandNames) {
-            var island = new Island(params, new Storage(name));
-            view.islands.push(island);
-
-            if (name == islandName)
-                view.island(island);
-        }
-
-        var allIslands = new Island(params, localStorage);
-        view.islands.unshift(allIslands);
-        if (!view.island())
-            view.island(allIslands);
-
-
-
-        if (localStorage) {
-            view.islands.subscribe(islands => {
-                let islandNames = JSON.stringify(islands.filter(i => !i.isAllIslands()).map(i => i.name()));
-                localStorage.setItem(islandsKey, islandNames);
-            });
-
-            view.island.subscribe(island => {
-                localStorage.setItem(islandKey, island.name())
-            });
-
-        }
-
-        this.islandExists = ko.computed(() => {
-            var name = this.islandNameInput();
-            if (!name || name == ALL_ISLANDS || name == view.texts.allIslands.name())
-                return true;
-
-            for (var island of view.islands()) {
-                if (island.name() == name)
-                    return true;
-            }
-
-            return false;
-        });
-    }
-
-    create() {
-        if (this.islandExists())
-            return;
-
-        var island = new Island(this.params, new Storage(this.islandNameInput()));
-        view.islands.push(island);
-        view.island(island);
-        this.islandNameInput(null);
-    }
-
-    delete() {
-        if (view.island().name() == ALL_ISLANDS || view.island().isAllIslands())
-            return;
-
-        var island = view.island();
-        view.island(view.islands()[0]);
-        view.islands.remove(island);
-        if (localStorage)
-            localStorage.removeItem(island.name());
     }
 }
 

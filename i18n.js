@@ -205,6 +205,19 @@ texts = {
         "japanese": "減少した需要",
         "russian": "Сниженные потребности"
     },
+    "islands": {
+        "english": "Islands",
+        "chinese": "岛屿",
+        "taiwanese": "島嶼",
+        "italian": "Isole",
+        "spanish": "Islas",
+        "german": "Inseln",
+        "polish": "Wyspy",
+        "french": "Îles",
+        "korean": "섬",
+        "japanese": "島",
+        "russian": "Острова"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",

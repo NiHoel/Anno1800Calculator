@@ -106,8 +106,8 @@
 
                             <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.name()"></select>
                             <div class="input-group-append">
-                                <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.delete(), enable: !$root.island().isAllIslands()">
-                                    <span class="fa fa-trash"> </span>
+                                <button class="btn btn-secondary" data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#island-management-dialog').modal(),500)" class="btn btn-light">
+                                    <span class="fa fa-cog"> </span>
                                 </button>
 
                             </div>
@@ -207,6 +207,56 @@
         </div>
     </div>
     <!-- #/factory-choose-dialog -->
+    <!-- #download-dialog -->
+    <div id="download-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: texts.download.name">Downloads</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <td data-bind="text: texts.downloadConfig.name"></td>
+                            <td>
+                                <div class="btn-group float-right">
+                                    <label class="btn btn-secondary" id="import-config-button" role="button" href="#" for="config-selector">
+                                        <input id="config-selector" type="file" style="display: none;">
+                                        <span class="fa fa-upload"> </span>
+                                    </label>
+                                    <label data-bind="click: () => exportConfig()" id="export-config-button" role="button" href="#" class="btn btn-secondary">
+                                        <span class="fa fa-download"> </span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td data-bind="text: texts.downloadCalculator.name" style="white-space:pre-wrap"></td>
+                            <td>
+                                <a id="download-calculator-button" role="button" href="https://github.com/NiHoel/Anno1800Calculator/releases/latest" class="btn btn-secondary float-right">
+                                    <span class="fa fa-download"> </span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span data-bind="text: texts.downloadCalculatorServer.name" style="white-space:pre-wrap"></span>
+                                <a href="https://github.com/NiHoel/Anno1800UXEnhancer">https://github.com/NiHoel/Anno1800UXEnhancer</a>
+                            </td>
+                            <td>
+                                <a id="download-calculator-server-button" role="button" href="https://github.com/NiHoel/Anno1800UXEnhancer/releases/latest" class="btn btn-secondary float-right">
+                                    <span class="fa fa-download"> </span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#download-dialog -->
     <!-- #item-equipment-dialog -->
     <div id="item-equipment-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -349,56 +399,79 @@
         </div>
     </div>
     <!-- #/good-consumption-island-upgrade-dialog -->
-    <!-- #download-dialog -->
-    <div id="download-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <!-- #island-management-dialog -->
+    <div id="island-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 data-bind="text: texts.download.name">Downloads</h4>
+                    <h4 data-bind="text: $root.texts.islands.name">Islands</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
                 </div>
                 <div class="modal-body">
-                    <table class="table">
-                        <tr>
-                            <td data-bind="text: texts.downloadConfig.name"></td>
-                            <td>
-                                <div class="btn-group float-right">
-                                    <label class="btn btn-secondary" id="import-config-button" role="button" href="#" for="config-selector">
-                                        <input id="config-selector" type="file" style="display: none;">
-                                        <span class="fa fa-upload"> </span>
-                                    </label>
-                                    <label data-bind="click: () => exportConfig()" id="export-config-button" role="button" href="#" class="btn btn-secondary">
-                                        <span class="fa fa-download"> </span>
-                                    </label>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td data-bind="text: texts.downloadCalculator.name" style="white-space:pre-wrap"></td>
-                            <td>
-                                <a id="download-calculator-button" role="button" href="https://github.com/NiHoel/Anno1800Calculator/releases/latest" class="btn btn-secondary float-right">
-                                    <span class="fa fa-download"> </span>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span data-bind="text: texts.downloadCalculatorServer.name" style="white-space:pre-wrap"></span>
-                                <a href="https://github.com/NiHoel/Anno1800UXEnhancer">https://github.com/NiHoel/Anno1800UXEnhancer</a>
-                            </td>
-                            <td>
-                                <a id="download-calculator-server-button" role="button" href="https://github.com/NiHoel/Anno1800UXEnhancer/releases/latest" class="btn btn-secondary float-right">
-                                    <span class="fa fa-download"> </span>
-                                </a>
-                            </td>
-                        </tr>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" data-bind="text: texts.selectedIsland.name">Select Island</span>
+                        </div>
+
+                        <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.name()"></select>
+
+                    </div>
+
+                    <hr />
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
+                        </div>
+
+                        <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" data-bind="click: () => $root.islandManager.create(), disable: $root.islandManager.islandExists">
+                                <span class="fa fa-plus"> </span>
+                            </button>
+
+                        </div>
+                    </div>
+
+
+                    <table class="table table-striped">
+
+                        <tbody data-bind="foreach: $root.islandManager.unusedNames">
+                            <tr>
+                                <td data-bind="text: $data"></td>
+                                <td>
+                                    <button class="btn btn-secondary btn-sm float-right" data-bind="click: () => $root.islandManager.create($data)">
+                                        <span class="fa fa-plus"> </span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
+
+                    <hr />
+                    <table class="table table-striped">
+
+                        <tbody data-bind="foreach: $root.islands">
+                            <tr>
+                                <td data-bind="text: $data.name"></td> <!-- item name -->
+
+                                <td>
+                                    <div class="float-right" data-bind="if: !$data.isAllIslands()">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.delete($data)">
+                                        <span class="fa fa-trash"> </span>
+                                    </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                 </div>
             </div>
         </div>
     </div>
-    <!-- /#download-dialog -->
+    <!-- #/island-management-dialog -->
     <!-- top right buttons -->
     <div id="content" data-bind="visible: true" style="display:none">
 
