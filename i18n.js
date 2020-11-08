@@ -218,6 +218,32 @@ texts = {
         "japanese": "島",
         "russian": "Острова"
     },
+    "apply": {
+        "english": "Apply",
+        "chinese": "应用",
+        "taiwanese": "套用",
+        "italian": "Applica",
+        "spanish": "Aplicar",
+        "german": "Anwenden",
+        "polish": "Zastosuj",
+        "french": "Appliquer",
+        "korean": "적용",
+        "japanese": "適用",
+        "russian": "Применить"
+    },
+    "world": {
+        "english": "The World",
+        "chinese": "世界",
+        "taiwanese": "世界",
+        "italian": "Il mondo",
+        "spanish": "El mundo",
+        "german": "Die Welt",
+        "polish": "Świat",
+        "french": "Le Monde",
+        "korean": "세계",
+        "japanese": "世界",
+        "russian": "Мир"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",
@@ -244,19 +270,38 @@ texts = {
         korean: "소비재 생산에 필요한 건물 수"
     },
     tonsPerMinute: {
-        english: "Production in Tons per Minute",
-        german: "Produktion in Tonnen pro Minute",
-        korean: "분당 생산량"
+        "english": "Tons per minute (t/min)",
+        "chinese": "每分钟吨数（吨／分钟）",
+        "taiwanese": "每分鐘噸數（噸／分鐘）",
+        "italian": "Tonnellate al minuto (t/min)",
+        "spanish": "Toneladas por minuto (t/min)",
+        "german": "Tonnen pro Minute (t/min)",
+        "polish": "Tony na minutę (t/min)",
+        "french": "Tonnes par minute (t/min)",
+        "korean": "톤/분(1분당 톤 수)",
+        "japanese": "トン毎分 (トン/分)",
+        "russian": "Тонн в минуту (т./мин.)"
     },
     producedAmount: {
         english: "Plain building output after taking extra goods into account",
         german: "Reiner Gebäudeoutput nach Berücksichtigung von Zusatzwaren",
-        korean: "분당 생산량"
+    },
+    showIslandOnCreation: {
+        english: "After creating a new island display it",
+        german: "Nach dem Erstellen einer neuen Insel zeige diese an"
     },
     language: {
-        english: "Language",
-        german: "Sprache",
-        korean: "언어"
+        "english": "Text Language",
+        "chinese": "文本语言",
+        "taiwanese": "文字語言",
+        "italian": "Lingua testo",
+        "spanish": "Idioma del texto",
+        "german": "Textsprache",
+        "polish": "Język napisów",
+        "french": "Langue des textes",
+        "korean": "텍스트 언어",
+        "japanese": "テキスト言語",
+        "russian": "Язык текста"
     },
     islandName: {
         english: "New island name",
