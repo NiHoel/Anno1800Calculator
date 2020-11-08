@@ -7,6 +7,7 @@
     ".btn-default": "btn-dark btn-outline-light",
     ".btn-light": "btn-dark",
     ".ui-fchain-item": "bg-dark",
+    ".card": "bg-dark"
   };
 
   const makeDark = () => Object.keys(classAdditions).forEach((key) => $(key).addClass(classAdditions[key]));

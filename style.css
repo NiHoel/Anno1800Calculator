@@ -56,6 +56,11 @@ h1 {
         color: #FF0000;
     }
 
+.table td {
+    display: table-cell;
+    vertical-align: middle;
+}
+
 .modal-xl {
     max-width: 1140px;
 }
@@ -88,6 +93,37 @@ h1 {
     background-color: #FFBBBB;
 }
 
+.ui-fchain-item-tr-button {
+    margin-left: calc(100% - 1.25rem);
+}
+
+.ui-fchain-item-tr-button div {
+    position: absolute;
+    margin-top: -10px;
+}
+
+.ui-fchain-item-tr-button div .btn-light {
+    background-color: rgba(248, 249, 250, 0.5);
+    border-color: rgba(248, 249, 250, 0.5);
+}
+
+.ui-fchain-item-tr-button div .btn-dark {
+    background-color: rgba(52, 58, 64, 0.5);
+    border-color: rgba(52, 58, 64, 0.5);
+}
+
+.ui-fchain-item-tr-checkbox {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: -10px;
+}
+
+.ui-fchain-item-tr-checkbox div {
+    position: absolute;
+    margin-top: -15px;
+    margin-right: -0.5rem;
+}
+
 .ui-fchain-item-icon {
     text-align: center;
     margin-top: 5px;
@@ -114,8 +150,9 @@ h1 {
 .ui-fchain-item-attribute-group {
     display: flex;
     flex-flow: column;
-    height: 5.5em;
+    height: 6rem;
     justify-content: space-around;
+    margin: -0.75rem 0rem;
 }
 
 .ui-fchain-item-attribute-group .mb-3 {
@@ -166,7 +203,7 @@ h1 {
     float: left;
     color: #CECECE;
     font-size: 30px;
-    margin: 0 25px;
+    margin: auto 25px;
     line-height: 115px;
 }
 
@@ -387,4 +424,12 @@ input[type=number]::-webkit-inner-spin-button {
 
 .ui-fchain-item.bg-dark {
     border: 1px solid #ffffffce;
+}
+
+.bg-dark .icon-dark {
+    display: none;
+}
+
+.bg-light:not(.bg-dark) .icon-light {
+    display: none;
 }
