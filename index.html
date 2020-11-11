@@ -685,23 +685,14 @@
                                         <tr>
 
                                             <td>
-                                                <div data-bind="if: $data.item">
+
                                                     <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
                                                     <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
-                                                </div>
-                                                <div data-bind="if: !$data.item">
-                                                    <span data-bind="$root.texts.total.name" style="font-weight: bold">Total</span>
-                                                </div>
+
                                             </td> <!-- factory icon -->
                                             <td>
                                                 <span data-bind="text: Math.ceil(100*parseFloat($data.amount()))/100"></span>
                                                 <span> t/min</span>
-
-                                                    <span data-bind="if: !$data.item" style="float: right;">
-                                                    <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $parent.updateExtraGoods(1)">
-                                                            <span class="fa fa-sign-in"> </span>
-                                                        </button>
-                                                    </span>
 
                                             </td>
 
@@ -743,18 +734,40 @@
                                                     </button>
 
                                                 </td>
+                                                <td>
+                                                    <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > EPSILON">
+                                                        <span>
+                                                            Export overproduction:
+                                                        </span>
+                                                        <span data-bind="text: Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
+                                                        <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() + $parent.factory.overProduction())">
+                                                            <span class="fa fa-sign-in"> </span>
+                                                        </button>
 
+                                                    </div>
+                                                    <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -EPSILON">
+                                                        <span>
+                                                            Import deficite:
+                                                        </span>
+                                                        <span data-bind="text: -Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
+                                                        <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() - $parent.factory.overProduction())">
+                                                            <span class="fa fa-sign-in"> </span>
+                                                        </button>
+
+                                                    </div>
+                                                </td>
                                                 <td>
 
                                                     <div class="input-group spinner">
+                                                        <div class="input-group-prepend">
                                                         <div class="input-group-text">
                                                             <span data-bind="if: $data.isExport($parent)">Export</span>
                                                             <span data-bind="if: !$data.isExport($parent)">Import</span>
                                                         </div>
-                                                            <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.toFactory.existingBuildings() < $data.toFactory.buildings()-EPSILON">
+                                                            <span data-bind="if: !$data.isExport($parent) && $data.fromFactory.overProduction() < -EPSILON">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
-
+                                                        </div>
                                                         <input step="0.1" class="form-control" type="number" value="0" data-bind="value: amount"/>
                                                     </div>
 
@@ -763,15 +776,17 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <form class="form form-inline" data-bind="if: $data.unusedIslands().length ">
+                                    <form class="form form-inline" data-bind="if: $data.unusedIslands().length " style="justify-content: space-between">
 
 
 
                                         <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.name()"></select>
-                                        <div class="ml-3">Import</div>
+                                        <div style="display: flex">
+                                            <div class="mr-2">Import</div>
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="create-trade-route-export-checkbox" data-bind="checked: $data.export">
                                             <label class="custom-control-label" for="create-trade-route-export-checkbox">Export</label>
+                                        </div>
                                         </div>
                                         <div class="input-group spinner">
 
@@ -788,6 +803,41 @@
 
                             <table class="table table-striped">
                                 <tbody>
+                                    <tr data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                                        <!-- extra goods -->
+                                        <td>
+                                            <span data-bind="text: $root.texts.extraNeed.name"></span>
+                                        </td>
+                                        <td>
+                                            <div class="input-group spinner mb-3">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">+ </span>
+                                                    <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount() + $data.tradeList.amount()">
+                                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                    </span>
+                                                </div>
+                                                <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
+                                            </div>
+
+                                            <div style="display: flex; flex-flow: wrap; justify-content: right; align-items: center">
+                                                <div data-bind="if: $root.settings.additionalProduction.checked()">
+                                                    <span class="mr-3" data-bind="text: $root.texts.extraGoods.name"></span>
+                                                    <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
+                                                    <span class="mr-3"> t/min</span>
+                                                </div>
+                                                <div data-bind="if: $root.settings.tradeRoutes.checked()">
+                                                    <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
+                                                    <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
+                                                    <span class="mr-3"> t/min</span>
+                                                </div>
+                                                <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                                                    <button class="btn btn-sm btn-light">
+                                                        <span data-bind="text: $root.texts.apply.name, click: () => $data.updateExtraGoods(1)">Apply</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <!-- boost -->
                                         <td>
@@ -828,41 +878,16 @@
 
                                         </td>
                                     </tr>
-                                    <tr data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                                        <!-- extra goods -->
+                                    <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
+                                        <!-- overproduction -->
                                         <td>
-                                            <span data-bind="text: $root.texts.extraNeed.name"></span>
+                                            <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
                                         </td>
                                         <td>
-                                            <div class="input-group spinner mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">+ </span>
-                                                    <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount()">
-                                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
-                                                    </span>
-                                                </div>
-                                                <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
-                                            </div>
-
-                                            <div style="display: flex; flex-flow: wrap; justify-content: right; align-items: center">
-                                                <div data-bind="if: $root.settings.additionalProduction.checked()">
-                                                    <span class="mr-3" data-bind="text: $root.texts.extraGoods.name"></span>
-                                                    <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
-                                                    <span class="mr-3"> t/min</span>
-                                                </div>
-                                                <div data-bind="if: $root.settings.tradeRoutes.checked()">
-                                                    <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
-                                                    <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
-                                                    <span class="mr-3"> t/min</span>
-                                                </div>
-                                                <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                                                    <button class="btn btn-sm btn-light">
-                                                        <span data-bind="text: $root.texts.apply.name, click: () => $data.updateExtraGoods(1)">Apply</span>
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            <span data-bind="text: Math.ceil(100*parseFloat($data.overProduction()))/100"></span><span> t/min</span>
                                         </td>
                                     </tr>
+
                                     <tr data-bind="if: $data.module && $data.moduleChecked()">
                                         <!-- extra goods module -->
                                         <td>
@@ -1051,7 +1076,7 @@
                                             <div class="input-group spinner mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">+ </span>
-                                                        <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount()">
+                                                        <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount() + $data.tradeList.amount()">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>

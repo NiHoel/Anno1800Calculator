@@ -658,9 +658,7 @@ class Factory extends Consumer {
             this.palaceBuffChecked = ko.observable(false);
         }
 
-        this.producedAmount = ko.computed(() => {
-            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
-
+        this.extraGoodFactor = ko.computed(() => {
             var factor = 1;
             if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
                 factor += 1 / this.module.additionalOutputCycle;
@@ -668,9 +666,15 @@ class Factory extends Consumer {
             if (this.palaceBuff && this.palaceBuffChecked())
                 factor += 1 / this.palaceBuff.additionalOutputCycle;
 
+            return factor;
+        })
+
+        this.producedAmount = ko.computed(() => {
+            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
+
             var existingBuildingsAmount = parseInt(this.existingBuildings()) * this.boost() * this.tpmin;
 
-            return Math.max(existingBuildingsAmount, amount / factor);
+            return Math.max(existingBuildingsAmount, amount / this.extraGoodFactor());
         });
 
         this.buildings = ko.computed(() => {
@@ -695,6 +699,15 @@ class Factory extends Consumer {
             if (view.settings.autoApplyExtraNeed.checked())
                 this.updateExtraGoods();
         });
+
+        this.overProduction = ko.computed(() => {
+            if (!view.settings.missingBuildingsHighlight.checked())
+                return 0;
+
+            var val = this.existingBuildings() * this.boost() * this.tpmin * this.extraGoodFactor();
+            return val - this.amount() - this.extraAmount();
+        });
+
     }
 
 
@@ -1228,14 +1241,7 @@ class ExtraGoodProductionList {
 
         this.entries = ko.observableArray();
         this.nonZero = ko.computed(() => {
-            var arr = this.entries().filter(i => i.amount());
-
-            if (arr.length)
-                arr.push({
-                    amount: this.amount
-                });
-
-            return arr;
+            return this.entries().filter(i => i.amount());
         });
         this.amount = ko.computed(() => {
             var total = 0;
@@ -1514,6 +1520,11 @@ class TradeManager {
         view.selectedFactory.subscribe(f => {
             var usedIslands = new Set(f.tradeList.routes().flatMap(r => [r.from, r.to]));
             var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != f.tradeList.island);
+            islands.sort((a, b) => {
+                return a.name() < b.name();
+            });
+            f.tradeList.export(f.overProduction() > 0);
+            f.tradeList.newAmount(Math.abs(f.overProduction()));
 
             f.tradeList.unusedIslands(islands);
         });
