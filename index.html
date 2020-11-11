@@ -845,17 +845,17 @@
                                             </div>
 
                                             <div style="display: flex; flex-flow: wrap; justify-content: right; align-items: center">
-                                                <div data-bind="if: $data.extraGoodProductionList.amount()">
+                                                <div data-bind="if: $root.settings.additionalProduction.checked()">
                                                     <span class="mr-3" data-bind="text: $root.texts.extraGoods.name"></span>
                                                     <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
                                                     <span class="mr-3"> t/min</span>
                                                 </div>
-                                                <div data-bind="if: $data.tradeList.amount()">
+                                                <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
                                                     <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
                                                     <span class="mr-3"> t/min</span>
                                                 </div>
-                                                <div data-bind="if: $data.extraGoodProductionList.amount() || $data.tradeList.amount()">
+                                                <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
                                                     <button class="btn btn-sm btn-light">
                                                         <span data-bind="text: $root.texts.apply.name, click: () => $data.updateExtraGoods(1)">Apply</span>
                                                     </button>

@@ -573,6 +573,13 @@ options = {
             "russian": "Торговые маршруты"
         }
     },
+    "autoApplyExtraNeed": {
+        "name": "Automatically update extra need when trade routes or extra goods change",
+        "locaText": {
+            "english": "Automatically update extra need when trade routes or extra goods change",
+            "german": "Zusatzbedarf automatisch anpassen, wenn sich Handelsrouten oder Zusatzwaren ändern"
+        }
+    },
     "consumptionModifier": {
         "name": "Show input field for percental consumption modification",
         "locaText": {

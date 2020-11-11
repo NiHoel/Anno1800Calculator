@@ -686,7 +686,15 @@ class Factory extends Consumer {
 
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
+        this.tradeList.amount.subscribe(() => {
+            if (view.settings.autoApplyExtraNeed.checked())
+                this.updateExtraGoods();
+        });
 
+        this.extraGoodProductionList.amount.subscribe(() => {
+            if (view.settings.autoApplyExtraNeed.checked())
+                this.updateExtraGoods();
+        });
     }
 
 
@@ -887,7 +895,7 @@ class Demand extends NamedElement {
 class ItemDemandSwitch {
     constructor(consumer, input, items, assetsMap) {
         this.items = items;
-
+        
         this.demands = [ // use array index to toggle
             new Demand({ guid: input.Product, consumer: consumer }, assetsMap),
             new Demand({ guid: items[0].replacements.get(input.Product), consumer: consumer }, assetsMap)
@@ -1399,7 +1407,11 @@ class TradeRoute {
     constructor(config) {
         $.extend(this, config);
 
-        this.amount = ko.observable(config.amount);
+        this.amount = ko.observable(config.amount || 0);
+        this.amount.subscribe(val => {
+            if (typeof val !== "number")
+                this.amount(parseFloat(val) || 0);
+        })
     }
 
     getOpposite(list) {
@@ -1496,6 +1508,7 @@ class TradeList {
 
 class TradeManager {
     constructor() {
+        this.key = "tradeRoutes";
         this.routes = ko.observableArray();
 
         view.selectedFactory.subscribe(f => {
@@ -1504,6 +1517,52 @@ class TradeManager {
 
             f.tradeList.unusedIslands(islands);
         });
+
+        if (localStorage) {
+            var islands = new Map();
+            for (var i of view.islands())
+                if (!i.isAllIslands())
+                    islands.set(i.name(), i);
+
+            var text = localStorage.getItem(this.key);
+            var json = text ? JSON.parse(text) : [];
+            for (var r of json) {
+                var config = {
+                    from: islands.get(r.from),
+                    to: islands.get(r.to),
+                    amount: parseFloat(r.amount)
+                };
+
+                if (!config.from || !config.to)
+                    continue;
+
+                config.fromFactory = config.from.assetsMap.get(r.factory);
+                config.toFactory = config.to.assetsMap.get(r.factory);
+
+                var route = new TradeRoute(config);
+                this.routes.push(route);
+                config.fromFactory.tradeList.routes.push(route);
+                config.toFactory.tradeList.routes.push(route);
+            }
+
+
+            this.persistenceSubscription = ko.computed(() => {
+                var json = [];
+
+                for (var r of this.routes()) {
+                    json.push({
+                        from: r.from.name(),
+                        to: r.to.name(),
+                        factory: r.fromFactory.guid,
+                        amount: r.amount()
+                    });
+                }
+
+                localStorage.setItem(this.key, JSON.stringify(json, null, 4));
+
+                return json;
+            });
+        }
     }
 
     add(route) {
