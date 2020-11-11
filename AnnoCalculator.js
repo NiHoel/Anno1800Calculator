@@ -132,14 +132,14 @@ class Island {
         }
 
         for (let consumer of params.powerPlants) {
-            let f = new Consumer(consumer, assetsMap)
+            let f = new Consumer(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
 
             if (localStorage) {
                 {
                     let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.existingBuildings(parseInt(localStorage.getItem(id)));
 
                     f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
@@ -159,7 +159,7 @@ class Island {
         }
 
         for (let factory of params.factories) {
-            let f = new Factory(factory, assetsMap)
+            let f = new Factory(factory, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
             this.factories.push(f);
@@ -167,7 +167,7 @@ class Island {
             if (localStorage) {
                 if (f.moduleChecked) { // set moduleChecked before boost, otherwise boost would be increased
                     let id = f.guid + ".module.checked";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.moduleChecked(parseInt(localStorage.getItem(id)));
 
                     f.moduleChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -175,7 +175,7 @@ class Island {
 
                 if (f.palaceBuff) {
                     let id = f.guid + ".palaceBuff.checked";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.palaceBuffChecked(parseInt(localStorage.getItem(id)));
 
                     f.palaceBuffChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -183,7 +183,7 @@ class Island {
 
                 {
                     let id = f.guid + ".percentBoost";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.percentBoost(parseInt(localStorage.getItem(id)));
 
                     f.percentBoost.subscribe(val => {
@@ -199,7 +199,7 @@ class Island {
 
                 {
                     let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.existingBuildings(parseInt(localStorage.getItem(id)));
 
                     f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
@@ -220,7 +220,7 @@ class Island {
                 if (localStorage) {
                     {
                         let id = p.guid + ".percentBoost";
-                        if (localStorage.getItem(id)) {
+                        if (localStorage.getItem(id) != null) {
                             let b = parseInt(localStorage.getItem(id))
                             p.factories.forEach(f => f.percentBoost(b));
                             localStorage.removeItem(id);
@@ -230,7 +230,7 @@ class Island {
 
                     {
                         let id = p.guid + ".fixedFactory";
-                        if (localStorage.getItem(id))
+                        if (localStorage.getItem(id) != null)
                             p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
                         p.fixedFactory.subscribe(
                             f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
@@ -256,7 +256,7 @@ class Island {
             if (localStorage) {
                 let oldId = i.guid + ".checked";
                 var oldChecked = false;
-                if (localStorage.getItem(oldId))
+                if (localStorage.getItem(oldId) != null)
                     oldChecked = parseInt(localStorage.getItem(oldId));
 
                 for (var equip of i.equipments) {
@@ -265,7 +265,7 @@ class Island {
                     if (oldChecked)
                         equip.checked(true);
 
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         equip.checked(parseInt(localStorage.getItem(id)));
 
                     equip.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -299,7 +299,7 @@ class Island {
             if (localStorage) {
                 {
                     let id = l.guid + ".amount";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         l.amount(parseInt(localStorage.getItem(id)));
 
                     l.amount.subscribe(val => {
@@ -314,7 +314,7 @@ class Island {
                 }
                 {
                     let id = l.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         l.existingBuildings(parseInt(localStorage.getItem(id)));
 
                     l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
@@ -332,7 +332,7 @@ class Island {
                 if (localStorage) {
                     {
                         let id = `${l.guid}[${n.guid}].checked`;
-                        if (localStorage.getItem(id))
+                        if (localStorage.getItem(id) != null)
                             n.checked(parseInt(localStorage.getItem(id)))
 
                         n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -341,7 +341,7 @@ class Island {
 
                     {
                         let id = `${l.guid}[${n.guid}].percentBoost`;
-                        if (localStorage.getItem(id))
+                        if (localStorage.getItem(id) != null)
                             n.percentBoost(parseInt(localStorage.getItem(id)));
 
                         n.percentBoost.subscribe(val => {
@@ -399,7 +399,7 @@ class Island {
                         if (localStorage) {
                             let oldId = b.guid + ".buildings";
                             let id = b.guid + ".existingBuildings"
-                            if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                            if (localStorage.getItem(id) != null || localStorage.getItem(oldId))
                                 b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
 
                             b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
@@ -417,7 +417,7 @@ class Island {
 
             if (localStorage) {
                 let id = u.guid + ".checked";
-                if (localStorage.getItem(id))
+                if (localStorage.getItem(id) != null)
                     u.checked(parseInt(localStorage.getItem(id)));
 
                 u.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -436,7 +436,7 @@ class Island {
 
             if (localStorage) {
                 let id = f.guid + ".extraAmount";
-                if (localStorage.getItem(id)) {
+                if (localStorage.getItem(id) != null) {
                     f.extraAmount(parseFloat(localStorage.getItem(id)));
                 }
 
@@ -521,7 +521,7 @@ class Island {
 }
 
 class Consumer extends NamedElement {
-    constructor(config, assetsMap) {
+    constructor(config, assetsMap, island) {
         super(config);
 
         if (config.region)
@@ -540,6 +540,8 @@ class Consumer extends NamedElement {
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
         this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+
+        this.tradeList = new TradeList(island, this);
     }
 
     getInputs() {
@@ -625,33 +627,14 @@ class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
         super(config, assetsMap);
     }
-
-
 }
 
 class Factory extends Consumer {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
+    constructor(config, assetsMap, island) {
+        super(config, assetsMap, island);
 
         this.extraAmount = ko.observable(0);
-        this.extraGoods = ko.observableArray();
-        this.extraGoodsNonZero = ko.computed(() => {
-            var arr = this.extraGoods().filter(i => i.amount());
-
-            if (arr.length)
-                arr.push({
-                    amount: this.extraGoodsTotal
-                });
-
-            return arr;
-        });
-        this.extraGoodsTotal = ko.computed(() => {
-            var total = 0;
-            for (var i of (this.extraGoods() || []))
-                total += i.amount();
-
-            return total;
-        })
+        this.extraGoodProductionList = new ExtraGoodProductionList(this);
 
         this.percentBoost = ko.observable(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -775,8 +758,13 @@ class Factory extends Consumer {
         this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
 
-    updateExtraGoods() {
-        this.extraAmount(- this.extraGoodsTotal());
+    updateExtraGoods(depth) {
+        this.extraAmount(- this.extraGoodProductionList.amount() + this.tradeList.amount());
+
+        if(depth > 0)
+        for (var route of this.tradeList.routes()) {
+            route.getOppositeFactory(this).updateExtraGoods(depth - 1);
+        }
     }
 }
 
@@ -1221,8 +1209,33 @@ class ExtraGoodProduction {
         this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.producedAmount() / this.additionalOutputCycle);
 
         for (var f of this.product.factories) {
-            f.extraGoods.push(this);
+            f.extraGoodProductionList.entries.push(this);
         }
+    }
+}
+
+class ExtraGoodProductionList {
+    constructor(factory) {
+        this.factory = factory;
+
+        this.entries = ko.observableArray();
+        this.nonZero = ko.computed(() => {
+            var arr = this.entries().filter(i => i.amount());
+
+            if (arr.length)
+                arr.push({
+                    amount: this.amount
+                });
+
+            return arr;
+        });
+        this.amount = ko.computed(() => {
+            var total = 0;
+            for (var i of (this.entries() || []))
+                total += i.amount();
+
+            return total;
+        })
     }
 }
 
@@ -1379,6 +1392,131 @@ class GoodConsumptionUpgradeIslandList {
         for (var list of this.lists) {
             list.apply();
         }
+    }
+}
+
+class TradeRoute {
+    constructor(config) {
+        $.extend(this, config);
+
+        this.amount = ko.observable(config.amount);
+    }
+
+    getOpposite(list) {
+        if (list.island == this.from)
+            return this.to;
+        else
+            return this.from;
+    }
+
+    getOppositeFactory(factory) {
+        if (this.fromFactory == factory)
+            return this.toFactory;
+        else
+            return this.fromFactory;
+    }
+
+    isExport(list) {
+        return list.island == this.from;
+    }
+
+    delete() {
+        view.tradeManager.remove(this);
+    }
+}
+
+class TradeList {
+    constructor(island, factory) {
+        this.island = island;
+        this.factory = factory;
+
+        this.routes = ko.observableArray();
+
+        this.amount = ko.computed(() => {
+            var amount = 0;
+            for (var route of this.routes()) {
+                amount += (route.isExport(this) ? 1 : -1) * route.amount();
+            }
+
+            return amount;
+        })
+
+        // interface elements to create a new route
+        this.unusedIslands = ko.observableArray();
+        this.selectedIsland = ko.observable();
+        this.export = ko.observable(false);
+        this.newAmount = ko.observable(0);
+    }
+
+    canCreate() {
+        return this.selectedIsland() && !this.selectedIsland().isAllIslands() && this.newAmount();
+    }
+
+    create() {
+        if (!this.canCreate())
+            return;
+
+        var otherFactory;
+        for (var f of this.selectedIsland().factories)
+            if (f.guid == this.factory.guid) {
+                otherFactory = f;
+                break;
+            }
+
+        if (!otherFactory)
+            return;
+
+        if (this.export()) {
+            var route = new TradeRoute({
+                from: this.island,
+                to: this.selectedIsland(),
+                fromFactory: this.factory,
+                toFactory: otherFactory,
+                amount: this.newAmount()
+            });
+        } else
+        {
+            var route = new TradeRoute({
+                to: this.island,
+                from: this.selectedIsland(),
+                toFactory: this.factory,
+                fromFactory: otherFactory,
+                amount: this.newAmount()
+            });
+        }
+
+        this.routes.push(route);
+        this.unusedIslands.remove(this.selectedIsland());
+        otherFactory.tradeList.routes.push(route);
+
+        view.tradeManager.add(route);
+    }
+
+}
+
+class TradeManager {
+    constructor() {
+        this.routes = ko.observableArray();
+
+        view.selectedFactory.subscribe(f => {
+            var usedIslands = new Set(f.tradeList.routes().flatMap(r => [r.from, r.to]));
+            var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != f.tradeList.island);
+
+            f.tradeList.unusedIslands(islands);
+        });
+    }
+
+    add(route) {
+        this.routes.push(route);
+    }
+
+    remove(route) {
+        route.fromFactory.tradeList.routes.remove(route);
+        route.toFactory.tradeList.routes.remove(route);
+        this.routes.remove(route);
+
+        route.toFactory.tradeList.unusedIslands.push(route.from);
+        route.fromFactory.tradeList.unusedIslands.push(route.to);
     }
 }
 
@@ -1723,7 +1861,7 @@ class DarkMode {
 
         if (localStorage) {
             let id = "darkMode.checked";
-            if (localStorage.getItem(id))
+            if (localStorage.getItem(id) != null)
                 this.checked(parseInt(localStorage.getItem(id)));
 
             this.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -1787,7 +1925,7 @@ function init() {
     view.newspaperConsumption = new NewspaperNeedConsumption();
     if (localStorage) {
         let id = "newspaperPropagandaBuff";
-        if (localStorage.getItem(id))
+        if (localStorage.getItem(id) != null)
             view.newspaperConsumption.selectedBuff(localStorage.getItem(id));
 
         view.newspaperConsumption.selectedBuff.subscribe(val => localStorage.setItem(id, val));
@@ -1821,6 +1959,8 @@ function init() {
     view.selectedFactory = ko.observable(view.island().factories[0]);
     view.selectedGoodConsumptionUpgradeList =
         ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
+
+    view.tradeManager = new TradeManager();
 
     ko.applyBindings(view, $(document.body)[0]);
 

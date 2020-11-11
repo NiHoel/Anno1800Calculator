@@ -557,6 +557,22 @@ options = {
             "korean": "추가 생산을 위한 입력 필드 표시 (음수 값 가능)"
         }
     },
+    "tradeRoutes": {
+        "name": "Trade Routes",
+        "locaText": {
+            "english": "Trade Routes",
+            "chinese": "贸易航线",
+            "taiwanese": "貿易航線",
+            "italian": "Rotte commerciali",
+            "spanish": "Rutas de comercio",
+            "german": "Handelsrouten",
+            "polish": "Szlaki handlowe",
+            "french": "Routes commerciales",
+            "korean": "무역로",
+            "japanese": "取引ルート",
+            "russian": "Торговые маршруты"
+        }
+    },
     "consumptionModifier": {
         "name": "Show input field for percental consumption modification",
         "locaText": {

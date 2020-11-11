@@ -8,7 +8,7 @@
 
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 
@@ -19,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 
     <!-- Latest compiled JavaScript -->
-    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="bootstrap-notify.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
 
@@ -73,12 +73,12 @@
                                     <td>
                                         <div class="float-right">
                                             <span data-bind="if: $data.id == 'additionalProduction'">
-                                                <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#item-equipment-dialog').modal(),500)" class="btn btn-light btn-sm">
+                                                <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#item-equipment-dialog').modal(),500), enable: $root.settings.additionalProduction.checked()" class="btn btn-light btn-sm">
                                         <span class="fa fa-cog"> </span>
                                     </button>
                                 </span>
                                             <span data-bind="if: $data.id == 'consumptionModifier'">
-                                                <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#good-consumption-island-upgrade-dialog').modal(),500)" class="btn btn-light btn-sm">
+                                                <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#good-consumption-island-upgrade-dialog').modal(),500), enable: $root.settings.consumptionModifier.checked()" class="btn btn-light btn-sm">
                                         <span class="fa fa-cog"> </span>
                                     </button>
                                 </span>
@@ -558,8 +558,8 @@
                             <div class="ui-tier-unit">
                                 <div class="ui-tier-unit-icon">
                                     <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-                                    <img src="icon_residence.png" class="subscript-icon" data-bind="if: !$root.settings.existingBuildingsInput.checked()">
-                                    <img src="icon_house.png" class="subscript-icon" data-bind="if: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
+                                    <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                    <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
                                 </div>
                                 <div class="ui-tier-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'tier-unit-guid' : guid}">
                                     <span data-bind="visible: hotkey, text: hotkey() ? '[' + hotkey().toUpperCase() + '] ' : ''"></span>
@@ -617,7 +617,7 @@
             <!-- /required workforce field -->
             <!-- #factory-config-dialog -->
             <div id="factory-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content" data-bind="with: $root.selectedFactory()">
                         <div class="modal-header">
                             <h4 data-bind="text: $data.name">Factory Name</h4>
@@ -676,12 +676,12 @@
                                 <hr />
                             </div>
 
-                            <div data-bind="if: $data.extraGoodsNonZero().length && $root.settings.additionalProduction.checked()">
+                            <div data-bind="if: $data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked()">
 
 
                                 <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
                                 <table class="table table-striped">
-                                    <tbody data-bind="foreach: $data.extraGoodsNonZero">
+                                    <tbody data-bind="foreach: $data.extraGoodProductionList.nonZero">
                                         <tr>
 
                                             <td>
@@ -698,7 +698,7 @@
                                                 <span> t/min</span>
 
                                                     <span data-bind="if: !$data.item" style="float: right;">
-                                                        <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $parent.updateExtraGoods()">
+                                                    <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $parent.updateExtraGoods(1)">
                                                             <span class="fa fa-sign-in"> </span>
                                                         </button>
                                                     </span>
@@ -709,6 +709,79 @@
                                     </tbody>
                                 </table>
 
+                                <hr />
+                            </div>
+
+                            <div data-bind="if: !$data.tradeList.island.isAllIslands() && $root.settings.tradeRoutes.checked()">
+                                <div data-bind="with: $data.tradeList">
+
+                                    <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
+                            <table class="table table-striped">
+                                        <tbody data-bind="foreach: $data.routes">
+                                            <tr>
+                                                <td data-bind="text: $data.getOpposite($parent).name"></td> <!-- island name -->
+                                                <!-- factory summary -->
+                                                <!--<td data-bind="with: $data.getOpposite($parent)">
+                                                    <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                                        <span class="mr-3">
+                                                            <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                                        </span>
+                                                        <span data-bind="if: !$data.top5Factories().length">0</span>
+                                                        <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                                            <span class="mr-1">
+                                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+
+                                                            </span>
+                                                            <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                                        </span>
+                                                    </div>
+                                                </td> -->
+                                                <td>
+
+                                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
+                                                        <span class="fa fa-trash"> </span>
+                                                    </button>
+
+                                                </td>
+
+                                                <td>
+
+                                                    <div class="input-group spinner">
+                                                        <div class="input-group-text">
+                                                            <span data-bind="if: $data.isExport($parent)">Export</span>
+                                                            <span data-bind="if: !$data.isExport($parent)">Import</span>
+                                                        </div>
+                                                            <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.toFactory.existingBuildings() < $data.toFactory.buildings()-EPSILON">
+                                                            <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                        </span>
+
+                                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: amount"/>
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <form class="form form-inline" data-bind="if: $data.unusedIslands().length ">
+
+
+
+                                        <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.name()"></select>
+                                        <div class="ml-3">Import</div>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" class="custom-control-input" id="create-trade-route-export-checkbox" data-bind="checked: $data.export">
+                                            <label class="custom-control-label" for="create-trade-route-export-checkbox">Export</label>
+                                        </div>
+                                        <div class="input-group spinner">
+
+                                            <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
+                                        </div>
+                                        <button class="btn btn-sm btn-light" data-bind="click: () => $data.create(), enable: $data.canCreate()">
+                                            <span class="fa fa-plus"></span>
+                                        </button>
+                                    </form>
+                                </div>
                                 <hr />
                             </div>
 
@@ -755,7 +828,7 @@
 
                                         </td>
                                     </tr>
-                                    <tr data-bind="if: $root.settings.additionalProduction.checked()">
+                                    <tr data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
                                         <!-- extra goods -->
                                         <td>
                                             <span data-bind="text: $root.texts.extraNeed.name"></span>
@@ -764,11 +837,29 @@
                                             <div class="input-group spinner mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">+ </span>
-                                                    <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodsTotal()">
+                                                    <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount()">
                                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                     </span>
                                                 </div>
                                                 <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
+                                            </div>
+
+                                            <div style="display: flex; flex-flow: wrap; justify-content: right; align-items: center">
+                                                <div data-bind="if: $data.extraGoodProductionList.amount()">
+                                                    <span class="mr-3" data-bind="text: $root.texts.extraGoods.name"></span>
+                                                    <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
+                                                    <span class="mr-3"> t/min</span>
+                                                </div>
+                                                <div data-bind="if: $data.tradeList.amount()">
+                                                    <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
+                                                    <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
+                                                    <span class="mr-3"> t/min</span>
+                                                </div>
+                                                <div data-bind="if: $data.extraGoodProductionList.amount() || $data.tradeList.amount()">
+                                                    <button class="btn btn-sm btn-light">
+                                                        <span data-bind="text: $root.texts.apply.name, click: () => $data.updateExtraGoods(1)">Apply</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
@@ -834,10 +925,10 @@
                     <div class="ui-fchain collapse show" data-bind="attr: {id:  'category-' + guid}">
                         <div data-bind="foreach: $data.products">
                             <div data-bind="foreach: $data.factories">
-                                <div data-bind="if: amount() > 0 || existingBuildings() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000)">
+                                <div data-bind="if: amount() > 0 || extraAmount() > 0 || existingBuildings() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000)">
 
                                     <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
-                                        <div class="ui-fchain-item-tr-button" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked()">
+                                        <div class="ui-fchain-item-tr-button" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked() || $root.settings.tradeRoutes.checked()">
                                             <div>
                                             <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data)}" data-toggle="modal" data-target="#factory-config-dialog">
                                                 <span class="fa fa-sliders"></span>
@@ -960,7 +1051,7 @@
                                             <div class="input-group spinner mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">+ </span>
-                                                        <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodsTotal()">
+                                                        <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount()">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>
