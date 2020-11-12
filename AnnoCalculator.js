@@ -435,20 +435,33 @@ class Island {
         for (let f of this.factories) {
 
             if (localStorage) {
-                let id = f.guid + ".extraAmount";
-                if (localStorage.getItem(id) != null) {
-                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+                {
+                    let id = f.guid + ".extraAmount";
+                    if (localStorage.getItem(id) != null) {
+                        f.extraAmount(parseFloat(localStorage.getItem(id)));
+                    }
+
+                    f.extraAmount.subscribe(val => {
+                        val = parseFloat(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val)) {
+                            f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
+                            return;
+                        }
+                        localStorage.setItem(id, val);
+                    });
                 }
 
-                f.extraAmount.subscribe(val => {
-                    val = parseFloat(val);
-
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
-                        return;
+                {
+                    let id = f.guid + ".extraGoodProductionList.checked";
+                    if (localStorage.getItem(id) != null) {
+                        f.extraGoodProductionList.checked(parseInt(localStorage.getItem(id)));
                     }
-                    localStorage.setItem(id, val);
-                });
+
+                    f.extraGoodProductionList.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0))
+                }
+
+
             } else {
                 f.extraAmount.subscribe(val => {
                     if (val == null || !isFinite(val) || isNaN(val)) {
@@ -690,13 +703,17 @@ class Factory extends Consumer {
 
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
-        this.tradeList.amount.subscribe(() => {
+        this.computedExtraAmount = ko.computed(() => {
+            return (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) + this.tradeList.amount();
+        });
+
+        this.computedExtraAmount.subscribe(() => {
             if (view.settings.autoApplyExtraNeed.checked())
                 this.updateExtraGoods();
         });
 
-        this.extraGoodProductionList.amount.subscribe(() => {
-            if (view.settings.autoApplyExtraNeed.checked())
+        this.amount.subscribe(() => {
+            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() + EPSILON < this.extraAmount())
                 this.updateExtraGoods();
         });
 
@@ -780,7 +797,7 @@ class Factory extends Consumer {
     }
 
     updateExtraGoods(depth) {
-        this.extraAmount(- this.extraGoodProductionList.amount() + this.tradeList.amount());
+        this.extraAmount(this.computedExtraAmount());
 
         if(depth > 0)
         for (var route of this.tradeList.routes()) {
@@ -1239,6 +1256,8 @@ class ExtraGoodProductionList {
     constructor(factory) {
         this.factory = factory;
 
+        this.checked = ko.observable(true);
+
         this.entries = ko.observableArray();
         this.nonZero = ko.computed(() => {
             return this.entries().filter(i => i.amount());
@@ -1524,7 +1543,7 @@ class TradeManager {
                 return a.name() < b.name();
             });
             f.tradeList.export(f.overProduction() > 0);
-            f.tradeList.newAmount(Math.abs(f.overProduction()));
+            f.tradeList.newAmount(Math.round(100 * Math.abs(f.overProduction())) / 100);
 
             f.tradeList.unusedIslands(islands);
         });

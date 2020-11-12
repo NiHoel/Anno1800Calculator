@@ -812,7 +812,7 @@
                                             <div class="input-group spinner mb-3">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text">+ </span>
-                                                    <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount() + $data.tradeList.amount()">
+                                                    <span data-bind="if: $data.extraAmount() < -EPSILON + $data.computedExtraAmount()">
                                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                     </span>
                                                 </div>
@@ -821,7 +821,12 @@
 
                                             <div style="display: flex; flex-flow: wrap; justify-content: right; align-items: center">
                                                 <div data-bind="if: $root.settings.additionalProduction.checked()">
-                                                    <span class="mr-3" data-bind="text: $root.texts.extraGoods.name"></span>
+                                                    <span class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.extraGoodProductionList.checked, attr: { id: $data.guid + '-extraGoodProductionList-checked' }">
+                                                        <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-extraGoodProductionList-checked' }, text: $root.texts.extraGoods.name" src-only style="vertical-align: top;">
+
+                                                        </label>
+                                                    </span>
                                                     <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
                                                     <span class="mr-3"> t/min</span>
                                                 </div>
@@ -1076,7 +1081,7 @@
                                             <div class="input-group spinner mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">+ </span>
-                                                        <span data-bind="if: $data.extraAmount() < -EPSILON - $data.extraGoodProductionList.amount() + $data.tradeList.amount()">
+                                                        <span data-bind="if: $data.extraAmount() < -EPSILON  + $data.computedExtraAmount()">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>
