@@ -542,79 +542,6 @@
             </div>
         </div>
         <!-- /top right buttons-->
-
-        <div data-bind="with: $root.island()">
-            <!-- population input field -->
-            <fieldset class="ui-fieldset" id="residents-view">
-                <legend data-bind="text:$root.texts.residents.name">Residents</legend>
-
-                <div style="display:flex;align-items:center;justify-content:space-between;">
-
-                    <div class="ui-tier-input fleft">
-                        <!-- <div class="ui-tier-icon">
-                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                        </div> -->
-                        <div data-bind="foreach: $data.populationLevels">
-                            <div class="ui-tier-unit">
-                                <div class="ui-tier-unit-icon">
-                                    <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-                                    <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
-                                    <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
-                                </div>
-                                <div class="ui-tier-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'tier-unit-guid' : guid}">
-                                    <span data-bind="visible: hotkey, text: hotkey() ? '[' + hotkey().toUpperCase() + '] ' : ''"></span>
-                                    <span data-bind="text: name"></span>
-                                </div>
-
-                                <div class="input text">
-                                    <div class="input-group spinner mb-3">
-                                        <div data-bind="if: !$root.settings.existingBuildingsInput.checked()">
-                                            <input step="100" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' };" />
-                                        </div>
-                                        <div data-bind="if: $root.settings.existingBuildingsInput.checked()">
-                                            <input step="10" class="form-control input-lg" type="number" value="0" data-bind="value: existingBuildings, attr: {title: 'Press '+name()[0]+' to focus' };" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                    <btn class="btn btn-light float-right align-middle" data-bind="click: () => $root.island().reset(), text: $root.texts.reset.name()">Reset</btn>
-                </div>
-            </fieldset>
-            <!-- /population input field -->
-            <!-- required workforce field -->
-            <fieldset class="ui-fieldset" id="workforce-view">
-                <legend class="collapser" data-toggle="collapse" data-target="#workforce">
-                    <span class="fa fa-chevron-right"></span>
-                    <span class="fa fa-chevron-down"></span>
-                    <span data-bind="text:$root.texts.workforce.name"></span>
-                </legend>
-
-                <div id="workforce" class="collapse show">
-
-                    <div class="ui-tier-input fleft">
-                        <!-- <div class="ui-tier-icon">
-                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                        </div> -->
-                        <div data-bind="foreach: $data.workforce">
-                            <div class="ui-tier-unit">
-                                <div class="ui-tier-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
-                                <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
-                                <div class="ui-fchain-item-count">
-                                    <span data-bind="text: amount"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <div class="clear"></div>
-                </div>
-            </fieldset>
-            <!-- /required workforce field -->
             <!-- #factory-config-dialog -->
             <div id="factory-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -632,12 +559,12 @@
                                     <tr>
                                         <td>
                                                 <div style="display: flex">
-                                            <span class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
-                                                <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
+                                                <span class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
+                                                    <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
 
-                                                </label>
-                                            </span>
+                                                    </label>
+                                                </span>
                                                     <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
                                                     <span data-bind="text: $data.name"></span> <!-- item name -->
                                                 </div>
@@ -686,8 +613,8 @@
 
                                             <td>
 
-                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
-                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
 
                                             </td> <!-- factory icon -->
                                             <td>
@@ -707,10 +634,10 @@
                                 <div data-bind="with: $data.tradeList">
 
                                     <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
-                            <table class="table table-striped">
+                                <table class="table table-striped">
                                         <tbody data-bind="foreach: $data.routes">
                                             <tr>
-                                                <td data-bind="text: $data.getOpposite($parent).name"></td> <!-- island name -->
+                                            <td><a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a></td> <!-- island name -->
                                                 <!-- factory summary -->
                                                 <!--<td data-bind="with: $data.getOpposite($parent)">
                                                     <div style="display: flex; flex-flow: wrap; justify-content: center">
@@ -768,7 +695,7 @@
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                         </div>
-                                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: amount"/>
+                                                    <input step="0.1" class="form-control" type="number" value="0" data-bind="value: amount" />
                                                     </div>
 
                                                 </td>
@@ -856,11 +783,11 @@
                                                         <div class="input-group-btn-vertical">
                                                             <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
                                                             <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: parseInt(percentBoost()) > 1"><i class="fa fa-caret-down"></i></button>
-                        </div>
+                                                    </div>
                                                         <span class="input-group-text">%</span>
-                    </div>
-                </div>
-            </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         </td>
                                     </tr>
                                     <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
@@ -943,6 +870,79 @@
                 </div>
             </div>
             <!-- #/factory-config-dialog -->
+
+        <div data-bind="with: $root.island()">
+            <!-- population input field -->
+            <fieldset class="ui-fieldset" id="residents-view">
+                <legend data-bind="text:$root.texts.residents.name">Residents</legend>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+
+                    <div class="ui-tier-input fleft">
+                        <!-- <div class="ui-tier-icon">
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
+                        <div data-bind="foreach: $data.populationLevels">
+                            <div class="ui-tier-unit">
+                                <div class="ui-tier-unit-icon">
+                                    <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                    <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                    <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
+                                </div>
+                                <div class="ui-tier-unit-name" data-bind="visible: !$root.settings.hideNames.checked(), attr: {'tier-unit-guid' : guid}">
+                                    <span data-bind="visible: hotkey, text: hotkey() ? '[' + hotkey().toUpperCase() + '] ' : ''"></span>
+                                    <span data-bind="text: name"></span>
+                                </div>
+
+                                <div class="input text">
+                                    <div class="input-group spinner mb-3">
+                                        <div data-bind="if: !$root.settings.existingBuildingsInput.checked()">
+                                            <input step="100" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' };" />
+                                        </div>
+                                        <div data-bind="if: $root.settings.existingBuildingsInput.checked()">
+                                            <input step="10" class="form-control input-lg" type="number" value="0" data-bind="value: existingBuildings, attr: {title: 'Press '+name()[0]+' to focus' };" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <btn class="btn btn-light float-right align-middle" data-bind="click: () => $root.island().reset(), text: $root.texts.reset.name()">Reset</btn>
+                </div>
+            </fieldset>
+            <!-- /population input field -->
+            <!-- required workforce field -->
+            <fieldset class="ui-fieldset" id="workforce-view">
+                <legend class="collapser" data-toggle="collapse" data-target="#workforce">
+                    <span class="fa fa-chevron-right"></span>
+                    <span class="fa fa-chevron-down"></span>
+                    <span data-bind="text:$root.texts.workforce.name"></span>
+                </legend>
+
+                <div id="workforce" class="collapse show">
+
+                    <div class="ui-tier-input fleft">
+                        <!-- <div class="ui-tier-icon">
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
+                        <div data-bind="foreach: $data.workforce">
+                            <div class="ui-tier-unit">
+                                <div class="ui-tier-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
+                                <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
+                                <div class="ui-fchain-item-count">
+                                    <span data-bind="text: amount"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="clear"></div>
+                </div>
+            </fieldset>
+            <!-- /required workforce field -->
             <!-- required factories by category -->
             <div data-bind="foreach: { data: $data.categories, as: 'category'}">
                 <fieldset class="ui-fieldset" id="categories-view">
