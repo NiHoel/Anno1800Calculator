@@ -1942,14 +1942,14 @@ class DarkMode {
 
         this.classAdditions = {
             "body": "bg-dark",
-            ".ui-fieldset legend, body": "text-light",
-            ".form-control": "text-light bg-dark bg-darker",
-            ".custom-select": "text-light bg-dark bg-darker",
-            ".input-group-text, .modal-content": "bg-dark text-light",
-            ".btn-default": "btn-dark btn-outline-light",
-            ".btn-light": "btn-dark",
-            ".ui-fchain-item": "bg-dark",
-            ".card": "bg-dark"
+            //".ui-fieldset legend, body": "text-light",
+            //".form-control": "text-light bg-dark bg-darker",
+            //".custom-select": "text-light bg-dark bg-darker",
+            //".input-group-text, .modal-content": "bg-dark text-light",
+            //".btn-default": "btn-dark btn-outline-light",
+            //".btn-light": "btn-dark",
+            //".ui-fchain-item": "bg-dark",
+            //".card": "bg-dark"
         };
 
         this.checked.subscribe(() => this.apply());

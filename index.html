@@ -646,20 +646,20 @@
                                             <td><a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a></td> <!-- island name -->
                                                 <!-- factory summary -->
                                                 <!--<td data-bind="with: $data.getOpposite($parent)">
-                                                    <div style="display: flex; flex-flow: wrap; justify-content: center">
-                                                        <span class="mr-3">
-                                                            <img src="icon_resource_storage_amount.png" width="25" height="25">
-                                                        </span>
-                                                        <span data-bind="if: !$data.top5Factories().length">0</span>
-                                                        <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
-                                                            <span class="mr-1">
-                                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                                <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                                    <span class="mr-3">
+                                                        <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                                    </span>
+                                                    <span data-bind="if: !$data.top5Factories().length">0</span>
+                                                    <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                                        <span class="mr-1">
+                                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
-                                                            </span>
-                                                            <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
                                                         </span>
-                                                    </div>
-                                                </td> -->
+                                                        <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                                    </span>
+                                                </div>
+                                            </td> -->
                                                 <td>
 
                                                     <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
@@ -694,8 +694,14 @@
                                                     <div class="input-group spinner">
                                                         <div class="input-group-prepend">
                                                         <div class="input-group-text">
-                                                            <span data-bind="if: $data.isExport($parent)">Export</span>
-                                                            <span data-bind="if: !$data.isExport($parent)">Import</span>
+                                                            <span data-bind="if: $data.isExport($parent)">
+                                                                <img class="small-icon icon-dark" src="icon_transporter_unloading_dark.png" />
+                                                                <img class="small-icon icon-light" src="icon_transporter_unloading_light.png" />
+                                                            </span>
+                                                            <span data-bind="if: !$data.isExport($parent)">
+                                                                <img class="small-icon icon-dark" src="icon_transporter_loading_dark.png" />
+                                                                <img class="small-icon icon-light" src="icon_transporter_loading_light.png" />
+                                                            </span>
                                                         </div>
                                                             <span data-bind="if: !$data.isExport($parent) && $data.fromFactory.overProduction() < -EPSILON">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
@@ -715,10 +721,16 @@
 
                                         <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.name()"></select>
                                         <div style="display: flex">
-                                            <div class="mr-2">Import</div>
+                                        <div class="mr-2">
+                                            <img class="small-icon icon-dark" src="icon_transporter_loading_dark.png" />
+                                            <img class="small-icon icon-light" src="icon_transporter_loading_light.png" />
+                                        </div>
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="create-trade-route-export-checkbox" data-bind="checked: $data.export">
-                                            <label class="custom-control-label" for="create-trade-route-export-checkbox">Export</label>
+                                            <label class="custom-control-label" for="create-trade-route-export-checkbox">
+                                                <img class="small-icon icon-dark" src="icon_transporter_unloading_dark.png" />
+                                                <img class="small-icon icon-light" src="icon_transporter_unloading_light.png" />
+                                            </label>
                                         </div>
                                         </div>
                                         <div class="input-group spinner">
@@ -1259,8 +1271,8 @@
                                         <div class="card bg-light mb-2 mt-2">
                                             <div style="display: flex; justify-content: space-between; vertical-align: bottom;">
                                                 <div>
-                                                    <img class="icon-dark" src="icon_marketplace_2d_dark.png" width="25" height="25" />
-                                                    <img class="icon-light" src="icon_marketplace_2d_light.png" width="25" height="25" />
+                                                            <img class="small-icon icon-dark" src="icon_marketplace_2d_dark.png" />
+                                                            <img class="small-icon icon-light" src="icon_marketplace_2d_light.png" />
                                                 </div>
                                                 <div>
                                                             <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedGoodConsumptionUpgradeList($data.goodConsumptionUpgradeList)}" data-toggle="modal" data-target="#good-consumption-upgrade-dialog">
