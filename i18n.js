@@ -320,6 +320,10 @@ texts = {
         english: "After creating a new island display it",
         german: "Nach dem Erstellen einer neuen Insel diese anzeigen"
     },
+    applyGlobally: {
+        english: "Apply Globally",
+        german: "Global anwenden"
+    },
     language: {
         "english": "Text Language",
         "chinese": "文本语言",

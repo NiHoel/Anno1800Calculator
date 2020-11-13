@@ -340,7 +340,9 @@
                 </div>
                 <div class="modal-body">
                     <h6 data-bind="text: $root.texts.newspaper.name">Newspaper</h6>
+
                     <form>
+
                         <div class="form mb-3" data-bind="foreach: $root.newspaperConsumption.allEffects">
                             <span class="custom-control custom-checkbox">
                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-checked' }">
@@ -348,7 +350,7 @@
                             </span>
                         </div>
 
-                        <div class="form-inline">
+                        <div class="form-inline" style="justify-content: space-between;">
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" data-bind="text: $root.texts.newspaperEffectiveness.name">Newspaper Effectiveness</span>
@@ -362,6 +364,10 @@
                                 <span>: </span>
                                 <span data-bind="text: formatPercentage($root.newspaperConsumption.amount())"></span>
                             </div>
+
+                            <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $root.newspaperConsumption.apply()">
+                                <span data-bind="text: $root.texts.applyGlobally.name">Apply globally</span>
+                            </button>
                         </div>
                     </form>
                     <table class="table table-striped">
@@ -395,7 +401,7 @@
                 </div>
                 <div class="modal-footer">
                     <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
-                        <span class="fa fa-sign-in"> </span>
+                        <span data-bind="text: $root.texts.apply.name">Apply</span>
                     </button>
                 </div>
             </div>
@@ -1211,7 +1217,7 @@
                             <span>: </span>
                             <span data-bind="text: formatPercentage($data.amount())"></span>
                             <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
-                                <span class="fa fa-sign-in"> </span>
+                                <span data-bind="text: $root.texts.apply.name">Apply</span>
                             </button>
                         </div>
                     </div>

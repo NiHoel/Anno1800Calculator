@@ -1367,6 +1367,12 @@ class NewspaperNeedConsumption {
         else
             this.selectedBuff(selectedBuff);
     }
+
+    apply() {
+        for (var island of view.islands()) {
+            island.allGoodConsumptionUpgrades.apply();
+        }
+    }
 }
 
 class NewspaperNeedConsumptionEntry extends Option {
