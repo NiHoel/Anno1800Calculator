@@ -437,16 +437,8 @@ input[type=number]::-webkit-inner-spin-button {
     background: #DB7979!important;
 }
 
-.ui-fchain-item.bg-dark {
-    border: 1px solid #ffffffce;
-}
-
-.bg-dark .icon-dark {
-    display: none;
-}
-
 body:not(.bg-dark) .icon-light {
-    display: none;
+    filter: invert(61.2%) sepia(48%) hue-rotate(168.4deg);
 }
 
 .bg-dark .danger-icon {
