@@ -1468,21 +1468,45 @@ class TradeRoute {
     }
 }
 
+class NPCTrader extends NamedElement{
+    constructor(config) {
+        super(config);
+    }
+}
+
+class NPCTradeRoute {
+    constructor(config) {
+        $.extend(this, config);
+
+        this.amount = this.ProductionPerMinute;
+        this.checked = ko.observable(false);
+    }
+}
+
 class TradeList {
     constructor(island, factory) {
         this.island = island;
         this.factory = factory;
 
         this.routes = ko.observableArray();
+        if (this.factory.outputs) {
+            var trader = view.productsToTraders.get(this.factory.outputs[0].Product);
+            if (trader)
+                this.npcRoute = new NPCTradeRoute(trader);
+        }
 
         this.amount = ko.computed(() => {
             var amount = 0;
+
+            if (this.npcRoute && this.npcRoute.checked())
+                amount -= this.npcRoute.amount;
+
             for (var route of this.routes()) {
                 amount += (route.isExport(this) ? 1 : -1) * route.amount();
             }
 
             return amount;
-        })
+        });
 
         // interface elements to create a new route
         this.unusedIslands = ko.observableArray();
@@ -1554,6 +1578,8 @@ class TradeManager {
             f.tradeList.unusedIslands(islands);
         });
 
+        
+
         if (localStorage) {
             var islands = new Map();
             for (var i of view.islands())
@@ -1598,6 +1624,8 @@ class TradeManager {
 
                 return json;
             });
+
+
         }
     }
 
@@ -2039,6 +2067,19 @@ function init() {
         }
     }
 
+    // set up NPC traders
+    view.productsToTraders = new Map();
+    for (var t of params.traders) {
+        var trader = new NPCTrader(t);
+
+        for (var r of t.goodsProduction) {
+            if (view.productsToTraders.has(r.Good))
+                view.productsToTraders.get(r.Good).amount += r.ProductionPerMinute;
+             else
+                view.productsToTraders.set(r.Good, $.extend({}, r, { trader: trader }));
+        }
+    }
+
     // set up island management
     view.islandManager = new IslandManager(params);
 
@@ -2083,17 +2124,6 @@ function init() {
         }
 
         return bindings;
-    });
-
-    // use computed observable to be called after updating the DOM
-    this.darkModeFix = ko.computed(() => {
-        // subscribe to all components with a with-binding
-        view.island();
-        view.selectedFactory();
-        view.selectedGoodConsumptionUpgradeList();
-
-        view.darkMode.apply();
-        setTimeout(() => view.darkMode.apply(), 100);
     });
 
     $(document).on("keydown", (evt) => {

@@ -636,11 +636,27 @@
                                 <hr />
                             </div>
 
-                            <div data-bind="if: !$data.tradeList.island.isAllIslands() && $root.settings.tradeRoutes.checked()">
+                        <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                 <div data-bind="with: $data.tradeList">
 
                                     <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
-                                <table class="table table-striped">
+                                
+                                <div class="mb-3" data-bind="with: $data.npcRoute" style="display: flex; flex-flow: wrap; justify-content: space-between; align-items: center">
+                                    <span class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: 'npcRoute-checked' }">
+                                        <label class="custom-control-label" data-bind="attr: { for: 'npcRoute-checked' }" src-only style="vertical-align: top;">
+                                            <img class="small-icon" src="" data-bind="attr:{src: $data.trader.icon}" />
+                                            <span data-bind="text: $data.trader.name"></span>
+                                        </label>
+                                    </span>
+                                    
+                                    <div data-bind="if: $root.settings.tradeRoutes.checked()">
+                                        <span data-bind="text: $data.amount"></span>
+                                        <span> t/min</span>
+                                    </div>
+                                </div>
+                                
+                                <table class="table table-striped" data-bind="if: !$data.island.isAllIslands()">
                                         <tbody data-bind="foreach: $data.routes">
                                             <tr>
                                             <td><a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a></td> <!-- island name -->
@@ -781,8 +797,8 @@
                                                     <span class="mr-3"> t/min</span>
                                                 </div>
                                                 <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                                                    <button class="btn btn-sm btn-light">
-                                                        <span data-bind="text: $root.texts.apply.name, click: () => $data.updateExtraGoods(1)">Apply</span>
+                                                <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() > 0">
+                                                    <span data-bind="text: $root.texts.apply.name">Apply</span>
                                                     </button>
                                                 </div>
                                             </div>
