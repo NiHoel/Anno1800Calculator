@@ -555,6 +555,7 @@ options = {
     },
     "additionalProduction": {
         "name": "Show input field for additional production",
+        "dialog": "item-equipment-dialog",
         "locaText": {
             "english": "Show input field for additional production (negative values possible)",
             "german": "Zeige Eingabefeld für Zusatzproduktion (negative Werte möglich)",
@@ -563,6 +564,7 @@ options = {
     },
     "tradeRoutes": {
         "name": "Trade Routes",
+        "dialog": "trade-routes-management-dialog",
         "locaText": {
             "english": "Trade Routes",
             "chinese": "贸易航线",
@@ -586,6 +588,7 @@ options = {
     },
     "consumptionModifier": {
         "name": "Show input field for percental consumption modification",
+        "dialog": "good-consumption-island-upgrade-dialog",
         "locaText": {
             "english": "Show input field for percental consumption modification",
             "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs",

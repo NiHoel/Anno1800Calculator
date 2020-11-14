@@ -278,7 +278,7 @@ class Island {
         this.extraGoodItems.sort((a, b) => a.name() > b.name());
         view.settings.language.subscribe(() => {
             this.extraGoodItems.sort((a, b) => a.name() > b.name());
-        })
+        });
 
         // must be set after items so that extraDemand is correctly handled
         this.consumers.forEach(f => f.referenceProducts(assetsMap));
@@ -718,10 +718,11 @@ class Factory extends Consumer {
         });
 
         this.overProduction = ko.computed(() => {
-            if (!view.settings.missingBuildingsHighlight.checked())
-                return 0;
+            var val = 0;
 
-            var val = this.existingBuildings() * this.boost() * this.tpmin * this.extraGoodFactor();
+            if (view.settings.missingBuildingsHighlight.checked())
+                var val = this.existingBuildings() * this.boost() * this.tpmin * this.extraGoodFactor();
+
             return val - this.amount() - this.extraAmount();
         });
 
@@ -799,10 +800,10 @@ class Factory extends Consumer {
     updateExtraGoods(depth) {
         this.extraAmount(this.computedExtraAmount());
 
-        if(depth > 0)
-        for (var route of this.tradeList.routes()) {
-            route.getOppositeFactory(this).updateExtraGoods(depth - 1);
-        }
+        if (depth > 0)
+            for (var route of this.tradeList.routes()) {
+                route.getOppositeFactory(this).updateExtraGoods(depth - 1);
+            }
     }
 }
 
@@ -925,7 +926,7 @@ class Demand extends NamedElement {
 class ItemDemandSwitch {
     constructor(consumer, input, items, assetsMap) {
         this.items = items;
-        
+
         this.demands = [ // use array index to toggle
             new Demand({ guid: input.Product, consumer: consumer }, assetsMap),
             new Demand({ guid: items[0].replacements.get(input.Product), consumer: consumer }, assetsMap)
@@ -1468,7 +1469,7 @@ class TradeRoute {
     }
 }
 
-class NPCTrader extends NamedElement{
+class NPCTrader extends NamedElement {
     constructor(config) {
         super(config);
     }
@@ -1480,6 +1481,14 @@ class NPCTradeRoute {
 
         this.amount = this.ProductionPerMinute;
         this.checked = ko.observable(false);
+        this.checked.subscribe(checked => {
+            if (view.tradeManager) {
+                if (checked)
+                    view.tradeManager.npcRoutes.push(this);
+                else
+                    view.tradeManager.npcRoutes.remove(this);
+            }
+        });
     }
 }
 
@@ -1490,16 +1499,17 @@ class TradeList {
 
         this.routes = ko.observableArray();
         if (this.factory.outputs) {
-            var trader = view.productsToTraders.get(this.factory.outputs[0].Product);
-            if (trader)
-                this.npcRoute = new NPCTradeRoute(trader);
+            var traders = view.productsToTraders.get(this.factory.outputs[0].Product);
+            if (traders)
+                this.npcRoutes = traders.map(t => new NPCTradeRoute($.extend({},t, { to: island, toFactory: factory })));
         }
 
         this.amount = ko.computed(() => {
             var amount = 0;
 
-            if (this.npcRoute && this.npcRoute.checked())
-                amount -= this.npcRoute.amount;
+            for (var route of (this.npcRoutes || [])) {
+                amount -= route.checked() ? route.amount : 0;
+            }
 
             for (var route of this.routes()) {
                 amount += (route.isExport(this) ? 1 : -1) * route.amount();
@@ -1541,8 +1551,7 @@ class TradeList {
                 toFactory: otherFactory,
                 amount: this.newAmount()
             });
-        } else
-        {
+        } else {
             var route = new TradeRoute({
                 to: this.island,
                 from: this.selectedIsland(),
@@ -1564,6 +1573,8 @@ class TradeList {
 class TradeManager {
     constructor() {
         this.key = "tradeRoutes";
+        this.npcKey = "npcTradeRoutes";
+        this.npcRoutes = ko.observableArray();
         this.routes = ko.observableArray();
 
         view.selectedFactory.subscribe(f => {
@@ -1573,14 +1584,15 @@ class TradeManager {
                 return a.name() < b.name();
             });
             f.tradeList.export(f.overProduction() > 0);
-            f.tradeList.newAmount(Math.round(100 * Math.abs(f.overProduction())) / 100);
+            f.tradeList.newAmount(Math.abs(f.overProduction()));
 
             f.tradeList.unusedIslands(islands);
         });
 
-        
+
 
         if (localStorage) {
+            // trade routes
             var islands = new Map();
             for (var i of view.islands())
                 if (!i.isAllIslands())
@@ -1625,21 +1637,76 @@ class TradeManager {
                 return json;
             });
 
+            // npc trade routes
+            text = localStorage.getItem(this.npcKey);
+            json = text ? JSON.parse(text) : [];
+            for (var r of json) {
+                var to = islands.get(r.to);
+ 
+                if (!to)
+                    continue;
 
+                var factory = to.assetsMap.get(r.factory);
+
+                factory.tradeList.npcRoutes.forEach(froute => {
+                    if (froute.trader.guid === r.trader) {
+                        froute.checked(true);
+                        this.add(froute);
+                    }
+                });
+            }
+
+
+            this.npcPersistenceSubscription = ko.computed(() => {
+                var json = [];
+
+                for (var r of this.npcRoutes()) {
+                    json.push({
+                        trader: r.trader.guid,
+                        to: r.to.name(),
+                        factory: r.toFactory.guid
+                    });
+                }
+
+                localStorage.setItem(this.npcKey, JSON.stringify(json, null, 4));
+
+                return json;
+            });
         }
     }
 
     add(route) {
-        this.routes.push(route);
+        if (route instanceof NPCTradeRoute)
+            this.npcRoutes.push(route);
+        else
+            this.routes.push(route);
     }
 
     remove(route) {
+        if (route instanceof NPCTradeRoute) {
+            this.npcRoutes.remove(route);
+            route.checked(false);
+            return;
+        }
+
         route.fromFactory.tradeList.routes.remove(route);
         route.toFactory.tradeList.routes.remove(route);
         this.routes.remove(route);
 
         route.toFactory.tradeList.unusedIslands.push(route.from);
         route.fromFactory.tradeList.unusedIslands.push(route.to);
+    }
+
+    islandDeleted(island) {
+        {
+            var deletedRoutes = this.routes().filter(r => r.to === island || r.from === island);
+            deletedRoutes.forEach(r => this.remove(r));
+        }
+
+        {
+            var deletedRoutes = this.npcRoutes().filter(r => r.to === island);
+            deletedRoutes.forEach(r => this.remove(r));
+        }
     }
 }
 
@@ -1769,7 +1836,7 @@ class IslandManager {
         this.islandNameInput = ko.observable();
         this.params = params;
         this.unusedNames = ko.observableArray();
-        this.serveNamesMap = new Map();
+        this.serverNamesMap = new Map();
 
         this.showIslandOnCreation = new Option({
             name: "Show Island on Creation",
@@ -1790,7 +1857,7 @@ class IslandManager {
         for (var name of islandNames) {
             var island = new Island(params, new Storage(name));
             view.islands.push(island);
-            this.serveNamesMap.set(island.name(), island);
+            this.serverNamesMap.set(island.name(), island);
 
             if (name == islandName)
                 view.island(island);
@@ -1800,7 +1867,7 @@ class IslandManager {
 
         var allIslands = new Island(params, localStorage);
         view.islands.unshift(allIslands);
-        this.serveNamesMap.set(allIslands.name(), allIslands);
+        this.serverNamesMap.set(allIslands.name(), allIslands);
         if (!view.island())
             view.island(allIslands);
 
@@ -1813,7 +1880,7 @@ class IslandManager {
             });
 
             view.island.subscribe(island => {
-                localStorage.setItem(islandKey, island.name())
+                localStorage.setItem(islandKey, island.name());
             });
 
         }
@@ -1823,7 +1890,7 @@ class IslandManager {
             if (!name || name == ALL_ISLANDS || name == view.texts.allIslands.name())
                 return true;
 
-            return this.serveNamesMap.has(name) && this.serveNamesMap.get(name).name() == name;
+            return this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name;
         });
     }
 
@@ -1835,7 +1902,7 @@ class IslandManager {
             name = this.islandNameInput();
         }
 
-        if (this.serveNamesMap.has(name) && this.serveNamesMap.get(name).name() == name)
+        if (this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name)
             return;
 
         var island = new Island(this.params, new Storage(name));
@@ -1845,10 +1912,10 @@ class IslandManager {
         if (this.showIslandOnCreation.checked())
             view.island(island);
 
-        this.serveNamesMap.set(name, island);
+        this.serverNamesMap.set(name, island);
         var removedNames = this.unusedNames.remove(n => !isNaN(this.compareNames(n, name)));
         for (var n of removedNames)
-            this.serveNamesMap.set(n, island);
+            this.serverNamesMap.set(n, island);
 
         if (name == this.islandNameInput())
             this.islandNameInput(null);
@@ -1864,26 +1931,30 @@ class IslandManager {
         if (view.island() == island)
             view.island(view.islands()[0]);
 
+        if (view.tradeManager) {
+            view.tradeManager.islandDeleted(island);
+        }
+
         view.islands.remove(island);
         if (localStorage)
             localStorage.removeItem(island.name());
 
-        for (var entry of this.serveNamesMap.entries()) {
+        for (var entry of this.serverNamesMap.entries()) {
             if (entry[1] == island)
-                this.serveNamesMap.set(entry[0], null);
+                this.serverNamesMap.set(entry[0], null);
         }
 
-        this.serveNamesMap.delete(island.name());
+        this.serverNamesMap.delete(island.name());
         this.unusedNames.push(island.name());
         this.sortUnusedNames();
     }
 
     getByName(name) {
-        return this.serveNamesMap.get(name);
+        return this.serverNamesMap.get(name);
     }
 
     registerName(name) {
-        if (name == ALL_ISLANDS || this.serveNamesMap.has(name))
+        if (name == ALL_ISLANDS || this.serverNamesMap.has(name))
             return;
 
         var island = null;
@@ -1898,7 +1969,7 @@ class IslandManager {
         }
 
         if (island) {
-            this.serveNamesMap.set(name, island);
+            this.serverNamesMap.set(name, island);
             this.unusedNames.remove(name);
             return;
         }
@@ -2069,14 +2140,15 @@ function init() {
 
     // set up NPC traders
     view.productsToTraders = new Map();
-    for (var t of params.traders) {
+    for (var t of (params.traders || [])) {
         var trader = new NPCTrader(t);
 
         for (var r of t.goodsProduction) {
+            var route = $.extend({}, r, { trader: trader });
             if (view.productsToTraders.has(r.Good))
-                view.productsToTraders.get(r.Good).amount += r.ProductionPerMinute;
-             else
-                view.productsToTraders.set(r.Good, $.extend({}, r, { trader: trader }));
+                view.productsToTraders.get(r.Good).push(route);
+            else
+                view.productsToTraders.set(r.Good, [route]);
         }
     }
 

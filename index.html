@@ -71,17 +71,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="float-right">
-                                            <span data-bind="if: $data.id == 'additionalProduction'">
-                                                <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#item-equipment-dialog').modal(),500), enable: $root.settings.additionalProduction.checked()" class="btn btn-light btn-sm">
-                                        <span class="fa fa-cog"> </span>
-                                    </button>
-                                </span>
-                                            <span data-bind="if: $data.id == 'consumptionModifier'">
-                                                <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#good-consumption-island-upgrade-dialog').modal(),500), enable: $root.settings.consumptionModifier.checked()" class="btn btn-light btn-sm">
-                                        <span class="fa fa-cog"> </span>
-                                    </button>
-                                </span>
+                                        <div class="float-right" data-bind="if: $data.dialog">
+                                            <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#' + $data.dialog).modal(),500), enable: $data.checked()" class="btn btn-light btn-sm">
+                                                <span class="fa fa-cog"> </span>
+                                            </button>
                             </div>
                                     </td>
                                 </tr>
@@ -525,6 +518,79 @@
     </div>
     </div>
     <!-- #/island-management-dialog -->
+    <!-- #trade-routes-management-dialog -->
+    <div id="trade-routes-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped" data-bind="if: $root.tradeManager.npcRoutes().length">
+                        <tbody class="mb-3" data-bind="foreach: $root.tradeManager.npcRoutes">
+                            <tr>
+                                <td>
+                                    <img class="small-icon" src="" data-bind="attr: {src: $data.trader.icon, alt: $data.trader.name}" />
+                                    <span data-bind="text: $data.trader.name"></span>
+                                </td>
+                                <td><span>&rarr;</span></td>
+                                <td data-bind="text: $data.to.name"></td>
+                                <td>
+                                    <img class="small-icon" src="" data-bind="attr: {src: $data.toFactory.product.icon, alt: $data.toFactory.product.name}" />
+                                </td>
+                                <td>
+                                    <span data-bind="text: $data.amount"></span>
+                                    <span> t/min</span>
+                                </td>
+                                <td>
+                                    <div class="float-right">
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.checked(false)">
+                                            <span class="fa fa-trash"> </span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <table class="table table-striped">
+                        <tbody data-bind="foreach: $root.tradeManager.routes">
+                        <tr>
+                            <td data-bind="text: $data.from.name"></td>
+                            <td><span>&rarr;</span></td>
+                            <td data-bind="text: $data.to.name"></td>
+                            <td>
+                                <img class="small-icon" src="" data-bind="attr: {src: $data.fromFactory.product.icon, alt: $data.fromFactory.product.name}"/>
+                            </td>
+                            <td>
+                                <div class="input-group spinner">
+                                    <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
+                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                    </span>
+                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount"/>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">t/min</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
+                                        <span class="fa fa-trash"> </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #/trade-routes-management-dialog -->
     <!-- top right buttons -->
     <div id="content" data-bind="visible: true" style="display:none">
 
@@ -641,16 +707,16 @@
 
                                     <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
                                 
-                                <div class="mb-3" data-bind="with: $data.npcRoute" style="display: flex; flex-flow: wrap; justify-content: space-between; align-items: center">
-                                    <span class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: 'npcRoute-checked' }">
-                                        <label class="custom-control-label" data-bind="attr: { for: 'npcRoute-checked' }" src-only style="vertical-align: top;">
+                                <div class="mb-3" data-bind="foreach: $data.npcRoutes" style="display: flex; flex-flow: wrap; justify-content: space-between; align-items: center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.trader.guid + '-npcRoute-checked' }">
+                                        <label class="custom-control-label" data-bind="attr: { for: $data.trader.guid + '-npcRoute-checked' }" src-only style="vertical-align: top;">
                                             <img class="small-icon" src="" data-bind="attr:{src: $data.trader.icon}" />
                                             <span data-bind="text: $data.trader.name"></span>
                                         </label>
-                                    </span>
+                                    </div>
                                     
-                                    <div data-bind="if: $root.settings.tradeRoutes.checked()">
+                                    <div>
                                         <span data-bind="text: $data.amount"></span>
                                         <span> t/min</span>
                                     </div>
@@ -719,12 +785,15 @@
                                                                 <img class="small-icon icon-light" src="icon_transporter_loading_light.png" />
                                                             </span>
                                                         </div>
-                                                            <span data-bind="if: !$data.isExport($parent) && $data.fromFactory.overProduction() < -EPSILON">
+                                                        <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                         </div>
-                                                    <input step="0.1" class="form-control" type="number" value="0" data-bind="value: amount" />
+                                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount" />
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">t/min</span>
                                                     </div>
+                                                </div>
 
                                                 </td>
 
@@ -752,7 +821,10 @@
                                         <div class="input-group spinner">
 
                                             <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">t/min</span>
                                         </div>
+                                    </div>
                                         <button class="btn btn-sm btn-light" data-bind="click: () => $data.create(), enable: $data.canCreate()">
                                             <span class="fa fa-plus"></span>
                                         </button>
@@ -771,12 +843,9 @@
                                         </td>
                                         <td>
                                             <div class="input-group spinner mb-3">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">+ </span>
-                                                    <span data-bind="if: $data.extraAmount() < -EPSILON + $data.computedExtraAmount()">
-                                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
-                                                    </span>
-                                                </div>
+                                            <span data-bind="if: $data.extraAmount() < -EPSILON + $data.computedExtraAmount()">
+                                                <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                            </span>
                                                 <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
                                             </div>
 

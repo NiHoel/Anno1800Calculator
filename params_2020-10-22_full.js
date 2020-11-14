@@ -16689,10 +16689,6 @@ params=
 {
 "Good": 1010256,
 "ProductionPerMinute": 7
-},
-{
-"Good": 1010221,
-"ProductionPerMinute": 7
 }
 ],
 "regions": [
