@@ -308,7 +308,7 @@ texts = {
         "japanese": "トン毎分 (トン/分)",
         "russian": "Тонн в минуту (т./мин.)"
     },
-    producedAmount: {
+    outputAmount: {
         english: "Plain building output without extra goods",
         german: "Reiner Gebäudeoutput ohne Zusatzwaren",
     },
@@ -323,6 +323,18 @@ texts = {
     applyGlobally: {
         english: "Apply Globally",
         german: "Global anwenden"
+    },
+    overproduction: {
+        english: "Overproduction",
+        german: "Überproduktion"
+    },
+    importDeficit: {
+        english: "Import deficit",
+        german: "Defizit importieren"
+    },
+    exportOverproduction: {
+        english: "Export overproduction",
+        german: "Überproduktion exportieren"
     },
     language: {
         "english": "Text Language",

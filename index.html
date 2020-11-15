@@ -528,7 +528,7 @@
 
                 </div>
                 <div class="modal-body">
-                    <table class="table table-striped" data-bind="if: $root.tradeManager.npcRoutes().length">
+                    <table class="table table-striped table-sm" data-bind="if: $root.tradeManager.npcRoutes().length">
                         <tbody class="mb-3" data-bind="foreach: $root.tradeManager.npcRoutes">
                             <tr>
                                 <td>
@@ -555,7 +555,7 @@
                         </tbody>
                     </table>
 
-                    <table class="table table-striped">
+                    <table class="table table-striped table-sm">
                         <tbody data-bind="foreach: $root.tradeManager.routes">
                         <tr>
                             <td data-bind="text: $data.from.name"></td>
@@ -565,15 +565,18 @@
                                 <img class="small-icon" src="" data-bind="attr: {src: $data.fromFactory.product.icon, alt: $data.fromFactory.product.name}"/>
                             </td>
                             <td>
-                                <div class="input-group spinner">
+                                    <div class="float-right">
                                     <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
                                     </span>
-                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount"/>
+                                        <div class="input-group input-group-short spinner">
+                                            <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount, attr: { id: $data.from.name() + '-' + $data.to.name() + '-' + $data.toFactory.guid + '-amount-input' }" />
                                     <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.from.name() + '-' + $data.to.name() + '-' + $data.toFactory.guid + '-amount-input' }}"></div>
                                         <span class="input-group-text">t/min</span>
                                     </div>
                                 </div>
+                                    </div>
                             </td>
                             <td>
                                 <div class="float-right">
@@ -675,33 +678,6 @@
                                 <hr />
                             </div>
 
-                            <div data-bind="if: $data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked()">
-
-
-                                <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
-                                <table class="table table-striped">
-                                    <tbody data-bind="foreach: $data.extraGoodProductionList.nonZero">
-                                        <tr>
-
-                                            <td>
-
-                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
-                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
-
-                                            </td> <!-- factory icon -->
-                                            <td>
-                                                <span data-bind="text: Math.ceil(100*parseFloat($data.amount()))/100"></span>
-                                                <span> t/min</span>
-
-                                            </td>
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                <hr />
-                            </div>
-
                         <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                 <div data-bind="with: $data.tradeList">
 
@@ -722,7 +698,7 @@
                                     </div>
                                 </div>
                                 
-                                <table class="table table-striped" data-bind="if: !$data.island.isAllIslands()">
+                                <table class="table table-striped table-sm" data-bind="if: !$data.island.isAllIslands()">
                                         <tbody data-bind="foreach: $data.routes">
                                             <tr>
                                             <td><a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a></td> <!-- island name -->
@@ -742,38 +718,28 @@
                                                     </span>
                                                 </div>
                                             </td> -->
-                                                <td>
 
-                                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
-                                                        <span class="fa fa-trash"> </span>
-                                                    </button>
-
-                                                </td>
                                                 <td>
                                                     <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > EPSILON">
-                                                        <span>
-                                                            Export overproduction:
-                                                        </span>
+                                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.exportOverproduction.name}">
                                                         <span data-bind="text: Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() + $parent.factory.overProduction())">
                                                             <span class="fa fa-sign-in"> </span>
                                                         </button>
-
                                                     </div>
+                                                </div>
                                                     <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -EPSILON">
-                                                        <span>
-                                                            Import deficite:
-                                                        </span>
+                                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
                                                         <span data-bind="text: -Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() - $parent.factory.overProduction())">
                                                             <span class="fa fa-sign-in"> </span>
                                                         </button>
-
                                                     </div>
+                                                </div>
                                                 </td>
                                                 <td>
 
-                                                    <div class="input-group spinner">
+                                                <div class="input-group spinner" style="max-width: 12rem">
                                                         <div class="input-group-prepend">
                                                         <div class="input-group-text">
                                                             <span data-bind="if: $data.isExport($parent)">
@@ -789,14 +755,21 @@
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                         </div>
-                                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount" />
+                                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount, attr: {id: $data.guid + '-amount-input' } " />
                                                     <div class="input-group-append">
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.guid + '-amount-input' }}"></div>
                                                         <span class="input-group-text">t/min</span>
                                                     </div>
                                                 </div>
 
                                                 </td>
+                                            <td>
 
+                                                <button class="btn btn-secondary btn-sm float-right" data-bind="click: () => $data.delete()">
+                                                    <span class="fa fa-trash"> </span>
+                                                </button>
+
+                                            </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -818,7 +791,7 @@
                                             </label>
                                         </div>
                                         </div>
-                                        <div class="input-group spinner">
+                                    <div class="input-group input-group-short spinner">
 
                                             <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
                                         <div class="input-group-append">
@@ -833,45 +806,50 @@
                                 <hr />
                             </div>
 
+                        <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                            <div style="padding: .75rem; display: flex; flex-flow: wrap; justify-content: space-between; align-items: center">
+                                <div data-bind="if: $root.settings.tradeRoutes.checked()">
+                                    <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
+                                    <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
+                                    <span class="mr-3"> t/min</span>
+                                </div>
+                                <div data-bind="if: $root.settings.additionalProduction.checked()">
+                                    <span class="custom-control custom-checkbox" style="display:unset">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.extraGoodProductionList.checked, attr: { id: $data.guid + '-extraGoodProductionList-checked' }">
+                                        <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-extraGoodProductionList-checked' }, text: $root.texts.extraGoods.name" src-only style="vertical-align: top;">
 
-                            <table class="table table-striped">
-                                <tbody>
-                                    <tr data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                                        <!-- extra goods -->
-                                        <td>
-                                            <span data-bind="text: $root.texts.extraNeed.name"></span>
+                                        </label>
+                                    </span>
+                                    <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
+                                    <span class="mr-3"> t/min</span>
+                                </div>
+                                <div>
+                                                <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() > 0">
+                                                    <span data-bind="text: $root.texts.apply.name">Apply</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                                    <!-- extra goods -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.extraNeed.name"></span>
                                         </td>
-                                        <td>
-                                            <div class="input-group spinner mb-3">
+                                    <td>
+
+
+                                        <div class="float-right">
                                             <span data-bind="if: $data.extraAmount() < -EPSILON + $data.computedExtraAmount()">
                                                 <span class="fa fa-exclamation-triangle danger-icon"></span>
                                             </span>
-                                                <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
+                                            <div class="input-group input-group-short spinner">
+                                                <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount, attr: {id: $data.guid + '-extraAmount-input'} " />
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.extraAmount, id: $data.guid + '-extraAmount-input' }}"></div>
                                             </div>
-
-                                            <div style="display: flex; flex-flow: wrap; justify-content: right; align-items: center">
-                                                <div data-bind="if: $root.settings.additionalProduction.checked()">
-                                                    <span class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.extraGoodProductionList.checked, attr: { id: $data.guid + '-extraGoodProductionList-checked' }">
-                                                        <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-extraGoodProductionList-checked' }, text: $root.texts.extraGoods.name" src-only style="vertical-align: top;">
-
-                                                        </label>
-                                                    </span>
-                                                    <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
-                                                    <span class="mr-3"> t/min</span>
-                                                </div>
-                                                <div data-bind="if: $root.settings.tradeRoutes.checked()">
-                                                    <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
-                                                    <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
-                                                    <span class="mr-3"> t/min</span>
-                                                </div>
-                                                <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                                                <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() > 0">
-                                                    <span data-bind="text: $root.texts.apply.name">Apply</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </td>
+                                        </div>
+                                    </td>
                                     </tr>
                                     <tr>
                                         <!-- boost -->
@@ -879,14 +857,11 @@
                                             <span data-bind="text: $root.texts.productionBoost.name"></span>
                                         </td>
                                         <td>
-                                            <div href="#" data-toggle="tooltip">
-                                                <div class="input-group mb-3 spinner">
-                                                    <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
+                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}">
+                                            <div class="input-group input-group-short spinner">
+                                                <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.buid + '-percentBoost-input'}" />
                                                     <div class="input-group-append">
-                                                        <div class="input-group-btn-vertical">
-                                                            <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
-                                                            <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: parseInt(percentBoost()) > 1"><i class="fa fa-caret-down"></i></button>
-                                                    </div>
+                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
                                                         <span class="input-group-text">%</span>
                                                 </div>
                                             </div>
@@ -899,30 +874,43 @@
                                             <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
                                         </td>
                                         <td>
-                                            <div href="#" data-toggle="tooltip">
-                                                <div class="input-group mb-3 spinner">
-                                                    <input class="form-control" type="text" value="100" data-bind="value: existingBuildings" />
+                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
+                                            <div class="input-group input-group-short spinner">
+                                                <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr:{id: $data.guid + '-existingBuildings-input'}" />
                                                     <div class="input-group-append">
-                                                        <div class="input-group-btn-vertical">
-                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings() + 1))"><i class="fa fa-caret-up"></i></button>
-                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings() - 1)), enable: parseInt(existingBuildings()) > 0"><i class="fa fa-caret-down"></i></button>
-                                                        </div>
-                                                    </div>
+                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
                                                 </div>
                                             </div>
+                                        </div>
 
                                         </td>
                                     </tr>
                                     <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
                                         <!-- overproduction -->
                                         <td>
-                                            <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
+                                        <span data-bind="text: $root.texts.overproduction.name"></span>
                                         </td>
                                         <td>
+                                        <div class="float-right">
                                             <span data-bind="text: Math.ceil(100*parseFloat($data.overProduction()))/100"></span><span> t/min</span>
+                                        </div>
                                         </td>
                                     </tr>
 
+                                <tr data-bind="if: $data.palaceBuff && $data.palaceBuffChecked()">
+                                    <!-- extra goods palace -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.extraGoods.name"></span>
+                                        <span>: </span>
+                                        <span data-bind="text: $data.palaceBuff.name"></span>
+                                    </td>
+                                    <td>
+                                        <div class="float-right">
+                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                            <span data-bind="text: Math.ceil(100*parseFloat($data.outputAmount() / $data.palaceBuff.additionalOutputCycle))/100"></span><span> t/min</span>
+                                        </div>
+                                    </td>
+                                </tr>
                                     <tr data-bind="if: $data.module && $data.moduleChecked()">
                                         <!-- extra goods module -->
                                         <td>
@@ -933,22 +921,22 @@
                                         <td>
                                             <div class="float-right">
                                                 <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                                <span data-bind="text: Math.ceil(100*parseFloat($data.producedAmount() / $data.module.additionalOutputCycle))/100"></span><span> t/min</span>
+                                            <span data-bind="text: Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100"></span><span> t/min</span>
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr data-bind="if: $data.palaceBuff && $data.palaceBuffChecked()">
-                                        <!-- extra goods palace -->
+                                <tr data-bind="if: $data.module && $data.moduleChecked()">
+                                    <!-- extra goods module -->
                                         <td>
                                             <span data-bind="text: $root.texts.extraGoods.name"></span>
                                             <span>: </span>
-                                            <span data-bind="text: $data.palaceBuff.name"></span>
+                                        <span data-bind="text: $data.module.name"></span>
                                         </td>
                                         <td>
                                             <div class="float-right">
                                                 <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                                <span data-bind="text: Math.ceil(100*parseFloat($data.producedAmount() / $data.palaceBuff.additionalOutputCycle))/100"></span><span> t/min</span>
-                                                <div class="float-right">
+                                            <span data-bind="text: Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100"></span><span> t/min</span>
+                                        </div>
                                         </td>
                                     </tr>
                                     <tr data-bind="if: $data.module && $data.moduleChecked()">
@@ -967,11 +955,38 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        <hr />
+
+                        <div data-bind="if: $data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked()">
+
+
+                            <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
+                            <table class="table table-striped">
+                                <tbody data-bind="foreach: $data.extraGoodProductionList.nonZero">
+                                    <tr>
+
+                                        <td>
+
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
+                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
+
+                                        </td> <!-- factory icon -->
+                                        <td>
+                                            <span data-bind="text: Math.ceil(100*parseFloat($data.amount()))/100"></span>
+                                            <span> t/min</span>
+
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
 
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
             <!-- #/factory-config-dialog -->
 
         <div data-bind="with: $root.island()">
@@ -998,14 +1013,23 @@
                                 </div>
 
                                 <div class="input text">
-                                    <div class="input-group spinner mb-3">
+
                                         <div data-bind="if: !$root.settings.existingBuildingsInput.checked()">
-                                            <input step="100" class="form-control input-lg" type="number" value="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus' };" />
+                                        <div class="input-group input-group-sm spinner mb-3">
+                                            <input step="100" class="form-control input-lg" type="number" value="0" min="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus', id: $data.guid + '-amount-input' };" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.guid + '-amount-input' }}"></div>
                                         </div>
-                                        <div data-bind="if: $root.settings.existingBuildingsInput.checked()">
-                                            <input step="10" class="form-control input-lg" type="number" value="0" data-bind="value: existingBuildings, attr: {title: 'Press '+name()[0]+' to focus' };" />
                                         </div>
                                     </div>
+                                        <div data-bind="if: $root.settings.existingBuildingsInput.checked()">
+                                        <div class="input-group input-group-sm spinner mb-3">
+                                            <input step="10" class="form-control input-lg" type="number" value="0" min="0" data-bind="value: existingBuildings, attr: {title: 'Press '+name()[0]+' to focus', id: $data.guid + '-existingBuildings-input' };" />
+                                            <div class="input-group-append">
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
 
                             </div>
@@ -1076,13 +1100,10 @@
                                     </div>
                                     <div class="ui-fchain-item-boost">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
-                                                <div class="input-group mb-3 spinner">
-                                                    <input class="form-control" type="text" value="100" data-bind="value: percentBoost" />
+                                                <div class="input-group input-group-sm mb-3 spinner">
+                                                    <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}" />
                                                     <div class="input-group-append">
-                                                        <div class="input-group-btn-vertical">
-                                                            <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
-                                                            <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: parseInt(percentBoost()) > 1"><i class="fa fa-caret-down"></i></button>
-                                                        </div>
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
                                                         <span class="input-group-text">%</span>
                                                     </div>
                                                 </div>
@@ -1120,13 +1141,10 @@
                                         <div class="ui-fchain-item-count" data-bind="if: $data.editable">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
 
-                                                <div class="input-group mb-3 spinner">
-                                                    <input class="form-control" type="text" value="0" step="1" data-bind="value: existingBuildings" />
+                                                        <div class="input-group input-group-sm mb-3 spinner">
+                                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: {id: $data.guid + '-existingBuildings-input'}" />
                                                     <div class="input-group-append">
-                                                        <div class="input-group-btn-vertical">
-                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
-                                                            <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
-                                                        </div>
+                                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
                                                         <span class="input-group-text">x</span>
                                                     </div>
                                                 </div>
@@ -1181,18 +1199,21 @@
                                     </div>
                                         <div class="ui-fchain-item-load" data-bind="if: $root.settings.additionalProduction.checked()">
                                         <div class="ui-fchain-item-extra-input">
-                                            <div class="input-group spinner mb-3">
+                                                <div class="input-group input-group-sm spinner mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">+ </span>
                                                         <span data-bind="if: $data.extraAmount() < -EPSILON  + $data.computedExtraAmount()">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>
-                                                <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount" />
+                                                    <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount, attr: {id: $data.guid + '-extraAmount-input'}" />
+                                                    <div class="input-group-append">
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.extraAmount, id: $data.guid + '-extraAmount-input' }}"></div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.producedAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
-                                                <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(producedAmount()))/100"></span><span> t/min</span></div>
+                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.outputAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
+                                                <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(outputAmount()))/100"></span><span> t/min</span></div>
                                             </div>
 
 
@@ -1214,13 +1235,10 @@
                                 <div class="ui-fchain-item-count">
                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
 
-                                        <div class="input-group mb-3 spinner">
-                                            <input class="form-control" type="text" value="0" step="1" data-bind="value: existingBuildings" />
+                                        <div class="input-group input-group-sm mb-3 spinner">
+                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
                                             <div class="input-group-append">
-                                                <div class="input-group-btn-vertical">
-                                                    <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) + 1)"><i class="fa fa-caret-up"></i></button>
-                                                    <button class="btn btn-default" type="button" data-bind="click: () => existingBuildings(parseInt(existingBuildings()) - 1), enable: existingBuildings() > 0"><i class="fa fa-caret-down"></i></button>
-                                                </div>
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
                                                 <span class="input-group-text">x</span>
                                             </div>
                                         </div>
@@ -1367,12 +1385,9 @@
                                                         </div>
                                                     </div>
                                                     <div class="input-group spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}, if: $root.settings.consumptionModifier.checked()" title="Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe" style="">
-                                                <input class="form-control" type="text" value="100" min="1" data-bind="value: percentBoost">
+                                                        <input class="form-control" type="number" value="1000" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}">
                                                         <div class="input-group-append">
-                                                            <div class="input-group-btn-vertical">
-                                                                <button class="btn btn-default" type="button" data-bind="click: incrementPercentBoost"><i class="fa fa-caret-up"></i></button>
-                                                                <button class="btn btn-default" type="button" data-bind="click: decrementPercentBoost, enable: parseInt(percentBoost()) > 1"><i class="fa fa-caret-down"></i></button>
-                                                            </div>
+                                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
                                                             <span class="input-group-text">%</span>
                                                         </div>
                                                     </div>

@@ -3,6 +3,25 @@ let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
 
+function getStep(id) {
+    return parseFloat($('#' + id).attr('step') || 1);
+}
+
+function getMin(id) {
+    return parseFloat($('#' + id).attr('min') || -Infinity);
+}
+
+function getMax(id) {
+    return parseFloat($('#' + id).attr('max') || Infinity);
+}
+
+ko.components.register('number-input-increment', {
+    template:
+        `<div class="input-group-btn-vertical" >
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + EPSILON; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - EPSILON; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
+                                                    </div>`
+});
 
 view = {
     settings: {
@@ -548,7 +567,7 @@ class Consumer extends NamedElement {
         this.existingBuildings = ko.observable(0);
         this.items = [];
 
-        this.producedAmount = ko.computed(() => this.amount());
+        this.outputAmount = ko.computed(() => this.amount());
 
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
         this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
@@ -680,18 +699,21 @@ class Factory extends Consumer {
                 factor += 1 / this.palaceBuff.additionalOutputCycle;
 
             return factor;
-        })
-
-        this.producedAmount = ko.computed(() => {
-            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
-
-            var existingBuildingsAmount = parseInt(this.existingBuildings()) * this.boost() * this.tpmin;
-
-            return Math.max(existingBuildingsAmount, amount / this.extraGoodFactor());
         });
 
+        this.requiredOutputAmount = ko.computed(() => {
+            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
+            return amount / this.extraGoodFactor();
+        });
+
+        this.producedOutputAmount = ko.computed(() => {
+            return parseInt(this.existingBuildings()) * this.boost() * this.tpmin;
+        });
+
+        this.outputAmount = ko.computed(() => Math.max(this.requiredOutputAmount(), this.producedOutputAmount()));
+
         this.buildings = ko.computed(() => {
-            var buildings = this.producedAmount() / this.tpmin / this.boost();
+            var buildings = this.requiredOutputAmount() / this.tpmin / this.boost();
 
             if (this.moduleDemand)
                 if (this.moduleChecked())
@@ -1245,7 +1267,7 @@ class ExtraGoodProduction {
         this.product = assetsMap.get(config.Product);
         this.additionalOutputCycle = config.AdditionalOutputCycle;
 
-        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.producedAmount() / this.additionalOutputCycle);
+        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.outputAmount() / this.additionalOutputCycle);
 
         for (var f of this.product.factories) {
             f.extraGoodProductionList.entries.push(this);
@@ -1736,78 +1758,81 @@ class PopulationReader {
                 lang: view.settings.language(),
                 //                optimalProductivity: view.settings.optimalProductivity.checked()
             });
-        const response = await fetch(url_with_params);
-        const json = await response.json(); //extract JSON from the http response
 
-        if (!json)
-            return;
+        try {
+            const response = await fetch(url_with_params);
+            const json = await response.json(); //extract JSON from the http response
 
-        if (json.version) {
-            this.currentVersion = json.version;
-            this.checkVersion();
-        }
-
-
-        if (!json.version || json.version.startsWith("v1")) {
-            view.island().populationLevels.forEach(function (element) {
-                element.amount(0);
-            });
-            if (json.farmers) {
-                view.island().populationLevels[0].amount(json.farmers);
-            }
-            if (json.workers) {
-                view.island().populationLevels[1].amount(json.workers);
-            }
-            if (json.artisans) {
-                view.island().populationLevels[2].amount(json.artisans);
-            }
-            if (json.engineers) {
-                view.island().populationLevels[3].amount(json.engineers);
-            }
-            if (json.investors) {
-                view.island().populationLevels[4].amount(json.investors);
-            }
-            if (json.jornaleros) {
-                view.island().populationLevels[5].amount(json.jornaleros);
-            }
-            if (json.obreros) {
-                view.island().populationLevels[6].amount(json.obreros);
-            }
-        } else {
-
-            for (var isl of (json.islands || [])) {
-                view.islandManager.registerName(isl.name);
-            }
-
-            var island = null;
-            if (json.islandName) {
-                island = view.islandManager.getByName(json.islandName);
-            }
-
-            if (!island)
+            if (!json)
                 return;
 
-            if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
-                return;
+            if (json.version) {
+                this.currentVersion = json.version;
+                this.checkVersion();
+            }
 
 
-            for (let key in json) {
-                let asset = island.assetsMap.get(parseInt(key));
-                if (asset instanceof PopulationLevel) {
-                    if (json[key].amount && view.settings.populationLevelAmount.checked()) {
-                        asset.amount(json[key].amount);
-                    }
-                    if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
-                        asset.existingBuildings(json[key].existingBuildings);
-                    }
+            if (!json.version || json.version.startsWith("v1")) {
+                view.island().populationLevels.forEach(function(element) {
+                    element.amount(0);
+                });
+                if (json.farmers) {
+                    view.island().populationLevels[0].amount(json.farmers);
                 }
-                else if (asset instanceof Consumer) {
-                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
-                        asset.existingBuildings(parseInt(json[key].existingBuildings));
-                    if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
-                        asset.percentBoost(parseInt(json[key].percentBoost));
+                if (json.workers) {
+                    view.island().populationLevels[1].amount(json.workers);
+                }
+                if (json.artisans) {
+                    view.island().populationLevels[2].amount(json.artisans);
+                }
+                if (json.engineers) {
+                    view.island().populationLevels[3].amount(json.engineers);
+                }
+                if (json.investors) {
+                    view.island().populationLevels[4].amount(json.investors);
+                }
+                if (json.jornaleros) {
+                    view.island().populationLevels[5].amount(json.jornaleros);
+                }
+                if (json.obreros) {
+                    view.island().populationLevels[6].amount(json.obreros);
+                }
+            } else {
+
+                for (var isl of (json.islands || [])) {
+                    view.islandManager.registerName(isl.name);
+                }
+
+                var island = null;
+                if (json.islandName) {
+                    island = view.islandManager.getByName(json.islandName);
+                }
+
+                if (!island)
+                    return;
+
+                if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
+                    return;
+
+
+                for (let key in json) {
+                    let asset = island.assetsMap.get(parseInt(key));
+                    if (asset instanceof PopulationLevel) {
+                        if (json[key].amount && view.settings.populationLevelAmount.checked()) {
+                            asset.amount(json[key].amount);
+                        }
+                        if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
+                            asset.existingBuildings(json[key].existingBuildings);
+                        }
+                    } else if (asset instanceof Consumer) {
+                        if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                            asset.existingBuildings(parseInt(json[key].existingBuildings));
+                        if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
+                            asset.percentBoost(parseInt(json[key].percentBoost));
+                    }
                 }
             }
+        } catch (e) {
         }
     }
 
