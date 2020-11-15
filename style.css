@@ -418,7 +418,7 @@ input[type=number]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.small-icon {
+.icon-sm {
     width: 25px;
     height: 25px;
 }

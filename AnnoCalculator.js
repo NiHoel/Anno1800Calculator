@@ -102,6 +102,13 @@ class NamedElement {
 }
 
 class Region extends NamedElement { }
+class Session extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+
+        this.region = assetsMap.get(config.region);
+    }
+}
 
 class Option extends NamedElement {
     constructor(config) {
@@ -112,7 +119,7 @@ class Option extends NamedElement {
 }
 
 class Island {
-    constructor(params, localStorage) {
+    constructor(params, localStorage, session) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
             this.isAllIslands = function () { return false; };
@@ -123,9 +130,23 @@ class Island {
         this.storage = localStorage;
         var isNew = !localStorage.length;
 
-        var assetsMap = new Map();
+        this.session = session || this.storage.getItem("session");
+        this.session = this.session instanceof Session ? this.session : view.assetsMap.get(this.session);
+        this.region = this.session ? this.session.region : null;
 
-        this.regions = [];
+        this.storage.setItem("session", this.session ? this.session.guid : null);
+
+        var assetsMap = new Map();
+        for (var key of view.assetsMap.keys())
+            assetsMap.set(key, view.assetsMap.get(key));
+
+        this.sessionExtendedName = ko.pureComputed(() => {
+            if (!this.session)
+                return this.name();
+
+            return `${this.session.name()} - ${this.name()}`;
+        });
+
         this.populationLevels = [];
         this.consumers = [];
         this.factories = [];
@@ -138,19 +159,16 @@ class Island {
         this.extraGoodItems = [];
         this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
 
-        for (let region of params.regions) {
-            let r = new Region(region, assetsMap);
-            assetsMap.set(r.guid, r);
-            this.regions.push(r);
-        }
-
         for (let workforce of params.workforce) {
-            let w = new Workforce(workforce, assetsMap)
+            let w = new Workforce(workforce, assetsMap);
             assetsMap.set(w.guid, w);
             this.workforce.push(w);
         }
 
         for (let consumer of params.powerPlants) {
+            if (this.region && this.region.guid != consumer.region)
+                continue;
+
             let f = new Consumer(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
@@ -172,9 +190,11 @@ class Island {
             this.consumers.push(f);
         }
 
-        for (let buff of (params.palaceBuffs || [])) {
-            let f = new PalaceBuff(buff, assetsMap);
-            assetsMap.set(f.guid, f);
+        if (!this.region || this.region.guid === 5000000) {
+            for (let buff of (params.palaceBuffs || [])) {
+                let f = new PalaceBuff(buff, assetsMap);
+                assetsMap.set(f.guid, f);
+            }
         }
 
         for (let factory of params.factories) {
@@ -212,7 +232,7 @@ class Island {
                             f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
                             return;
                         }
-                        localStorage.setItem(id, val)
+                        localStorage.setItem(id, val);
                     });
                 }
 
@@ -262,7 +282,10 @@ class Island {
         }
 
         for (let item of (params.items || [])) {
-            let i = new Item(item, assetsMap);
+            let i = new Item(item, assetsMap, this.region);
+            if (!i.factories.length)
+                continue;  // Affects no factories in this region
+
             assetsMap.set(i.guid, i);
             this.items.push(i);
 
@@ -305,13 +328,16 @@ class Island {
         // setup demands induced by modules
         for (let factory of params.factories) {
             let f = assetsMap.get(factory.guid);
-            if (f.module)
+            if (f && f.module)
                 f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
         }
 
 
         for (let level of params.populationLevels) {
-            let l = new PopulationLevel(level, assetsMap)
+            if (this.region && this.region.guid != level.region)
+                continue;
+
+            let l = new PopulationLevel(level, assetsMap);
             assetsMap.set(l.guid, l);
             this.populationLevels.push(l);
 
@@ -394,6 +420,9 @@ class Island {
 
         for (let powerPlant of params.powerPlants) {
             var pl = assetsMap.get(powerPlant.guid);
+            if (!pl)
+                continue; // power plant not constructable in this region
+
             this.categories[1].consumers.push(pl);
             var pr = pl.getInputs()[0].product;
             let n = new PowerPlantNeed({ guid: pr.guid, factory: pl, product: pr }, assetsMap);
@@ -405,7 +434,7 @@ class Island {
             if (p)
                 for (let b of p.factories) {
                     if (b) {
-                        b.editable = true;
+                        b.editable(true);
                         let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
                         b.boost.subscribe(() => n.updateAmount());
                         b.existingBuildings.subscribe(() => n.updateAmount());
@@ -431,6 +460,9 @@ class Island {
 
         for (let upgrade of params.goodConsumptionUpgrades) {
             let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
+            if (!u.populationLevels.length)
+                continue;
+
             assetsMap.set(u.guid, u);
             this.allGoodConsumptionUpgrades.upgrades.push(u);
 
@@ -492,6 +524,8 @@ class Island {
 
         // force update once all pending notifications are processed
         setTimeout(() => { this.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000);
+
+        this.workforce = this.workforce.filter(w => w.demands.length);
 
         this.assetsMap = assetsMap;
         this.products = products;
@@ -555,6 +589,8 @@ class Island {
 class Consumer extends NamedElement {
     constructor(config, assetsMap, island) {
         super(config);
+
+        this.island = island;
 
         if (config.region)
             this.region = assetsMap.get(config.region);
@@ -665,6 +701,8 @@ class Factory extends Consumer {
     constructor(config, assetsMap, island) {
         super(config, assetsMap, island);
 
+        this.editable = ko.observable(false);
+
         this.extraAmount = ko.observable(0);
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
 
@@ -748,6 +786,22 @@ class Factory extends Consumer {
             return val - this.amount() - this.extraAmount();
         });
 
+        this.visible = ko.computed(() => {
+            if (this.amount() > 0 || this.extraAmount() > 0 || this.existingBuildings() > 0)
+                return true;
+
+            if (this.editable()) {
+                if (this.region && this.island.region)
+                    return this.region === this.island.region;
+
+                if (!this.region || this.region.guid === 5000000)
+                    return true;
+
+                return !view.settings.hideNewWorldConstructionMaterial.checked();
+            }
+
+            return false;
+        })
     }
 
 
@@ -1138,6 +1192,7 @@ class PopulationLevel extends NamedElement {
         this.existingBuildings = ko.observable(0);
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
+        this.region = assetsMap.get(config.region);
 
         config.needs.forEach(n => {
             if (n.tpmin > 0 && assetsMap.get(n.guid))
@@ -1211,8 +1266,8 @@ class WorkforceDemand extends NamedElement {
     }
 }
 
-class Item extends Option {
-    constructor(config, assetsMap) {
+class Item extends NamedElement {
+    constructor(config, assetsMap, region) {
         super(config);
 
         if (this.replaceInputs) {
@@ -1233,11 +1288,23 @@ class Item extends Option {
             this.extraGoods = this.additionalOutputs.map(p => assetsMap.get(p.Product));
         }
 
-        this.factories = this.factories.map(f => assetsMap.get(f));
+        this.factories = this.factories.map(f => assetsMap.get(f)).filter(f => f && (!region || f.region === region));
         this.equipments =
             this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap));
 
-        this.checked.subscribe(checked => this.equipments.forEach(e => e.checked(checked)));
+        this.checked = ko.pureComputed({
+            read: () => {
+                for (var eq of this.equipments)
+                    if (!eq.checked())
+                        return false;
+
+                return true;
+            },
+            write: (checked) => {
+                this.equipments.forEach(e => e.checked(checked));
+            }
+
+        });
     }
 }
 
@@ -1301,7 +1368,10 @@ class GoodConsumptionUpgrade extends Option {
 
         this.entries = [];
         this.entriesMap = new Map();
-        this.populationLevels = config.populationLevels.map(l => assetsMap.get(l));
+        this.populationLevels = config.populationLevels.map(l => assetsMap.get(l)).filter(l => !!l);
+        if (!this.populationLevels.length)
+            return;
+
         this.populationLevelsSet = new Set(this.populationLevels);
 
         for (var entry of config.goodConsumptionUpgrade) {
@@ -1603,7 +1673,14 @@ class TradeManager {
             var usedIslands = new Set(f.tradeList.routes().flatMap(r => [r.from, r.to]));
             var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != f.tradeList.island);
             islands.sort((a, b) => {
-                return a.name() < b.name();
+                var sIdxA = view.sessions.indexOf(a.session);
+                var sIdxB = view.sessions.indexOf(b.session);
+
+                if (sIdxA == sIdxB) {
+                    return a.name() > b.name();
+                } else {
+                    return sIdxA > sIdxB;
+                }
             });
             f.tradeList.export(f.overProduction() > 0);
             f.tradeList.newAmount(Math.abs(f.overProduction()));
@@ -1634,6 +1711,9 @@ class TradeManager {
 
                 config.fromFactory = config.from.assetsMap.get(r.factory);
                 config.toFactory = config.to.assetsMap.get(r.factory);
+
+                if (!config.fromFactory || !config.toFactory)
+                    continue;
 
                 var route = new TradeRoute(config);
                 this.routes.push(route);
@@ -1669,6 +1749,8 @@ class TradeManager {
                     continue;
 
                 var factory = to.assetsMap.get(r.factory);
+                if (!factory)
+                    continue;
 
                 factory.tradeList.npcRoutes.forEach(froute => {
                     if (froute.trader.guid === r.trader) {
@@ -1800,7 +1882,7 @@ class PopulationReader {
             } else {
 
                 for (var isl of (json.islands || [])) {
-                    view.islandManager.registerName(isl.name);
+                    view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
                 }
 
                 var island = null;
@@ -1859,6 +1941,7 @@ class IslandManager {
         let islandsKey = "islandNames";
 
         this.islandNameInput = ko.observable();
+        this.sessionInput = ko.observable(view.sessions[0]);
         this.params = params;
         this.unusedNames = ko.observableArray();
         this.serverNamesMap = new Map();
@@ -1919,7 +2002,7 @@ class IslandManager {
         });
     }
 
-    create(name) {
+    create(name, session) {
         if (name == null) {
             if (this.islandExists())
                 return;
@@ -1930,7 +2013,7 @@ class IslandManager {
         if (this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name)
             return;
 
-        var island = new Island(this.params, new Storage(name));
+        var island = new Island(this.params, new Storage(name), session);
         view.islands.push(island);
         this.sortIslands();
 
@@ -1938,7 +2021,7 @@ class IslandManager {
             view.island(island);
 
         this.serverNamesMap.set(name, island);
-        var removedNames = this.unusedNames.remove(n => !isNaN(this.compareNames(n, name)));
+        var removedNames = this.unusedNames.remove(i => !isNaN(this.compareNames(i.name, name)));
         for (var n of removedNames)
             this.serverNamesMap.set(n, island);
 
@@ -1970,7 +2053,7 @@ class IslandManager {
         }
 
         this.serverNamesMap.delete(island.name());
-        this.unusedNames.push(island.name());
+        this.unusedNames.push({ name: island.name(), session: island.session });
         this.sortUnusedNames();
     }
 
@@ -1978,7 +2061,7 @@ class IslandManager {
         return this.serverNamesMap.get(name);
     }
 
-    registerName(name) {
+    registerName(name, session) {
         if (name == ALL_ISLANDS || this.serverNamesMap.has(name))
             return;
 
@@ -1995,11 +2078,11 @@ class IslandManager {
 
         if (island) {
             this.serverNamesMap.set(name, island);
-            this.unusedNames.remove(name);
+            this.unusedNames.remove(i => i.name === name);
             return;
         }
 
-        this.unusedNames.push(name);
+        this.unusedNames.push({ name: island.name(), session: session });
         this.sortUnusedNames();
     }
 
@@ -2021,12 +2104,28 @@ class IslandManager {
             else if (b.isAllIslands() || b.name() == ALL_ISLANDS)
                 return true;
 
-            return a.name() > b.name();
+            var sIdxA = view.sessions.indexOf(a.session);
+            var sIdxB = view.sessions.indexOf(b.session);
+
+            if (sIdxA == sIdxB) {
+                return a.name() > b.name();
+            } else {
+                return sIdxA > sIdxB;
+            }
         })
     }
 
     sortUnusedNames() {
-        this.unusedNames.sort();
+        this.unusedNames.sort((a, b) => {
+            var sIdxA = view.sessions.indexOf(a.session);
+            var sIdxB = view.sessions.indexOf(b.session);
+
+            if (sIdxA == sIdxB) {
+                return a.name > b.name;
+            } else {
+                return sIdxA > sIdxB;
+            }
+        });
     }
 
     // Function to find length of Longest Common Subsequence of substring
@@ -2139,6 +2238,24 @@ function init() {
             o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
         }
     }
+
+    view.assetsMap = new Map();
+
+    view.regions = [];
+    for (let region of params.regions) {
+        let r = new Region(region, view.assetsMap);
+        view.assetsMap.set(r.guid, r);
+        view.regions.push(r);
+    }
+
+    view.sessions = [];
+    for (let session of params.sessions) {
+        let s = new Session(session, view.assetsMap);
+        view.assetsMap.set(s.guid, s);
+        view.sessions.push(s);
+    }
+
+
 
     // set up newspaper
     view.newspaperConsumption = new NewspaperNeedConsumption();

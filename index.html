@@ -61,6 +61,27 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
+                            </div>
+
+                            <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: texts.selectedIsland.name">Select Island</span>
+                            </div>
+
+                            <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.sessionExtendedName()"></select>
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary" data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#island-management-dialog').modal(),500)" class="btn btn-light">
+                                    <span class="fa fa-cog"> </span>
+                                </button>
+
+                            </div>
+                        </div>
+                        <hr />
                         <table class="table table-striped">
                             <tbody data-bind="foreach: settings.options">
                                 <tr>
@@ -81,27 +102,7 @@
                             </tbody>
                         </table>
                         <hr />
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
-                            </div>
 
-                            <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
-                        </div>
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" data-bind="text: texts.selectedIsland.name">Select Island</span>
-                            </div>
-
-                            <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.name()"></select>
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#island-management-dialog').modal(),500)" class="btn btn-light">
-                                    <span class="fa fa-cog"> </span>
-                                </button>
-
-                            </div>
-                        </div>
-                        <hr />
                         <h6>Server<button type="button" class="help" data-toggle="modal" data-target="#download-dialog">?</button></h6>
                         <div data-bind="foreach: settings.serverOptions">
                             <div class="custom-control custom-checkbox">
@@ -416,18 +417,18 @@
                             <span class="input-group-text" data-bind="text: texts.selectedIsland.name">Select Island</span>
                         </div>
 
-                        <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.name()"></select>
+                        <select name="islands" class="custom-select" id="islands" data-bind="value: $root.island, options: $root.islands, optionsText: i => i.sessionExtendedName()"></select>
 
                     </div>
 
                     <hr />
 
-                    <form data-bind="submit: () => $root.islandManager.create()">
+                    <form data-bind="submit: () => $root.islandManager.create($root.islandManager.islandNameInput(), $root.islandManager.sessionInput())">
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
                             </div>
-
+                            <select name="session" class="form-control custom-select" id="session" data-bind="value: $root.islandManager.sessionInput, caption: 'Session', options: $root.sessions, optionsText: s => s.name()" />
                             <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" data-bind="disable: $root.islandManager.islandExists">
@@ -446,13 +447,18 @@
 
                         <tbody data-bind="foreach: $root.islandManager.unusedNames">
                             <tr>
-                                <td data-bind="text: $data"></td>
+                                <td>
+                                    <div data-bind="if: $data.session">
+                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
+                                    </div>
+                                </td>
+                                <td data-bind="text: $data.name"></td>
                                 <td>
                                     <span class="float-right">
-                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.islandNameInput($data)">
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => {$root.islandManager.islandNameInput($data.name), $root.islandManager.sessionInput($data.session)}">
                                         <span class="fa fa-pencil"> </span>
                                     </button>
-                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data)">
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data.name, $data.session)">
                                         <span class="fa fa-plus"> </span>
                                     </button>
                                     </span>
@@ -467,6 +473,11 @@
 
                         <tbody data-bind="foreach: $root.islands">
                             <tr>
+                                <td>
+                                    <div data-bind="if: $data.session">
+                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
+                                    </div>
+                                </td>
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
                                 <td>
                                     <div style="display: flex; flex-flow: wrap; justify-content: center">
@@ -527,18 +538,23 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
                 </div>
-                <div class="modal-body">
+                <span class="modal-body">
                     <table class="table table-striped table-sm" data-bind="if: $root.tradeManager.npcRoutes().length">
                         <tbody class="mb-3" data-bind="foreach: $root.tradeManager.npcRoutes">
                             <tr>
                                 <td>
-                                    <img class="small-icon" src="" data-bind="attr: {src: $data.trader.icon, alt: $data.trader.name}" />
+                                    <img class="icon-sm" src="" data-bind="attr: {src: $data.trader.icon, alt: $data.trader.name}" />
                                     <span data-bind="text: $data.trader.name"></span>
                                 </td>
                                 <td><span>&rarr;</span></td>
-                                <td data-bind="text: $data.to.name"></td>
                                 <td>
-                                    <img class="small-icon" src="" data-bind="attr: {src: $data.toFactory.product.icon, alt: $data.toFactory.product.name}" />
+                                    <span data-bind="if: $data.to.session">
+                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.to.session.icon}" />
+                                    </span>
+                                    <a href="#" data-dismiss="modal" data-bind="text: $data.to.name, click: () => {setTimeout(() => { $root.island($data.to); $root.selectedFactory($data.toFactory);$('#factory-config-dialog').modal('show')}, 500);}"></a>
+                                </td>
+                                <td>
+                                    <img class="icon-sm" src="" data-bind="attr: {src: $data.toFactory.product.icon, alt: $data.toFactory.product.name}" />
                                 </td>
                                 <td>
                                     <span data-bind="text: $data.amount"></span>
@@ -558,13 +574,23 @@
                     <table class="table table-striped table-sm">
                         <tbody data-bind="foreach: $root.tradeManager.routes">
                         <tr>
-                            <td data-bind="text: $data.from.name"></td>
+                                <td>
+                                    <span data-bind="if: $data.from.session">
+                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.from.session.icon}" />
+                                    </span>
+                                    <a href="#" data-dismiss="modal" data-bind="text: $data.from.name, click: () => { $root.island($data.from); setTimeout(() => {$root.selectedFactory($data.fromFactory);$('#factory-config-dialog').modal('show')}, 500);}"></a>
+                                </td>
                             <td><span>&rarr;</span></td>
-                            <td data-bind="text: $data.to.name"></td>
                             <td>
-                                <img class="small-icon" src="" data-bind="attr: {src: $data.fromFactory.product.icon, alt: $data.fromFactory.product.name}"/>
+                                    <span data-bind="if: $data.to.session">
+                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.to.session.icon}" />
+                                    </span>
+                                    <a href="#" data-dismiss="modal" data-bind="text: $data.to.name, click: () => {setTimeout(() => { $root.island($data.to); $root.selectedFactory($data.toFactory);$('#factory-config-dialog').modal('show')}, 500);}"></a>
                             </td>
                             <td>
+                                    <img class="icon-sm" src="" data-bind="attr: {src: $data.fromFactory.product.icon, alt: $data.fromFactory.product.name}" />
+                                </td>
+                                <td>
                                     <div class="float-right">
                                     <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
                                         <span class="fa fa-exclamation-triangle danger-icon"></span>
@@ -687,7 +713,7 @@
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.trader.guid + '-npcRoute-checked' }">
                                         <label class="custom-control-label" data-bind="attr: { for: $data.trader.guid + '-npcRoute-checked' }" src-only style="vertical-align: top;">
-                                            <img class="small-icon" src="" data-bind="attr:{src: $data.trader.icon}" />
+                                            <img class="icon-sm" src="" data-bind="attr:{src: $data.trader.icon}" />
                                             <span data-bind="text: $data.trader.name"></span>
                                         </label>
                                     </div>
@@ -701,7 +727,12 @@
                                 <table class="table table-striped table-sm" data-bind="if: !$data.island.isAllIslands()">
                                         <tbody data-bind="foreach: $data.routes">
                                             <tr>
-                                            <td><a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a></td> <!-- island name -->
+                                            <td>
+                                                <span data-bind="if: $data.getOpposite($parent).session">
+                                                    <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.getOpposite($parent).session.icon}" />
+                                                </span>
+                                                <a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a>
+                                            </td> <!-- island name -->
                                                 <!-- factory summary -->
                                                 <!--<td data-bind="with: $data.getOpposite($parent)">
                                                 <div style="display: flex; flex-flow: wrap; justify-content: center">
@@ -744,11 +775,11 @@
                                                         <div class="input-group-text">
                                                             <span data-bind="if: $data.isExport($parent)">
                                                                
-                                                                <img class="small-icon icon-light" src="icon_transporter_unloading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
                                                             </span>
                                                             <span data-bind="if: !$data.isExport($parent)">
                                                               
-                                                                <img class="small-icon icon-light" src="icon_transporter_loading_light.png" />
+                                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
                                                             </span>
                                                         </div>
                                                         <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
@@ -777,17 +808,17 @@
 
 
 
-                                        <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.name()"></select>
+                                    <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.sessionExtendedName()"></select>
                                         <div style="display: flex">
                                         <div class="mr-2">
                                            
-                                            <img class="small-icon icon-light" src="icon_transporter_loading_light.png" />
+                                            <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
                                         </div>
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="create-trade-route-export-checkbox" data-bind="checked: $data.export">
                                             <label class="custom-control-label" for="create-trade-route-export-checkbox">
                                               
-                                                <img class="small-icon icon-light" src="icon_transporter_unloading_light.png" />
+                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
                                             </label>
                                         </div>
                                         </div>
@@ -868,7 +899,7 @@
                                         </div>
                                         </td>
                                     </tr>
-                                    <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
+                                <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
                                         <!-- existing buildings -->
                                         <td>
                                             <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
@@ -1082,7 +1113,7 @@
                     <div class="ui-fchain collapse show" data-bind="attr: {id:  'category-' + guid}">
                         <div data-bind="foreach: $data.products">
                             <div data-bind="foreach: $data.factories">
-                                <div data-bind="if: amount() > 0 || extraAmount() > 0 || existingBuildings() > 0 || $data.editable && (!$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000)">
+                                <div data-bind="if: $data.visible">
 
                                     <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
                                         <div class="ui-fchain-item-tr-button" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked() || $root.settings.tradeRoutes.checked()">
@@ -1113,7 +1144,7 @@
                                     <div class="ui-fchain-item-attribute-group">
                                         <div>
                                         <!-- buildings display for non-construction products -->
-                                        <div class="ui-fchain-item-count" data-bind="if: !$data.editable">
+                                                <div class="ui-fchain-item-count" data-bind="if: !$data.editable()">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                                 <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
                                                 <span>x</span>
@@ -1125,7 +1156,7 @@
                                         </div>
 
                                         <!-- existing buildings input for non-construction products -->
-                                        <div class="ui-fchain-item-count" data-bind="if: !$data.editable && $root.settings.missingBuildingsHighlight.checked()">
+                                                <div class="ui-fchain-item-count" data-bind="if: !$data.editable() && $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region)">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
                                                 <span data-bind="text: $root.texts.existingNumberOfBuildingsIs.name"></span>
                                                 <span data-bind="text: existingBuildings()"></span>
@@ -1138,7 +1169,7 @@
                                         </div>
 
                                         <!-- buildings input for construction material -->
-                                        <div class="ui-fchain-item-count" data-bind="if: $data.editable">
+                                                <div class="ui-fchain-item-count" data-bind="if: $data.editable() && (!$data.region || !$data.island.region || $data.region === $data.island.region)">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
 
                                                         <div class="input-group input-group-sm mb-3 spinner">
@@ -1153,7 +1184,7 @@
                                         </div>
 
                                         <!-- required buildings display for construction materials -->
-                                        <div class="ui-fchain-item-count" data-bind="if: $data.editable &&  buildings() > existingBuildings()">
+                                                <div class="ui-fchain-item-count" data-bind="if: $data.editable() &&  buildings() > existingBuildings()">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}" style="display: flex">
                                                 <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
                                                 <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
@@ -1225,8 +1256,8 @@
                             </div>
                         </div>
                         <div data-bind="foreach: $data.consumers">
-
-                            <div class="ui-fchain-item" data-bind="if: !$root.settings.hideNewWorldConstructionMaterial.checked() || $data.region.guid === 5000000, css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
+                            <div data-bind="if: !$data.island.region || $data.region === $data.island.region">
+                                <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
                                 <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 
@@ -1265,7 +1296,7 @@
                                 </div>
                             </div>
 
-
+                            </div>
 
                         </div>
                     </div>
@@ -1375,7 +1406,7 @@
                                             <div style="display: flex; justify-content: space-between; vertical-align: bottom;">
                                                 <div>
                                                            
-                                                            <img class="small-icon icon-light" src="icon_marketplace_2d_light.png" />
+                                                            <img class="icon-sm icon-light" src="icon_marketplace_2d_light.png" />
                                                 </div>
                                                 <div>
                                                             <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedGoodConsumptionUpgradeList($data.goodConsumptionUpgradeList)}" data-toggle="modal" data-target="#good-consumption-upgrade-dialog">
