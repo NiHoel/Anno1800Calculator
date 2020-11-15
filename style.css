@@ -187,7 +187,6 @@ h1 {
     font-size: 12px;
     font-weight: bold;
     text-align: center;
-    margin-top: 5px;
 }
 
 .ui-fchain-item-count {
@@ -243,9 +242,6 @@ h1 {
     align-items: center;
     display: flex;
     flex-direction: column;
-}
-
-.ui-tier-unit-icon {
 }
 
 .ui-tier-icon {
@@ -478,6 +474,27 @@ input[type=number]::-webkit-inner-spin-button {
     color: red;
     z-index: 1000;
     margin: 2px;
+}
+
+.inline-list {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: left;
+    align-items: center;
+}
+
+.inline-list-centered {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.inline-list-stretched {
+    display: flex;
+    flex-flow: nowrap;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* dark-mode styles */

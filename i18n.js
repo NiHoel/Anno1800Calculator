@@ -541,39 +541,6 @@ options = {
             "korean": "주민 수 대신 주택 수를 입력"
         }
     },
-    "noOptionalNeeds": {
-        "name": "Do not produce luxury goods",
-        "locaText": {
-            "english": "Do not produce luxury goods",
-            "german": "Keine Luxusgüter produzieren",
-            "korean": "사치품을 생산하지 않습니다."
-        }
-    },
-    "decimalsForBuildings": {
-        "name": "Show number of buildings with decimals",
-        "locaText": {
-            "english": "Show number of buildings with decimals",
-            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
-            "korean": "건물 수를 소수점 단위로 표시"
-        }
-    },
-    "missingBuildingsHighlight": {
-        "name": "Highlight missing buildings",
-        "locaText": {
-            "english": "Highlight missing buildings",
-            "german": "Fehlende Gebäude hervorheben",
-            "korean": "부족한 건물 강조"
-        }
-    },
-    "additionalProduction": {
-        "name": "Show input field for additional production",
-        "dialog": "item-equipment-dialog",
-        "locaText": {
-            "english": "Show input field for additional production (negative values possible)",
-            "german": "Zeige Eingabefeld für Zusatzproduktion (negative Werte möglich)",
-            "korean": "추가 생산을 위한 입력 필드 표시 (음수 값 가능)"
-        }
-    },
     "tradeRoutes": {
         "name": "Trade Routes",
         "dialog": "trade-routes-management-dialog",
@@ -589,6 +556,23 @@ options = {
             "korean": "무역로",
             "japanese": "取引ルート",
             "russian": "Торговые маршруты"
+        }
+    },
+    "additionalProduction": {
+        "name": "Extra Goods",
+        "dialog": "item-equipment-dialog",
+        "locaText": {
+            "english": "Extra Goods",
+            "chinese": "额外货物",
+            "taiwanese": "額外貨物",
+            "italian": "Merci aggiuntive",
+            "spanish": "Bienes extra",
+            "german": "Zusatzwaren",
+            "polish": "Dodatkowe towary",
+            "french": "Marchandises supplémentaires",
+            "korean": "추가 물품",
+            "japanese": "追加品物",
+            "russian": "Дополнительные товары"
         }
     },
     "autoApplyExtraNeed": {
@@ -607,6 +591,30 @@ options = {
             "korean": "소비 수정(백분율)을 위한 입력 필드 표시"
         }
     },
+    "missingBuildingsHighlight": {
+        "name": "Highlight missing buildings",
+        "locaText": {
+            "english": "Highlight missing buildings",
+            "german": "Fehlende Gebäude hervorheben",
+            "korean": "부족한 건물 강조"
+        }
+    },
+    "noOptionalNeeds": {
+        "name": "Do not produce luxury goods",
+        "locaText": {
+            "english": "Do not produce luxury goods",
+            "german": "Keine Luxusgüter produzieren",
+            "korean": "사치품을 생산하지 않습니다."
+        }
+    },
+    "decimalsForBuildings": {
+        "name": "Show number of buildings with decimals",
+        "locaText": {
+            "english": "Show number of buildings with decimals",
+            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
+            "korean": "건물 수를 소수점 단위로 표시"
+        }
+    },
     "hideNames": {
         "name": "Hide the names of products, factories, and population levels",
         "locaText": {
@@ -623,12 +631,11 @@ options = {
             "korean": "생산성 입력 필드 숨기기"
         }
     },
-    "hideNewWorldConstructionMaterial": {
-        "name": "Hide factory cards for construction material not produced in Europe",
+    "showAllConstructableFactories": {
+        "name": "Show all factories constructable in the region",
         "locaText": {
-            "english": "Hide factory cards for construction material not produced in Europe",
-            "german": "Verberge die Fabrikkacheln für Baumaterial, das nicht in Europa produziert wird",
-            "korean": "새로운 지역(북극)에서 생산되는 건축 자재 숨기기"
+            "english": "Show all factories constructable in the region",
+            "german": "Zeige alle Fabriken, die in der Region errichtet werden können"
         }
     }
 }
@@ -680,6 +687,13 @@ serverOptions = {
             "english": "Restrict updates to the selected island",
             "german": "Beschränke Updates auf die ausgewählte Insel",
             "korean": "선택한 섬만 가져오기"
+        }
+    },
+    "proposeIslandNames": {
+        "name": "Suggest island names encountered by the server",
+        "locaText": {
+            "english": "Suggest island names encountered by the server",
+            "german": "Vom Server erkannte Inselnamen vorschlagen"
         }
     }
 }

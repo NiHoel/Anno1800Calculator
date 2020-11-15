@@ -165,7 +165,7 @@
                         <hr />
 
                         <div data-bind="foreach: $root.island().replaceInputItems">
-                            <div class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
+                            <div class="ui-fchain-item" "style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
 
                                 <div class="ui-fchain-item-tr-checkbox">
                                     <div data-bind="foreach: $data.equipments" style="display:flex">
@@ -277,7 +277,7 @@
                                 <td><img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
                                 <td>
-                                    <span data-bind="foreach: $data.extraGoods" style="display: flex;">
+                                    <span data-bind="foreach: $data.extraGoods" class="inline-list-centered">
                                         <!-- icon extra goods -->
                                         <span style="flex: 100 1 auto;"></span>
 
@@ -289,7 +289,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <span data-bind="foreach: $data.equipments" style="display: flex; flex-flow: wrap; justify-content: center">
+                                    <span data-bind="foreach: $data.equipments" class="inline-list-centered">
 
                                         <span style="flex-basis: fit-content;">
                                             <span class="custom-control custom-checkbox">
@@ -377,7 +377,7 @@
                                 <td><img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- upgrade icon -->
                                 <td data-bind="text: $data.name"></td> <!-- upgrade name -->
                                 <td>
-                                    <span data-bind="foreach: $data.entries" style="display: flex; flex-flow: wrap; justify-content: center">
+                                    <span data-bind="foreach: $data.entries" class="inline-list-centered">
                                         <div>
                                             <span data-bind="text: formatPercentage($data.amount)"></span>
                                             <span class="ml-1 mr-2" style="flex-basis: fit-content;" data-bind="if: $data.product">
@@ -425,10 +425,9 @@
 
                     <form data-bind="submit: () => $root.islandManager.create($root.islandManager.islandNameInput(), $root.islandManager.sessionInput())">
                         <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" data-bind="text: texts.islandName.name">New Island</span>
-                            </div>
-                            <select name="session" class="form-control custom-select" id="session" data-bind="value: $root.islandManager.sessionInput, caption: 'Session', options: $root.sessions, optionsText: s => s.name()" />
+                            <select name="session" class="form-control custom-select" id="session" data-bind="value: $root.islandManager.sessionInput, valueAllowUnset: true, options: $root.sessions, optionsText: s => s.name()" />
+                           
+
                             <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
                             <div class="input-group-append">
                                 <button class="btn btn-secondary" data-bind="disable: $root.islandManager.islandExists">
@@ -469,45 +468,51 @@
 
                     <hr />
                     <h6 data-bind="text: $root.texts.world.name">The World</h6>
-                    <table class="table table-striped">
+                    <table class="table table-striped table-sm">
 
                         <tbody data-bind="foreach: $root.islands">
                             <tr>
                                 <td>
-                                    <div data-bind="if: $data.session">
+                                    <div class="inline-list">
+                                        <div class="mr-2" data-bind="if: $data.session">
                                         <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
                                     </div>
+                                        <a href="#" data-dismiss="modal" data-bind="text: $data.name, click: () => $root.island($data)"></a>
+                                    </div>
                                 </td>
-                                <td data-bind="text: $data.name"></td> <!-- item name -->
                                 <td>
-                                    <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                    <div class="inline-list">
                                         <span class="mr-3">
-                                            <img src="icon_residence.png" width="25" height="25" data-bind="if: !$root.settings.existingBuildingsInput.checked()">
-                                            <img src="icon_house.png" width="25" height="25" data-bind="if: $root.settings.existingBuildingsInput.checked()">
+                                            <img src="icon_residence.png" width="25" height="25" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                            <img src="icon_house.png" width="25" height="25" data-bind="visible: $root.settings.existingBuildingsInput.checked()">
                                         </span>
                                         <span data-bind="if: !$data.top2Population().length">0</span>
-                                        <span data-bind="foreach: $data.top2Population" style="display: flex; flex-flow: wrap; justify-content: center">
-                                            <span class="ui-tier-unit-icon" class="mr-1">
+                                        <!-- ko foreach: $data.top2Population -->
+                                        <span class="inline-list">
+                                            <span class="ui-tier-unit-icon" class="mr-3">
                                                 <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
                                             </span>
-                                            <span class="mr-3" data-bind="text: $root.settings.existingBuildingsInput.checked() ? $data.existingBuildings() : $data.amount()"></span>
+                                            <span class="mr-3" data-bind="text: $root.settings.existingBuildingsInput.checked() ? $data.existingBuildings() : formatNumber($data.amount())"></span>
                                         </span>
+                                        <!-- /ko -->
                                     </div>
                                 </td>
                                 <td>
-                                    <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                    <div class="inline-list">
                                         <span class="mr-3">
                                             <img src="icon_resource_storage_amount.png" width="25" height="25">
                                         </span>
                                         <span data-bind="if: !$data.top5Factories().length">0</span>
-                                        <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                        <!-- ko foreach: $data.top5Factories -->
+                                        <span class="inline-list">
                                             <span class="mr-1">
                                                 <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
                                             </span>
                                             <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
                                         </span>
+                                        <!-- /ko -->
                                     </div>
                                 </td>
                                 <td>
@@ -557,7 +562,7 @@
                                     <img class="icon-sm" src="" data-bind="attr: {src: $data.toFactory.product.icon, alt: $data.toFactory.product.name}" />
                                 </td>
                                 <td>
-                                    <span data-bind="text: $data.amount"></span>
+                                    <span data-bind="text: formatNumber($data.amount)"></span>
                                     <span> t/min</span>
                                 </td>
                                 <td>
@@ -659,7 +664,7 @@
                                 <tbody data-bind="foreach: $data.items">
                                     <tr>
                                         <td>
-                                                <div style="display: flex">
+                                            <div class="inline-list">
                                                 <span class="custom-control custom-checkbox">
                                                     <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
                                                     <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
@@ -672,7 +677,7 @@
                                         </td>
                                         <td>
                                             <span data-bind="if: $data.item.extraGoods">
-                                                <span data-bind="foreach: $data.item.extraGoods" style="display: flex; flex-flow: wrap;">
+                                                <span data-bind="foreach: $data.item.extraGoods" class="inline-list-centered">
                                                     <!-- icon extra goods -->
                                                     <span style="flex: 100 1 auto;"></span>
 
@@ -709,7 +714,7 @@
 
                                     <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
                                 
-                                <div class="mb-3" data-bind="foreach: $data.npcRoutes" style="display: flex; flex-flow: wrap; justify-content: space-between; align-items: center">
+                                <div class="mb-3 inline-list-stretched" data-bind="foreach: $data.npcRoutes">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.trader.guid + '-npcRoute-checked' }">
                                         <label class="custom-control-label" data-bind="attr: { for: $data.trader.guid + '-npcRoute-checked' }" src-only style="vertical-align: top;">
@@ -719,7 +724,7 @@
                                     </div>
                                     
                                     <div>
-                                        <span data-bind="text: $data.amount"></span>
+                                        <span data-bind="text: formatNumber($data.amount)"></span>
                                         <span> t/min</span>
                                     </div>
                                 </div>
@@ -804,7 +809,7 @@
                                             </tr>
                                         </tbody>
                                     </table>
-                                    <form class="form form-inline" data-bind="if: $data.unusedIslands().length " style="justify-content: space-between">
+                                <form class="form form-inline" data-bind="if: $data.unusedIslands().length && !$data.island.isAllIslands() " style="justify-content: space-between">
 
 
 
@@ -838,10 +843,10 @@
                             </div>
 
                         <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                            <div style="padding: .75rem; display: flex; flex-flow: wrap; justify-content: space-between; align-items: center">
+                            <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
-                                    <span data-bind="text: Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10"></span>
+                                    <span data-bind="text: formatNumber(Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10)"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div data-bind="if: $root.settings.additionalProduction.checked()">
@@ -851,7 +856,7 @@
 
                                         </label>
                                     </span>
-                                    <span data-bind="text: Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100"></span>
+                                    <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.extraGoodProductionList.amount()))/100)"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div>
@@ -938,7 +943,7 @@
                                     <td>
                                         <div class="float-right">
                                             <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: Math.ceil(100*parseFloat($data.outputAmount() / $data.palaceBuff.additionalOutputCycle))/100"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.palaceBuff.additionalOutputCycle))/100)"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -952,7 +957,7 @@
                                         <td>
                                             <div class="float-right">
                                                 <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -966,7 +971,7 @@
                                         <td>
                                             <div class="float-right">
                                                 <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
                                         </div>
                                         </td>
                                     </tr>
@@ -980,7 +985,7 @@
                                         <td>
                                             <div class="float-right">
                                                 <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
-                                                <span data-bind="text: Math.ceil(100*$data.moduleDemand.amount())/100"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber(Math.ceil(100*$data.moduleDemand.amount())/100)"></span><span> t/min</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -1003,7 +1008,7 @@
 
                                         </td> <!-- factory icon -->
                                         <td>
-                                            <span data-bind="text: Math.ceil(100*parseFloat($data.amount()))/100"></span>
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.amount()))/100)"></span>
                                             <span> t/min</span>
 
                                         </td>
@@ -1025,7 +1030,7 @@
             <fieldset class="ui-fieldset" id="residents-view">
                 <legend data-bind="text:$root.texts.residents.name">Residents</legend>
 
-                <div style="display:flex;align-items:center;justify-content:space-between;">
+                <div class="inline-list-stretched">
 
                     <div class="ui-tier-input fleft">
                         <!-- <div class="ui-tier-icon">
@@ -1033,7 +1038,7 @@
                     </div> -->
                         <div data-bind="foreach: $data.populationLevels">
                             <div class="ui-tier-unit">
-                                <div class="ui-tier-unit-icon">
+                                <div class="ui-tier-unit-icon mb-1">
                                     <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                     <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
                                     <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
@@ -1089,7 +1094,7 @@
                                 <div class="ui-tier-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
                                 <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
                                 <div class="ui-fchain-item-count">
-                                    <span data-bind="text: amount"></span>
+                                    <span data-bind="text: formatNumber(amount())"></span>
                                 </div>
                             </div>
                         </div>
@@ -1126,7 +1131,7 @@
 
                                         <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
 
-                                        <div class="ui-fchain-item-icon">
+                                        <div class="ui-fchain-item-icon mb-2">
                                             <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                     </div>
                                     <div class="ui-fchain-item-boost">
@@ -1193,7 +1198,7 @@
                                             </div>
                                         </div>
                                         <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                            <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
+                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span></div>
 
                                         </div>
 
@@ -1228,7 +1233,7 @@
                                             <div style="flex: 100 1 auto;"></div>
                                         </div>
                                     </div>
-                                        <div class="ui-fchain-item-load" data-bind="if: $root.settings.additionalProduction.checked()">
+                                        <div class="ui-fchain-item-load" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
                                         <div class="ui-fchain-item-extra-input">
                                                 <div class="input-group input-group-sm spinner mb-3">
                                                     <div class="input-group-prepend">
@@ -1244,7 +1249,7 @@
                                                 </div>
                                             </div>
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.outputAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
-                                                <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(outputAmount()))/100"></span><span> t/min</span></div>
+                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat(outputAmount()))/100)"></span><span> t/min</span></div>
                                             </div>
 
 
@@ -1259,7 +1264,7 @@
                             <div data-bind="if: !$data.island.region || $data.region === $data.island.region">
                                 <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
                                 <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
-                                <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+                                    <div class="ui-fchain-item-icon mb-2"><img src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 
 
                                 <!-- buildings input  -->
@@ -1291,7 +1296,7 @@
                                 </div>
 
                                 <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                    <div class="ui-fchain-item-load"><span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span></div>
+                                        <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span></div>
 
                                 </div>
                             </div>
@@ -1437,7 +1442,7 @@
                                                 </div>
                                                 <div class="ui-fchain-item-load">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                                        <span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span>
+                                                        <span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -1476,7 +1481,7 @@
                                 </div>
                                 <div class="ui-fchain-item-load">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <span data-bind="text: Math.ceil(100*parseFloat(amount()))/100"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span>
                                     </span>
                                 </div>
 

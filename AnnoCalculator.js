@@ -3,25 +3,6 @@ let EPSILON = 0.01;
 let ALL_ISLANDS = "All Islands";
 
 
-function getStep(id) {
-    return parseFloat($('#' + id).attr('step') || 1);
-}
-
-function getMin(id) {
-    return parseFloat($('#' + id).attr('min') || -Infinity);
-}
-
-function getMax(id) {
-    return parseFloat($('#' + id).attr('max') || Infinity);
-}
-
-ko.components.register('number-input-increment', {
-    template:
-        `<div class="input-group-btn-vertical" >
-                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + EPSILON; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
-                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - EPSILON; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
-                                                    </div>`
-});
 
 view = {
     settings: {
@@ -790,6 +771,12 @@ class Factory extends Consumer {
             if (this.amount() > 0 || this.extraAmount() > 0 || this.existingBuildings() > 0)
                 return true;
 
+            if (this.region && this.island.region && this.region != this.island.region)
+                return false;
+
+            if (view.settings.showAllConstructableFactories.checked())
+                return true;
+
             if (this.editable()) {
                 if (this.region && this.island.region)
                     return this.region === this.island.region;
@@ -797,7 +784,7 @@ class Factory extends Consumer {
                 if (!this.region || this.region.guid === 5000000)
                     return true;
 
-                return !view.settings.hideNewWorldConstructionMaterial.checked();
+                return false;
             }
 
             return false;
@@ -1881,8 +1868,10 @@ class PopulationReader {
                 }
             } else {
 
-                for (var isl of (json.islands || [])) {
-                    view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
+                if (view.settings.proposeIslandNames.checked()) {
+                    for (var isl of (json.islands || [])) {
+                        view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
+                    }
                 }
 
                 var island = null;
@@ -2371,8 +2360,30 @@ function removeSpaces(string) {
     return string.replace(/\W/g, "");
 }
 
+window.formatNumber = new Intl.NumberFormat(navigator.language || "en").format;
+
+function getStep(id) {
+    return parseFloat($('#' + id).attr('step') || 1);
+}
+
+function getMin(id) {
+    return parseFloat($('#' + id).attr('min') || -Infinity);
+}
+
+function getMax(id) {
+    return parseFloat($('#' + id).attr('max') || Infinity);
+}
+
+ko.components.register('number-input-increment', {
+    template:
+        `<div class="input-group-btn-vertical" >
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + EPSILON; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - EPSILON; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
+                                                    </div>`
+});
+
 function formatPercentage(number) {
-    var str = (Math.ceil(10 * parseFloat(number)) / 10) + ' %';
+    var str = window.formatNumber(Math.ceil(10 * parseFloat(number)) / 10) + ' %';
     if (number > 0)
         str = '+' + str;
 
