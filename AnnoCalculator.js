@@ -146,7 +146,7 @@ class Island {
             this.workforce.push(w);
         }
 
-        for (let consumer of params.powerPlants) {
+        for (let consumer of (params.powerPlants||[])) {
             if (this.region && this.region.guid != consumer.region)
                 continue;
 
@@ -754,7 +754,7 @@ class Factory extends Consumer {
         });
 
         this.amount.subscribe(() => {
-            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() + EPSILON < this.extraAmount())
+            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() < 0 && this.computedExtraAmount() + EPSILON < this.extraAmount())
                 this.updateExtraGoods();
         });
 
@@ -2231,14 +2231,14 @@ function init() {
     view.assetsMap = new Map();
 
     view.regions = [];
-    for (let region of params.regions) {
+    for (let region of (params.regions||[])) {
         let r = new Region(region, view.assetsMap);
         view.assetsMap.set(r.guid, r);
         view.regions.push(r);
     }
 
     view.sessions = [];
-    for (let session of params.sessions) {
+    for (let session of (params.sessions||[])) {
         let s = new Session(session, view.assetsMap);
         view.assetsMap.set(s.guid, s);
         view.sessions.push(s);
