@@ -16817,10 +16817,6 @@ params=
 "ProductionPerMinute": 5
 },
 {
-"Good": 1010257,
-"ProductionPerMinute": 7
-},
-{
 "Good": 1010249,
 "ProductionPerMinute": 6
 },
@@ -16860,10 +16856,6 @@ params=
 {
 "Good": 1010221,
 "ProductionPerMinute": 5
-},
-{
-"Good": 1010257,
-"ProductionPerMinute": 7
 },
 {
 "Good": 1010249,

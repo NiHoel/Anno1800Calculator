@@ -750,12 +750,12 @@ class Factory extends Consumer {
 
         this.computedExtraAmount.subscribe(() => {
             if (view.settings.autoApplyExtraNeed.checked())
-                this.updateExtraGoods();
+                setTimeout(() => this.updateExtraGoods(), 10);
         });
 
         this.amount.subscribe(() => {
             if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() < 0 && this.computedExtraAmount() + EPSILON < this.extraAmount())
-                this.updateExtraGoods();
+                setTimeout(() => this.updateExtraGoods(), 10);
         });
 
         this.overProduction = ko.computed(() => {
@@ -1684,12 +1684,14 @@ class TradeManager {
                 if (!i.isAllIslands())
                     islands.set(i.name(), i);
 
+            var resolve = name => name == ALL_ISLANDS ? view.islandManager.allIslands : islands.get(name);
+
             var text = localStorage.getItem(this.key);
             var json = text ? JSON.parse(text) : [];
             for (var r of json) {
                 var config = {
-                    from: islands.get(r.from),
-                    to: islands.get(r.to),
+                    from: resolve(r.from),
+                    to: resolve(r.to),
                     amount: parseFloat(r.amount)
                 };
 
@@ -1714,8 +1716,8 @@ class TradeManager {
 
                 for (var r of this.routes()) {
                     json.push({
-                        from: r.from.name(),
-                        to: r.to.name(),
+                        from: r.from.isAllIslands() ? ALL_ISLANDS : r.from.name(),
+                        to: r.to.isAllIslands() ? ALL_ISLANDS : r.to.name(),
                         factory: r.fromFactory.guid,
                         amount: r.amount()
                     });
@@ -1730,7 +1732,7 @@ class TradeManager {
             text = localStorage.getItem(this.npcKey);
             json = text ? JSON.parse(text) : [];
             for (var r of json) {
-                var to = islands.get(r.to);
+                var to = resolve(r.to);
  
                 if (!to)
                     continue;
@@ -1754,7 +1756,7 @@ class TradeManager {
                 for (var r of this.npcRoutes()) {
                     json.push({
                         trader: r.trader.guid,
-                        to: r.to.name(),
+                        to: r.to.isAllIslands() ? ALL_ISLANDS : r.to.name(),
                         factory: r.toFactory.guid
                     });
                 }
@@ -1932,7 +1934,8 @@ class IslandManager {
         this.islandNameInput = ko.observable();
         this.sessionInput = ko.observable(view.sessions[0]);
         this.params = params;
-        this.unusedNames = ko.observableArray();
+        this.islandCandidates = ko.observableArray();
+        this.unusedNames = new Set();
         this.serverNamesMap = new Map();
 
         this.showIslandOnCreation = new Option({
@@ -1963,6 +1966,7 @@ class IslandManager {
         this.sortIslands();
 
         var allIslands = new Island(params, localStorage);
+        this.allIslands = allIslands;
         view.islands.unshift(allIslands);
         this.serverNamesMap.set(allIslands.name(), allIslands);
         if (!view.island())
@@ -2010,9 +2014,11 @@ class IslandManager {
             view.island(island);
 
         this.serverNamesMap.set(name, island);
-        var removedNames = this.unusedNames.remove(i => !isNaN(this.compareNames(i.name, name)));
-        for (var n of removedNames)
-            this.serverNamesMap.set(n, island);
+        var removedCandidates = this.islandCandidates.remove(i => !isNaN(this.compareNames(i.name, name)));
+        for (var c of removedCandidates) {
+            this.unusedNames.delete(c.name);
+            this.serverNamesMap.set(c.name, island);
+        }
 
         if (name == this.islandNameInput())
             this.islandNameInput(null);
@@ -2042,23 +2048,27 @@ class IslandManager {
         }
 
         this.serverNamesMap.delete(island.name());
-        this.unusedNames.push({ name: island.name(), session: island.session });
+        this.unusedNames.add(island.name());
+        this.islandCandidates.push({ name: island.name(), session: island.session });
         this.sortUnusedNames();
     }
 
     getByName(name) {
-        return this.serverNamesMap.get(name);
+        return name == ALL_ISLANDS ? this.allIslands : this.serverNamesMap.get(name);
     }
 
     registerName(name, session) {
         if (name == ALL_ISLANDS || this.serverNamesMap.has(name))
             return;
 
+        if (this.unusedNames.has(name))
+            return;
+
         var island = null;
         var bestMatch = Math.Infinity;
 
-        for (var isl of this.islands()) {
-            var match = compareNames(isl.name(), name);
+        for (var isl of view.islands()) {
+            var match = this.compareNames(isl.name(), name);
             if (!isNaN(match) && match > bestMatch) {
                 island = isl;
                 bestMatch = match;
@@ -2067,11 +2077,14 @@ class IslandManager {
 
         if (island) {
             this.serverNamesMap.set(name, island);
-            this.unusedNames.remove(i => i.name === name);
+            var removedCandidates = this.islandCandidates.remove(i => i.name === name);
+            for (var c of removedCandidates)
+                this.unusedNames.delete(c.name);
             return;
         }
 
-        this.unusedNames.push({ name: island.name(), session: session });
+        this.islandCandidates.push({ name: name, session: session });
+        this.unusedNames.add(name);
         this.sortUnusedNames();
     }
 
@@ -2101,11 +2114,11 @@ class IslandManager {
             } else {
                 return sIdxA > sIdxB;
             }
-        })
+        });
     }
 
     sortUnusedNames() {
-        this.unusedNames.sort((a, b) => {
+        this.islandCandidates.sort((a, b) => {
             var sIdxA = view.sessions.indexOf(a.session);
             var sIdxB = view.sessions.indexOf(b.session);
 

@@ -444,7 +444,7 @@
 
                     <table class="table table-striped">
 
-                        <tbody data-bind="foreach: $root.islandManager.unusedNames">
+                        <tbody data-bind="foreach: $root.islandManager.islandCandidates">
                             <tr>
                                 <td>
                                     <div data-bind="if: $data.session">
@@ -1421,7 +1421,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="input-group spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}, if: $root.settings.consumptionModifier.checked()" title="Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe" style="">
-                                                        <input class="form-control" type="number" value="1000" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}">
+                                                        <input class="form-control" type="number" value="100" step="0.1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}">
                                                         <div class="input-group-append">
                                                             <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
                                                             <span class="input-group-text">%</span>
