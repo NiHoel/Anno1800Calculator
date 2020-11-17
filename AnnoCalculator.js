@@ -1402,10 +1402,10 @@ class NewspaperNeedConsumption {
         this.amount = ko.computed(() => {
             var sum = 0;
             for (var effect of this.selectedEffects()) {
-                sum += effect.amount;
+                sum += Math.ceil(effect.amount * (1 + parseInt(this.selectedBuff()) / 100));
             }
 
-            return sum * (1 + parseInt(this.selectedBuff()) / 100);
+            return sum;
         });
     }
 
@@ -1488,12 +1488,14 @@ class GoodConsumptionUpgradeList {
 
     updateAmount() {
         var factor = (100 + view.newspaperConsumption.amount()) / 100;
+
+        var remainingSupply = 100;
         for (var entry of this.upgrades) {
             if (entry.upgrade.checked())
-                factor *= (100 + entry.amount) / 100;
+                remainingSupply += entry.amount;
         }
 
-        this.amount(100 * factor);
+        this.amount(remainingSupply * (100 + view.newspaperConsumption.amount()) / 100);
     }
 
     apply() {
