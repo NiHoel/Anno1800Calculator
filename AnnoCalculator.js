@@ -717,6 +717,11 @@ class Factory extends Consumer {
             if (this.palaceBuff && this.palaceBuffChecked())
                 factor += 1 / this.palaceBuff.additionalOutputCycle;
 
+            if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting)
+                for (var e of this.extraGoodProductionList.selfEffecting())
+                    if(e.item.checked())
+                        factor += (e.Amount || 1) / e.additionalOutputCycle;
+
             return factor;
         });
 
@@ -788,7 +793,7 @@ class Factory extends Consumer {
             }
 
             return false;
-        })
+        });
     }
 
 
@@ -861,7 +866,15 @@ class Factory extends Consumer {
     }
 
     updateExtraGoods(depth) {
-        this.extraAmount(this.computedExtraAmount());
+        var val = this.computedExtraAmount();
+        var amount = this.amount();
+        if (val < -Math.ceil(amount * 100) / 100)
+            val = - Math.ceil(amount * 100) / 100;
+
+        if (Math.abs(val - this.extraAmount()) < EPSILON)
+            return;
+
+        this.extraAmount(val);
 
         if (depth > 0)
             for (var route of this.tradeList.routes()) {
@@ -907,13 +920,8 @@ class Demand extends NamedElement {
 
                 var factor = 1;
 
-                // make sure all observables are called when initializing this variable
-                var f = this.factory();
-                if (f.module && f.moduleChecked() && f.module.additionalOutputCycle)
-                    factor += 1 / f.module.additionalOutputCycle;
-
-                if (f.palaceBuff && f.palaceBuffChecked())
-                    factor += 1 / f.palaceBuff.additionalOutputCycle;
+                if(this.factory() && this.factory().extraGoodFactor)
+                 factor = this.factory().extraGoodFactor();
 
                 return amount / factor;
 
@@ -1320,11 +1328,15 @@ class ExtraGoodProduction {
 
         this.product = assetsMap.get(config.Product);
         this.additionalOutputCycle = config.AdditionalOutputCycle;
+        this.Amount = config.Amount;
 
         this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.outputAmount() / this.additionalOutputCycle);
 
         for (var f of this.product.factories) {
             f.extraGoodProductionList.entries.push(this);
+
+            if (f == this.factory)
+                f.extraGoodProductionList.selfEffecting.push(this);
         }
     }
 }
@@ -1334,6 +1346,7 @@ class ExtraGoodProductionList {
         this.factory = factory;
 
         this.checked = ko.observable(true);
+        this.selfEffecting = ko.observableArray();
 
         this.entries = ko.observableArray();
         this.nonZero = ko.computed(() => {
@@ -1342,10 +1355,11 @@ class ExtraGoodProductionList {
         this.amount = ko.computed(() => {
             var total = 0;
             for (var i of (this.entries() || []))
-                total += i.amount();
+                if (this.selfEffecting.indexOf(i) == -1) // self effects considered in factory.extraGoodFactor
+                    total += i.amount();
 
             return total;
-        })
+        });
     }
 }
 
