@@ -456,6 +456,10 @@ Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im
 
 Über den Downloadbutton kann dieser Rechner sowie eine zusätzliche Serveranwendung heruntergeladen werden. Mit der Serveranwendung lassen sich die Bevölkerungszahlen automatisch aus dem Spiel auslesen. Ich danke meinem Kollegen Josua Bloeß für die Umsetzung.
 
+Die Einstellung Zusatzwaren schaltet die Items frei. Zunächst muss festgelegt werden, welche Fabriken mit welchem Item ausgerüstet sind. Dies kann über das Einstellungsmenü (Button links oben an jeder Fabrik) geschehen oder über die Itemübersicht, bei der die Fabriken per Checkbox ausgewählt werden können. Mit der Option werden in der Kachel zwei zusätzliche Informationen angezeigt: Ein Eingabefeld, das den Zusatzbedarf darstellt, welcher sich aus Importen / Exporten von Handelsrouten sowie den Zusatzwaren zusammensetzt. Da es sich um Bedarf handelt, werden die Zusatzwaren hier negativ eingetragen. Den Ertrag der Zusatzwaren wird bei den Fabriken angezeigt, die das Produkt normalerweise herstellen. Dort muss dann auf den Button "anwenden" geklickt werden, um die Werte einzutragen und den neuen Bedarf zu berechnen. Zusatzwaren lassen sich durch die Checkbox aus der Berechnung herausnehmen. Dies ist notwendig, wenn mehrere Fabriken dasselbe Produkt herstellen, da andernfalls die Zusatzwaren mehrfach gut geschrieben würden. 
+
+Die Option Handelsrouten erlaubt es, Waren zwischen den Inseln auszutauschen. Wie bei Zusatzwaren werden dafür der Bedarf auf der einen Seiter erhöht und auf der anderen erniedrigt. Zum Anlegen einer Route muss das Einstellungsmenü einer Fabrik geöffnet werden, die das Produkt herstellt. Die Entscheidung, Routen über die Fabrikkacheln zu erstellen, folgt der Überlegung, keine weiter Übersicht über alle Produkte zu benötigen. Der Nachteil ist, dass der Import von derjenigen Fabrik erfolgen muss, von der es auf der anderen Insel produziert wird. 
+
 Haftungsausschluss:
 Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
 Dies sind insbesondere, aber nicht ausschließlich alle Icons der Bevölkerung, Waren und Gegenstände sowie die Daten der Produktionsketten und die Verbrachswerte der Bevölkerung.
@@ -465,6 +469,7 @@ Diese Software steht unter der MIT-Lizenz.
 
 Autor:
 Nico Höllerich
+hoellerich.nico@freenet.de
 
 Fehler und Verbesserungen:
 Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
@@ -497,6 +502,7 @@ This software is under the MIT license.
 
 Author:
 Nico Höllerich
+hoellerich.nico@freenet.de
 
 Bugs and improvements:
 If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
@@ -527,6 +533,8 @@ Anno1800 계산기는 어떠한 종류의 보증도 제공되지 않습니다. �
 
 개발자:
 Nico Höllerich
+hoellerich.nico@freenet.de
+
 버그 및 개선 사항 :
 버그 나 불편한 점이 있거나 개선을 제안하려면 GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)에 문의하십시오`
     }
