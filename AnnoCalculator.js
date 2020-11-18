@@ -368,13 +368,13 @@ class Island {
                     {
                         let id = `${l.guid}[${n.guid}].percentBoost`;
                         if (localStorage.getItem(id) != null)
-                            n.percentBoost(parseInt(localStorage.getItem(id)));
+                            n.percentBoost(parseFloat(localStorage.getItem(id)));
 
                         n.percentBoost.subscribe(val => {
-                            val = parseInt(val);
+                            val = parseFloat(val);
 
                             if (val == null || !isFinite(val) || isNaN(val)) {
-                                n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                                n.percentBoost(parseFloat(localStorage.getItem(id)) || 100);
                                 return;
                             }
                             localStorage.setItem(id, val);
