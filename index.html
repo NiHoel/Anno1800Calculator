@@ -28,6 +28,7 @@
     <script type="text/javascript" src="params_2020-10-22_full.js"></script>
 </head>
 <body>
+<noscript>This site requires JavaScript!</noscript>
     <!-- #params-dialog -->
     <div id="params-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -165,7 +166,7 @@
                         <hr />
 
                         <div data-bind="foreach: $root.island().replaceInputItems">
-                            <div class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
+                            <div data-bind="visible: $data.visible" class="ui-fchain-item" style="display: flex; flex-direction: column; justify-content:space-between; height: 12rem">
 
                                 <div class="ui-fchain-item-tr-checkbox">
                                     <div data-bind="foreach: $data.equipments" style="display:flex">
@@ -264,7 +265,7 @@
 
                 </div>
                 <div class="modal-body">
-                    <table class="table table-striped">
+                    <table class="table">
                         <thead style="text-align: center">
                         <th></th>
                         <th></th>
@@ -273,7 +274,7 @@
                         <th data-bind="text: $root.texts.all.name">All</th>
                         </thead>
                         <tbody data-bind="foreach: $root.island().extraGoodItems">
-                            <tr>
+                            <tr data-bind="visible: $data.visible">
                                 <td><img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
                                 <td>
@@ -648,17 +649,17 @@
             </div>
         </div>
         <!-- /top right buttons-->
-            <!-- #factory-config-dialog -->
-            <div id="factory-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content" data-bind="with: $root.selectedFactory()">
-                        <div class="modal-header">
-                            <h4 data-bind="text: $data.name">Factory Name</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <!-- #factory-config-dialog -->
+        <div id="factory-config-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" data-bind="with: $root.selectedFactory()">
+                    <div class="modal-header">
+                        <h4 data-bind="text: $data.name">Factory Name</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
-                        </div>
-                        <div class="modal-body">
-                            <div data-bind="if: $data.items.length && $root.settings.additionalProduction.checked()">
+                    </div>
+                    <div class="modal-body">
+                        <div data-bind="if: $data.items.length && $root.settings.additionalProduction.checked()">
                             <h6 data-bind="text: $root.texts.itemsEquipped.name">Equipped Items</h6>
                             <table class="table table-striped">
                                 <tbody data-bind="foreach: $data.items">
@@ -671,9 +672,9 @@
 
                                                     </label>
                                                 </span>
-                                                    <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
-                                                    <span data-bind="text: $data.name"></span> <!-- item name -->
-                                                </div>
+                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
+                                                <span data-bind="text: $data.name"></span> <!-- item name -->
+                                            </div>
                                         </td>
                                         <td>
                                             <span data-bind="if: $data.item.extraGoods">
@@ -706,14 +707,14 @@
                                 </tbody>
                             </table>
 
-                                <hr />
-                            </div>
+                            <hr />
+                        </div>
 
                         <div data-bind="if: $root.settings.tradeRoutes.checked()">
-                                <div data-bind="with: $data.tradeList">
+                            <div data-bind="with: $data.tradeList">
 
-                                    <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
-                                
+                                <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
+
                                 <div class="mb-3 inline-list-stretched" data-bind="foreach: $data.npcRoutes">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.trader.guid + '-npcRoute-checked' }">
@@ -722,41 +723,41 @@
                                             <span data-bind="text: $data.trader.name"></span>
                                         </label>
                                     </div>
-                                    
+
                                     <div>
                                         <span data-bind="text: formatNumber($data.amount)"></span>
                                         <span> t/min</span>
                                     </div>
                                 </div>
-                                
+
                                 <table class="table table-striped table-sm" data-bind="if: !$data.island.isAllIslands()">
-                                        <tbody data-bind="foreach: $data.routes">
-                                            <tr>
+                                    <tbody data-bind="foreach: $data.routes">
+                                        <tr>
                                             <td>
                                                 <span data-bind="if: $data.getOpposite($parent).session">
                                                     <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.getOpposite($parent).session.icon}" />
                                                 </span>
                                                 <a href="#" data-bind="text: $data.getOpposite($parent).name, click: () => {$root.selectedFactory($data.getOppositeFactory($parent.factory)); $root.island($data.getOpposite($parent))}"></a>
                                             </td> <!-- island name -->
-                                                <!-- factory summary -->
-                                                <!--<td data-bind="with: $data.getOpposite($parent)">
-                                                <div style="display: flex; flex-flow: wrap; justify-content: center">
-                                                    <span class="mr-3">
-                                                        <img src="icon_resource_storage_amount.png" width="25" height="25">
-                                                    </span>
-                                                    <span data-bind="if: !$data.top5Factories().length">0</span>
-                                                    <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
-                                                        <span class="mr-1">
-                                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                            <!-- factory summary -->
+                                            <!--<td data-bind="with: $data.getOpposite($parent)">
+                                            <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                                <span class="mr-3">
+                                                    <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                                </span>
+                                                <span data-bind="if: !$data.top5Factories().length">0</span>
+                                                <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                                    <span class="mr-1">
+                                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
-                                                        </span>
-                                                        <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
                                                     </span>
-                                                </div>
-                                            </td> -->
+                                                    <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                                </span>
+                                            </div>
+                                        </td> -->
 
-                                                <td>
-                                                    <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > EPSILON">
+                                            <td>
+                                                <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > EPSILON">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.exportOverproduction.name}">
                                                         <span data-bind="text: Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() + $parent.factory.overProduction())">
@@ -764,7 +765,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                    <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -EPSILON">
+                                                <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -EPSILON">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
                                                         <span data-bind="text: -Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() - $parent.factory.overProduction())">
@@ -772,25 +773,25 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                </td>
-                                                <td>
+                                            </td>
+                                            <td>
 
                                                 <div class="input-group spinner" style="max-width: 12rem">
-                                                        <div class="input-group-prepend">
+                                                    <div class="input-group-prepend">
                                                         <div class="input-group-text">
                                                             <span data-bind="if: $data.isExport($parent)">
-                                                               
+
                                                                 <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
                                                             </span>
                                                             <span data-bind="if: !$data.isExport($parent)">
-                                                              
+
                                                                 <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
                                                             </span>
                                                         </div>
                                                         <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
-                                                        </div>
+                                                    </div>
                                                     <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount, attr: {id: $data.guid + '-amount-input' } " />
                                                     <div class="input-group-append">
                                                         <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.guid + '-amount-input' }}"></div>
@@ -798,7 +799,7 @@
                                                     </div>
                                                 </div>
 
-                                                </td>
+                                            </td>
                                             <td>
 
                                                 <button class="btn btn-secondary btn-sm float-right" data-bind="click: () => $data.delete()">
@@ -806,41 +807,41 @@
                                                 </button>
 
                                             </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                        </tr>
+                                    </tbody>
+                                </table>
                                 <form class="form form-inline" data-bind="if: $data.unusedIslands().length && !$data.island.isAllIslands() " style="justify-content: space-between">
 
 
 
                                     <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.sessionExtendedName()"></select>
-                                        <div style="display: flex">
+                                    <div style="display: flex">
                                         <div class="mr-2">
-                                           
+
                                             <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
                                         </div>
                                         <div class="custom-control custom-switch">
                                             <input type="checkbox" class="custom-control-input" id="create-trade-route-export-checkbox" data-bind="checked: $data.export">
                                             <label class="custom-control-label" for="create-trade-route-export-checkbox">
-                                              
+
                                                 <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
                                             </label>
                                         </div>
-                                        </div>
+                                    </div>
                                     <div class="input-group input-group-short spinner">
 
-                                            <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
+                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
                                         <div class="input-group-append">
                                             <span class="input-group-text">t/min</span>
                                         </div>
                                     </div>
-                                        <button class="btn btn-sm btn-light" data-bind="click: () => $data.create(), enable: $data.canCreate()">
-                                            <span class="fa fa-plus"></span>
-                                        </button>
-                                    </form>
-                                </div>
-                                <hr />
+                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.create(), enable: $data.canCreate()">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
+                                </form>
                             </div>
+                            <hr />
+                        </div>
 
                         <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
                             <div class="inline-list-stretched" style="padding: .75rem;">
@@ -860,8 +861,8 @@
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div>
-                                                <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() > 0">
-                                                    <span data-bind="text: $root.texts.apply.name">Apply</span>
+                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() > 0">
+                                        <span data-bind="text: $root.texts.apply.name">Apply</span>
                                     </button>
                                 </div>
                             </div>
@@ -872,7 +873,7 @@
                                     <!-- extra goods -->
                                     <td>
                                         <span data-bind="text: $root.texts.extraNeed.name"></span>
-                                        </td>
+                                    </td>
                                     <td>
 
 
@@ -886,52 +887,52 @@
                                             </div>
                                         </div>
                                     </td>
-                                    </tr>
-                                    <tr>
-                                        <!-- boost -->
-                                        <td>
-                                            <span data-bind="text: $root.texts.productionBoost.name"></span>
-                                        </td>
-                                        <td>
+                                </tr>
+                                <tr>
+                                    <!-- boost -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.productionBoost.name"></span>
+                                    </td>
+                                    <td>
                                         <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}">
                                             <div class="input-group input-group-short spinner">
                                                 <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.buid + '-percentBoost-input'}" />
-                                                    <div class="input-group-append">
+                                                <div class="input-group-append">
                                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
-                                                        <span class="input-group-text">%</span>
+                                                    <span class="input-group-text">%</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        </td>
-                                    </tr>
+                                    </td>
+                                </tr>
                                 <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
-                                        <!-- existing buildings -->
-                                        <td>
-                                            <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
-                                        </td>
-                                        <td>
+                                    <!-- existing buildings -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
+                                    </td>
+                                    <td>
                                         <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
                                             <div class="input-group input-group-short spinner">
                                                 <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr:{id: $data.guid + '-existingBuildings-input'}" />
-                                                    <div class="input-group-append">
+                                                <div class="input-group-append">
                                                     <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        </td>
-                                    </tr>
-                                    <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
-                                        <!-- overproduction -->
-                                        <td>
+                                    </td>
+                                </tr>
+                                <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
+                                    <!-- overproduction -->
+                                    <td>
                                         <span data-bind="text: $root.texts.overproduction.name"></span>
-                                        </td>
-                                        <td>
+                                    </td>
+                                    <td>
                                         <div class="float-right">
                                             <span data-bind="text: Math.ceil(100*parseFloat($data.overProduction()))/100"></span><span> t/min</span>
                                         </div>
-                                        </td>
-                                    </tr>
+                                    </td>
+                                </tr>
 
                                 <tr data-bind="if: $data.palaceBuff && $data.palaceBuffChecked()">
                                     <!-- extra goods palace -->
@@ -947,50 +948,50 @@
                                         </div>
                                     </td>
                                 </tr>
-                                    <tr data-bind="if: $data.module && $data.moduleChecked()">
-                                        <!-- extra goods module -->
-                                        <td>
-                                            <span data-bind="text: $root.texts.extraGoods.name"></span>
-                                            <span>: </span>
-                                            <span data-bind="text: $data.module.name"></span>
-                                        </td>
-                                        <td>
-                                            <div class="float-right">
-                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
-                                            </div>
-                                        </td>
-                                    </tr>
                                 <tr data-bind="if: $data.module && $data.moduleChecked()">
                                     <!-- extra goods module -->
-                                        <td>
-                                            <span data-bind="text: $root.texts.extraGoods.name"></span>
-                                            <span>: </span>
+                                    <td>
+                                        <span data-bind="text: $root.texts.extraGoods.name"></span>
+                                        <span>: </span>
                                         <span data-bind="text: $data.module.name"></span>
-                                        </td>
-                                        <td>
-                                            <div class="float-right">
-                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                    </td>
+                                    <td>
+                                        <div class="float-right">
+                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
                                             <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
                                         </div>
-                                        </td>
-                                    </tr>
-                                    <tr data-bind="if: $data.module && $data.moduleChecked()">
-                                        <!-- consumption module -->
-                                        <td>
-                                            <span data-bind="text: $root.texts.consumption.name"></span>
-                                            <span>: </span>
-                                            <span data-bind="text: $data.module.name"></span>
-                                        </td>
-                                        <td>
-                                            <div class="float-right">
-                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
+                                    </td>
+                                </tr>
+                                <tr data-bind="if: $data.module && $data.moduleChecked()">
+                                    <!-- extra goods module -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.extraGoods.name"></span>
+                                        <span>: </span>
+                                        <span data-bind="text: $data.module.name"></span>
+                                    </td>
+                                    <td>
+                                        <div class="float-right">
+                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr data-bind="if: $data.module && $data.moduleChecked()">
+                                    <!-- consumption module -->
+                                    <td>
+                                        <span data-bind="text: $root.texts.consumption.name"></span>
+                                        <span>: </span>
+                                        <span data-bind="text: $data.module.name"></span>
+                                    </td>
+                                    <td>
+                                        <div class="float-right">
+                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
                                             <span data-bind="text: formatNumber(Math.ceil(100*$data.moduleDemand.amount())/100)"></span><span> t/min</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <hr />
 
                         <div data-bind="if: $data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked()">
@@ -1023,9 +1024,74 @@
                 </div>
             </div>
         </div>
-            <!-- #/factory-config-dialog -->
+        <!-- #/factory-config-dialog -->
+        <!-- #good-consumption-upgrade-dialog -->
+        <div id="good-consumption-upgrade-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" data-bind="with: $root.selectedGoodConsumptionUpgradeList()">
+                    <div class="modal-header">
+                        <h4 data-bind="text: $root.texts.needConsumption.name">Need Consumption</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
-        <div data-bind="with: $root.island()">
+                    </div>
+                    <div class="modal-body">
+                        <h6 data-bind="text: $root.texts.newspaper.name">Newspaper</h6>
+                        <form>
+                            <div class="form mb-3" data-bind="foreach: $root.newspaperConsumption.allEffects">
+                                <span class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-checked' }">
+                                    <label class="custom-control-label" data-bind="text: $data.name() + ' ' + formatPercentage($data.amount), attr: { for: $data.guid + '-checked' }" src-only style="vertical-align: top;"></label>
+                                </span>
+                            </div>
+
+                            <div class="form-inline">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" data-bind="text: $root.texts.newspaperEffectiveness.name">Newspaper Effectiveness</span>
+                                    </div>
+
+                                    <select class="custom-select" data-bind="value: $root.newspaperConsumption.selectedBuff, options: $root.newspaperConsumption.selectableBuffs, optionsText: p => formatPercentage(p)"></select>
+                                </div>
+
+                                <div class="custom-control">
+                                    <span data-bind="text: $root.texts.reducedNeeds.name">Reduced Needs</span>
+                                    <span>: </span>
+                                    <span data-bind="text: formatPercentage($root.newspaperConsumption.amount())"></span>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-striped">
+                            <tbody data-bind="foreach: $data.upgrades">
+                                <tr>
+                                    <td>
+
+                                        <span class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.upgrade.checked, attr: { id: $data.upgrade.guid + '-checked' }">
+                                            <label class="custom-control-label" data-bind="attr: { for: $data.upgrade.guid + '-checked' }" src-only style="vertical-align: top;"></label>
+                                        </span>
+                                    </td>
+                                    <td><img src="" width="25" height="25" data-bind="attr: { src: $data.upgrade.icon ? $data.upgrade.icon : null}"></td> <!-- upgrade icon -->
+                                    <td data-bind="text: $data.upgrade.name"></td> <!-- upgrade name -->
+                                    <td><span data-bind="text: formatPercentage($data.amount)"></span></td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="modal-footer">
+                        <span data-bind="text: $root.texts.total.name">Total</span>
+                        <span>: </span>
+                        <span data-bind="text: formatPercentage($data.amount())"></span>
+                        <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
+                            <span data-bind="text: $root.texts.apply.name">Apply</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- #/good-consumption-upgrade-dialog -->
+    <div> 
             <!-- population input field -->
             <fieldset class="ui-fieldset" id="residents-view">
                 <legend data-bind="text:$root.texts.residents.name">Residents</legend>
@@ -1036,8 +1102,8 @@
                         <!-- <div class="ui-tier-icon">
                         <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                     </div> -->
-                        <div data-bind="foreach: $data.populationLevels">
-                            <div class="ui-tier-unit">
+                        <div data-bind="foreach: $root.template.populationLevels">
+                            <div class="ui-tier-unit" data-bind="visible: !$root.island().region || $root.island().region == $data.region">
                                 <div class="ui-tier-unit-icon mb-1">
                                     <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                     <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
@@ -1050,22 +1116,22 @@
 
                                 <div class="input text">
 
-                                        <div data-bind="if: !$root.settings.existingBuildingsInput.checked()">
+                                    <div data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
                                         <div class="input-group input-group-sm spinner mb-3">
-                                            <input step="100" class="form-control input-lg" type="number" value="0" min="0" data-bind="value: amount, attr: {title: 'Press '+name()[0]+' to focus', id: $data.guid + '-amount-input' };" />
+                                            <input step="100" class="form-control input-lg" type="number" value="0" min="0" data-bind="value: $data.instance().amount, attr: {title: 'Press '+name()[0]+' to focus', id: $data.guid + '-amount-input' };" />
                                             <div class="input-group-append">
-                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.guid + '-amount-input' }}"></div>
-                                        </div>
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().amount, id: $data.guid + '-amount-input' }}"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                        <div data-bind="if: $root.settings.existingBuildingsInput.checked()">
+                                    <div data-bind="visible: $root.settings.existingBuildingsInput.checked()">
                                         <div class="input-group input-group-sm spinner mb-3">
-                                            <input step="10" class="form-control input-lg" type="number" value="0" min="0" data-bind="value: existingBuildings, attr: {title: 'Press '+name()[0]+' to focus', id: $data.guid + '-existingBuildings-input' };" />
+                                            <input step="10" class="form-control input-lg" type="number" value="0" min="0" data-bind="value:  $data.instance().existingBuildings, attr: {title: 'Press '+name()[0]+' to focus', id: $data.guid + '-existingBuildings-input' };" />
                                             <div class="input-group-append">
-                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                                 </div>
 
                             </div>
@@ -1089,12 +1155,12 @@
                         <!-- <div class="ui-tier-icon">
                         <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
                     </div> -->
-                        <div data-bind="foreach: $data.workforce">
+                        <div data-bind="foreach: $root.template.workforce">
                             <div class="ui-tier-unit">
                                 <div class="ui-tier-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
                                 <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
                                 <div class="ui-fchain-item-count">
-                                    <span data-bind="text: formatNumber(amount())"></span>
+                                    <span data-bind="text: formatNumber($data.instance().amount())"></span>
                                 </div>
                             </div>
                         </div>
@@ -1107,7 +1173,7 @@
             </fieldset>
             <!-- /required workforce field -->
             <!-- required factories by category -->
-            <div data-bind="foreach: { data: $data.categories, as: 'category'}">
+            <div data-bind="foreach: { data: $root.template.categories, as: 'category'}">
                 <fieldset class="ui-fieldset" id="categories-view">
                     <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#category-' + guid}">
                         <span class="fa fa-chevron-right"></span>
@@ -1118,14 +1184,14 @@
                     <div class="ui-fchain collapse show" data-bind="attr: {id:  'category-' + guid}">
                         <div data-bind="foreach: $data.products">
                             <div data-bind="foreach: $data.factories">
-                                <div data-bind="if: $data.visible">
+                                <div data-bind="visible: $data.instance().visible">
 
-                                    <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
-                                        <div class="ui-fchain-item-tr-button" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked() || $root.settings.tradeRoutes.checked()">
+                                    <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
+                                        <div class="ui-fchain-item-tr-button" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked() || $root.settings.tradeRoutes.checked()">
                                             <div>
-                                            <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data)}" data-toggle="modal" data-target="#factory-config-dialog">
-                                                <span class="fa fa-sliders"></span>
-                                            </button>
+                                                <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
+                                                    <span class="fa fa-sliders"></span>
+                                                </button>
                                             </div>
                                         </div>
 
@@ -1133,123 +1199,123 @@
 
                                         <div class="ui-fchain-item-icon mb-2">
                                             <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-                                    </div>
-                                    <div class="ui-fchain-item-boost">
+                                        </div>
+                                        <div class="ui-fchain-item-boost">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
                                                 <div class="input-group input-group-sm mb-3 spinner">
-                                                    <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}" />
+                                                    <input class="form-control" type="number" value="100" step="1" min="1" data-bind="value:  $data.instance().percentBoost, attr: {id: $data.guid + '-percentBoost-input'}" />
                                                     <div class="input-group-append">
-                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
                                                         <span class="input-group-text">%</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                    <div class="ui-fchain-item-attribute-group">
-                                        <div>
-                                        <!-- buildings display for non-construction products -->
-                                                <div class="ui-fchain-item-count" data-bind="if: !$data.editable()">
-                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
-                                                <span>x</span>
-                                                <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable: buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- existing buildings input for non-construction products -->
-                                                <div class="ui-fchain-item-count" data-bind="if: !$data.editable() && $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region)">
-                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
-                                                <span data-bind="text: $root.texts.existingNumberOfBuildingsIs.name"></span>
-                                                <span data-bind="text: existingBuildings()"></span>
-                                                <span>x</span>
-                                                <div class="btn-group" role="group">
-                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => existingBuildings(parseInt(existingBuildings() + 1))" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                                    <button type="button" class="btn btn-secondary" data-bind="click: () => existingBuildings(parseInt(existingBuildings() - 1)), enable: existingBuildings() >= 1" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- buildings input for construction material -->
-                                                <div class="ui-fchain-item-count" data-bind="if: $data.editable() && (!$data.region || !$data.island.region || $data.region === $data.island.region)">
-                                            <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-
-                                                        <div class="input-group input-group-sm mb-3 spinner">
-                                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: {id: $data.guid + '-existingBuildings-input'}" />
-                                                    <div class="input-group-append">
-                                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
-                                                        <span class="input-group-text">x</span>
+                                        <div class="ui-fchain-item-attribute-group">
+                                            <div>
+                                                <!-- buildings display for non-construction products -->
+                                                <div class="ui-fchain-item-count" data-bind="visible: !$data.editable()">
+                                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                                        <span>x</span>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable:  $data.instance().buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                                        </div>
                                                     </div>
                                                 </div>
 
-                                            </div>
-                                        </div>
+                                                <!-- existing buildings input for non-construction products -->
+                                                <div class="ui-fchain-item-count" data-bind="visible: !$data.editable() && $root.settings.missingBuildingsHighlight.checked() && (!$data.instance().region || !$data.instance().island.region || $data.instance().region === $data.instance().island.region)">
+                                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.existingNumberOfBuildings.name}">
+                                                        <span data-bind="text: $root.texts.existingNumberOfBuildingsIs.name"></span>
+                                                        <span data-bind="text: $data.instance().existingBuildings()"></span>
+                                                        <span>x</span>
+                                                        <div class="btn-group" role="group">
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().existingBuildings(parseInt($data.instance().existingBuildings() + 1))" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().existingBuildings(parseInt($data.instance().existingBuildings() - 1)), enable: $data.instance().existingBuildings() >= 1" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                        <!-- required buildings display for construction materials -->
-                                                <div class="ui-fchain-item-count" data-bind="if: $data.editable() &&  buildings() > existingBuildings()">
+                                                <!-- buildings input for construction material -->
+                                                <div class="ui-fchain-item-count" data-bind="visible: $data.editable() && (!$data.instance().region || !$data.instance().island.region || $data.instance().region === $data.instance().island.region)">
+                                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+
+                                                        <div class="input-group input-group-sm mb-3 spinner">
+                                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value:  $data.instance().existingBuildings, attr: {id: $data.guid + '-existingBuildings-input'}" />
+                                                            <div class="input-group-append">
+                                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                                                <span class="input-group-text">x</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <!-- required buildings display for construction materials -->
+                                                <div class="ui-fchain-item-count" data-bind="visible: $data.editable() &&  $data.instance().buildings() > $data.instance().existingBuildings()">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}" style="display: flex">
-                                                <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                                                <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
-                                                <span>x</span>
+                                                        <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
+                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                                        <span>x</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span></div>
+                                            <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.instance().amount()))/100)"></span><span> t/min</span></div>
 
-                                        </div>
+                                            </div>
 
-                                        <div class="ui-fchain-item-module" data-bind="if: !!$data.module || !!$data.palaceBuff">
-                                            <div style="flex: 100 1 auto;"></div>
+                                            <div class="ui-fchain-item-module" data-bind="visible: !!$data.module || !!$data.palaceBuff">
+                                                <div style="flex: 100 1 auto;"></div>
 
-                                            <!-- module -->
-                                            <div data-bind="if: !!$data.module" style="flex: auto;">
-                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.module">
-                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.moduleChecked, attr: { id: category.guid + '-' + $data.guid + '-module' }">
+                                                <!-- module -->
+                                                <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                    <div class="custom-control custom-checkbox" data-bind="visible: !!$data.module">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().moduleChecked, attr: { id: category.guid + '-' + $data.guid + '-module' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-module', title: $data.module.name }" src-only style="vertical-align: top;">
 
-                                                    </label>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div data-bind="if: !!$data.module" style="flex: auto;">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                                            </div>
+                                                <div data-bind="if: !!$data.module" style="flex: auto;">
+                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                                </div>
 
-                                            <!-- palace buff -->
-                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
-                                                <div class="custom-control custom-checkbox" data-bind="if: !!$data.palaceBuff">
-                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.palaceBuffChecked, attr: { id: category.guid + '-' + $data.guid + '-palaceBuff' }">
+                                                <!-- palace buff -->
+                                                <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                    <div class="custom-control custom-checkbox" data-bind="visible: !!$data.palaceBuff">
+                                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().palaceBuffChecked, attr: { id: category.guid + '-' + $data.guid + '-palaceBuff' }">
                                                         <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
 
-                                                    </label>
+                                                        </label>
+                                                    </div>
                                                 </div>
+                                                <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
+                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                                </div>
+                                                <div style="flex: 100 1 auto;"></div>
                                             </div>
-                                            <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
-                                            </div>
-                                            <div style="flex: 100 1 auto;"></div>
                                         </div>
-                                    </div>
-                                        <div class="ui-fchain-item-load" data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
-                                        <div class="ui-fchain-item-extra-input">
+                                        <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                                            <div class="ui-fchain-item-extra-input">
                                                 <div class="input-group input-group-sm spinner mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">+ </span>
-                                                        <span data-bind="if: $data.extraAmount() < -EPSILON  + $data.computedExtraAmount()">
+                                                        <span data-bind="visible: $data.instance().extraAmount() < -EPSILON  + $data.instance().computedExtraAmount()">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>
-                                                    <input step="0.1" class="form-control" type="number" value="0" data-bind="value: extraAmount, attr: {id: $data.guid + '-extraAmount-input'}" />
+                                                    <input step="0.1" class="form-control" type="number" value="0" data-bind="value: $data.instance().extraAmount, attr: {id: $data.guid + '-extraAmount-input'}" />
                                                     <div class="input-group-append">
-                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.extraAmount, id: $data.guid + '-extraAmount-input' }}"></div>
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().extraAmount, id: $data.guid + '-extraAmount-input' }}"></div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.outputAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
-                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat(outputAmount()))/100)"></span><span> t/min</span></div>
+                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().outputAmount()))/100)"></span><span> t/min</span></div>
                                             </div>
 
 
@@ -1261,45 +1327,45 @@
                             </div>
                         </div>
                         <div data-bind="foreach: $data.consumers">
-                            <div data-bind="if: !$data.island.region || $data.region === $data.island.region">
-                                <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() && buildings() > existingBuildings() ? 'danger' : ''">
-                                <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
+                            <div data-bind="visible: !$data.island.region || $data.region === $data.island.region">
+                                <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
+                                    <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                     <div class="ui-fchain-item-icon mb-2"><img src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 
 
-                                <!-- buildings input  -->
-                                <div class="ui-fchain-item-count">
-                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                    <!-- buildings input  -->
+                                    <div class="ui-fchain-item-count">
+                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
 
-                                        <div class="input-group input-group-sm mb-3 spinner">
-                                            <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value: existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
-                                            <div class="input-group-append">
-                                                <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
-                                                <span class="input-group-text">x</span>
+                                            <div class="input-group input-group-sm mb-3 spinner">
+                                                <input class="form-control" type="number" value="0" step="1" min="0" data-bind="value:  $data.instance().existingBuildings, attr: { id: $data.guid + '-existingBuildings-input'}" />
+                                                <div class="input-group-append">
+                                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().existingBuildings, id: $data.guid + '-existingBuildings-input' }}"></div>
+                                                    <span class="input-group-text">x</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <!-- required buildings display -->
+                                    <div class="ui-fchain-item-count" data-bind="visible:  $data.instance().buildings() >  $data.instance().existingBuildings()">
+                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
+                                            <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
+                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                            <span>x</span>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().decrementBuildings(), enable:  $data.instance().buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                        <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().amount()))/100)"></span><span> t/min</span></div>
 
                                     </div>
                                 </div>
-
-                                <!-- required buildings display -->
-                                <div class="ui-fchain-item-count" data-bind="if: buildings() > existingBuildings()">
-                                    <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
-                                        <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
-                                        <span>x</span>
-                                        <div class="btn-group" role="group">
-                                            <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable: buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                            <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable: buildings() > 1.00001" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span></div>
-
-                                </div>
-                            </div>
 
                             </div>
 
@@ -1309,151 +1375,111 @@
                 </fieldset>
             </div>
             <!-- /required factories by category -->
-            <!-- #good-consumption-upgrade-dialog -->
-            <div id="good-consumption-upgrade-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content" data-bind="with: $root.selectedGoodConsumptionUpgradeList()">
-                        <div class="modal-header">
-                            <h4 data-bind="text: $root.texts.needConsumption.name">Need Consumption</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-
-                        </div>
-                        <div class="modal-body">
-                            <h6 data-bind="text: $root.texts.newspaper.name">Newspaper</h6>
-                            <form>
-                                <div class="form mb-3" data-bind="foreach: $root.newspaperConsumption.allEffects">
-                                    <span class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-checked' }">
-                                        <label class="custom-control-label" data-bind="text: $data.name() + ' ' + formatPercentage($data.amount), attr: { for: $data.guid + '-checked' }" src-only style="vertical-align: top;"></label>
-                                    </span>
-                                </div>
-
-                                <div class="form-inline">
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" data-bind="text: $root.texts.newspaperEffectiveness.name">Newspaper Effectiveness</span>
-                                        </div>
-
-                                        <select class="custom-select" data-bind="value: $root.newspaperConsumption.selectedBuff, options: $root.newspaperConsumption.selectableBuffs, optionsText: p => formatPercentage(p)"></select>
-                                    </div>
-
-                                    <div class="custom-control">
-                                        <span data-bind="text: $root.texts.reducedNeeds.name">Reduced Needs</span>
-                                        <span>: </span>
-                                        <span data-bind="text: formatPercentage($root.newspaperConsumption.amount())"></span>
-                                    </div>
-                                </div>
-                            </form>
-                            <table class="table table-striped">
-                                <tbody data-bind="foreach: $data.upgrades">
-                                    <tr>
-                                        <td>
-
-                                            <span class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" data-bind="checked: $data.upgrade.checked, attr: { id: $data.upgrade.guid + '-checked' }">
-                                                <label class="custom-control-label" data-bind="attr: { for: $data.upgrade.guid + '-checked' }" src-only style="vertical-align: top;"></label>
-                                            </span>
-                                        </td>
-                                        <td><img src="" width="25" height="25" data-bind="attr: { src: $data.upgrade.icon ? $data.upgrade.icon : null}"></td> <!-- upgrade icon -->
-                                        <td data-bind="text: $data.upgrade.name"></td> <!-- upgrade name -->
-                                        <td><span data-bind="text: formatPercentage($data.amount)"></span></td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                        <div class="modal-footer">
-                            <span data-bind="text: $root.texts.total.name">Total</span>
-                            <span>: </span>
-                            <span data-bind="text: formatPercentage($data.amount())"></span>
-                            <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $data.apply()">
-                                <span data-bind="text: $root.texts.apply.name">Apply</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- #/good-consumption-upgrade-dialog -->
             <!-- production chains by population level -->
-            <div data-bind="foreach: { data: $data.populationLevels, as: 'populationLevel'}">
-                <div data-bind="if: amount() || existingBuildings()">
+            <div data-bind="foreach: { data:  $root.template.populationLevels, as: 'populationLevel'}">
+                <div data-bind="visible:  $data.instance().amount() ||  $data.instance().existingBuildings()">
                     <fieldset class="ui-fieldset" id="consumption-view">
-                    <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  guid}">
-                        <span class="fa fa-chevron-right"></span>
-                        <span class="fa fa-chevron-down"></span>
-                        <span data-bind="text:name"></span>
-                    </legend>
-                    <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  guid}">
-                            <div class="ui-fchain" data-bind="if: optionalAmount, css:{inactive: banned}">
-                            <div class="d-flex flex-wrap align-content-start" data-bind="foreach: allDemands">
-                                <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) && amount()">
-                                    ←
+                        <legend class="collapser" data-toggle="collapse" data-bind="attr: {'data-target' : '#consumption-' +  guid}">
+                            <span class="fa fa-chevron-right"></span>
+                            <span class="fa fa-chevron-down"></span>
+                            <span data-bind="text:name"></span>
+                        </legend>
+                        <div class="collapse show" data-bind="foreach: needs, attr:{id: 'consumption-' +  guid}">
+                            <div class="ui-fchain" data-bind="visible:  $data.instance().optionalAmount(), css:{inactive: $data.instance().banned}">
+                                <div data-bind="visible: $data.instance().amount()">
+                                    <div class="ui-fchain-item">
+                                        <div class="ui-fchain-item-tr-checkbox">
+                                            <div>
+                                                <span class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" data-bind="checked: $data.instance().checked, attr: { id: populationLevel.guid + '-' + $data.product.guid + '-checked' }" type="checkbox">
+                                                    <label class="custom-control-label" src-only="" data-bind="attr: { for: populationLevel.guid + '-' + $data.product.guid + '-checked' }">&#8203;</label>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
+                                        <div class="ui-fchain-item-icon">
+                                            <img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
+                                        </div>
+
+                                        <div data-bind="visible: $root.settings.consumptionModifier.checked()">
+                                            <div class="card bg-light mb-2 mt-2">
+                                                <div style="display: flex; justify-content: space-between; vertical-align: bottom;">
+                                                    <div>
+
+                                                        <img class="icon-sm icon-light" src="icon_marketplace_2d_light.png" />
+                                                    </div>
+                                                    <div>
+                                                        <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedGoodConsumptionUpgradeList($data.instance().goodConsumptionUpgradeList)}" data-toggle="modal" data-target="#good-consumption-upgrade-dialog">
+                                                            <span class="fa fa-sliders"></span>
+                                                        </button>
+
+                                                    </div>
+                                                </div>
+                                                <div class="input-group spinner" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.consumptionModifier.name}, if: $root.settings.consumptionModifier.checked()" title="Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe" style="">
+                                                    <input class="form-control" type="number" value="100" step="0.1" min="1" data-bind="value:  $data.instance().percentBoost, attr: {id: $data.guid + '-percentBoost-input'}">
+                                                    <div class="input-group-append">
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.instance().percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
+                                                        <span class="input-group-text">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style="margin: auto">
+                                            <div data-bind="visible: $root.settings.consumptionModifier.checked() && !($data instanceof Need)">
+                                                <div style="height: calc(2.25rem + 2px);"></div>
+                                            </div>
+                                            <div class="ui-fchain-item-count">
+                                                <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat($data.instance().buildings()))/100 : Math.ceil($data.instance().buildings())"></span>
+                                                    <span>x</span>
+                                                </span>
+                                            </div>
+                                            <div class="ui-fchain-item-load">
+                                                <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                                    <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.instance().amount()))/100)"></span><span> t/min</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                    <div data-bind="if: ($data instanceof Need) || amount()">
+                                <div class="d-flex flex-wrap align-content-start" data-bind="foreach: $data.allDemands">
+                                    <div class="ui-fchain-spacer" data-bind="visible: $data.instance().amount()">
+                                        ←
+                                    </div>
+                                    <div data-bind="visible: $data.instance().amount()">
                                         <div class="ui-fchain-item">
-                                    <div data-bind="if: ($data instanceof Need)" class="ui-fchain-item-tr-checkbox">
-                                        <div>
-                                            <span class="custom-control custom-checkbox">
-                                                <input class="custom-control-input" data-bind="checked: $data.checked, attr: { id: populationLevel.guid + '-' + $data.product.guid + '-checked' }" type="checkbox">
-                                                <label class="custom-control-label" src-only="" data-bind="attr: { for: populationLevel.guid + '-' + $data.product.guid + '-checked' }">&#8203;</label>
-                                            </span>
+                                           
+                                            <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
+                                            <div class="ui-fchain-item-icon">
+                                                <img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
+                                            </div>
+
+                                            <div style="margin: auto">
+                                                <div data-bind="visible: $root.settings.consumptionModifier.checked() && !($data instanceof Need)">
+                                                    <div style="height: calc(2.25rem + 2px);"></div>
                                                 </div>
-                                    </div>
-
-                                    <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
-                                    <div class="ui-fchain-item-icon">
-                                        <img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
-                                    </div>
-
-                                    <div data-bind="if: $root.settings.consumptionModifier.checked() && ($data instanceof Need)">
-                                        <div class="card bg-light mb-2 mt-2">
-                                            <div style="display: flex; justify-content: space-between; vertical-align: bottom;">
-                                                <div>
-                                                           
-                                                            <img class="icon-sm icon-light" src="icon_marketplace_2d_light.png" />
-                                                </div>
-                                                <div>
-                                                            <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedGoodConsumptionUpgradeList($data.goodConsumptionUpgradeList)}" data-toggle="modal" data-target="#good-consumption-upgrade-dialog">
-                                                                <span class="fa fa-sliders"></span>
-                                                            </button>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group spinner" href="#" data-toggle="tooltip" data-bind="if: $data instanceof Need, attr: {'title' : $root.texts.consumptionModifier.name}, if: $root.settings.consumptionModifier.checked()" title="Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe" style="">
-                                                        <input class="form-control" type="number" value="100" step="0.1" min="1" data-bind="value: percentBoost, attr: {id: $data.guid + '-percentBoost-input'}">
-                                                        <div class="input-group-append">
-                                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.percentBoost, id: $data.guid + '-percentBoost-input' }}"></div>
-                                                            <span class="input-group-text">%</span>
-                                                        </div>
-                                                    </div>
-                                        </div>
-                                    </div>
-
-                                    <div style="margin: auto">
-                                        <div data-bind="if: $root.settings.consumptionModifier.checked() && !($data instanceof Need)">
-                                            <div style="height: calc(2.25rem + 2px);"></div>
-                                        </div>
                                                 <div class="ui-fchain-item-count">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
+                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat($data.instance().buildings()))/100 : Math.ceil($data.instance().buildings())"></span>
                                                         <span>x</span>
                                                     </span>
                                                 </div>
                                                 <div class="ui-fchain-item-load">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                                        <span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span>
+                                                        <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.instance().amount()))/100)"></span><span> t/min</span>
                                                     </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                        </div>
+                                </div>
                             </div>
-                        <div class="clear"></div>
-                    </div>
-                </fieldset>
-            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </fieldset>
+                </div>
             </div>
             <!-- /production chains by population level -->
             <!-- production chains for building materials -->
@@ -1463,31 +1489,49 @@
                     <span class="fa fa-chevron-down"></span>
                     <span data-bind="text: $root.island().categories[1].name"></span>
                 </legend>
-                <div class="collapse show" data-bind="foreach: $data.buildingMaterialsNeeds" id="building-materials-chains">
-                    <div class="ui-fchain" data-bind="if: amount">
-                        <div data-bind="foreach: $data.allDemands">
-                            <div class="ui-fchain-spacer" data-bind="if: !($data instanceof Need) && amount">
-                                ←
-                            </div>
-                            <div data-bind="if: amount">
-                                <div class="ui-fchain-item">
+                <div class="collapse show" data-bind="foreach: $root.template.buildingMaterialsNeeds" id="building-materials-chains">
+                    <div class="ui-fchain" data-bind="visible: $data.instance().amount">
+                        <div data-bind="visible:  $data.instance().amount">
+                            <div class="ui-fchain-item">
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                 <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat(buildings()))/100 : Math.ceil(buildings())"></span>
+                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
                                         <span>x</span>
                                     </span>
                                 </div>
                                 <div class="ui-fchain-item-load">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat(amount()))/100)"></span><span> t/min</span>
+                                        <span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().amount()))/100)"></span><span> t/min</span>
                                     </span>
                                 </div>
 
                             </div>
                         </div>
-                    </div>
+                        <div data-bind="foreach: $data.allDemands">
+                            <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) &&  $data.instance().amount">
+                                ←
+                            </div>
+                            <div data-bind="visible:  $data.instance().amount">
+                                <div class="ui-fchain-item">
+                                    <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
+                                    <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
+                                    <div class="ui-fchain-item-count">
+                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                            <span>x</span>
+                                        </span>
+                                    </div>
+                                    <div class="ui-fchain-item-load">
+                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
+                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().amount()))/100)"></span><span> t/min</span>
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="clear"></div>
                 </div>

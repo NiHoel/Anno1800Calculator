@@ -147,8 +147,8 @@ class Island {
         }
 
         for (let consumer of (params.powerPlants||[])) {
-            if (this.region && this.region.guid != consumer.region)
-                continue;
+            //if (this.region && this.region.guid != consumer.region)
+            //    continue;
 
             let f = new Consumer(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
@@ -315,8 +315,6 @@ class Island {
 
 
         for (let level of params.populationLevels) {
-            if (this.region && this.region.guid != level.region)
-                continue;
 
             let l = new PopulationLevel(level, assetsMap);
             assetsMap.set(l.guid, l);
@@ -1079,7 +1077,7 @@ class Need extends Demand {
         this.allDemands = [];
 
         let treeTraversal = node => {
-            if (node instanceof Demand)
+            if (node instanceof Demand && !(node instanceof Need))
                 this.allDemands.push(node);
             (node.demands || []).forEach(treeTraversal);
         }
@@ -1283,7 +1281,7 @@ class Item extends NamedElement {
             this.extraGoods = this.additionalOutputs.map(p => assetsMap.get(p.Product));
         }
 
-        this.factories = this.factories.map(f => assetsMap.get(f)).filter(f => f && (!region || f.region === region));
+        this.factories = this.factories.map(f => assetsMap.get(f));
         this.equipments =
             this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap));
 
@@ -1300,6 +1298,21 @@ class Item extends NamedElement {
             }
 
         });
+
+        this.visible = ko.computed(() => {
+            if (!view.island || !view.island())
+                return true;
+
+            var region = view.island().region;
+            if (!region)
+                return true;
+
+            for (var f of this.factories)
+                if (f.region === region)
+                    return true;
+
+            return false;
+        })
     }
 }
 
@@ -1388,7 +1401,7 @@ class GoodConsumptionUpgrade extends Option {
                 continue;
 
             for (var need of level.needs) {
-                var entry = this.entriesMap.get(need.allDemands[0].product.guid);
+                var entry = this.entriesMap.get(need.product.guid);
                 if (entry)
                     need.goodConsumptionUpgradeList.add(entry);
             }
@@ -2217,6 +2230,62 @@ class DarkMode {
     }
 }
 
+class Template {
+    constructor(asset, parentInstance, attributeName, index) {
+
+
+        this.attributeName = attributeName;
+        this.index = index;
+
+        this.name = asset.name;
+        this.guid = asset.guid;
+        this.getRegionExtendedName = asset.getRegionExtendedName;
+        this.editable = asset.editable;
+        this.region = asset.region;
+        this.hotkey = asset.hotkey;
+
+        this.templates = [];
+        this.parentInstance = ko.observable(parentInstance);
+
+        this.instance = ko.computed(() => {
+            var p = this.parentInstance();
+
+            var inst = p[this.attributeName][this.index];
+
+            this.templates.forEach(t => t.parentInstance(inst));
+
+            return inst;
+        });
+
+        for (var attr in asset) {
+            var val = asset[attr];
+
+            if (val instanceof Array) {
+                this[attr] = val.map((a, index) => {
+                    if (Template.prototype.applicable(asset)) {
+                        var t = new Template(a, this.instance(), attr, index);
+                        this.templates.push(t);
+                        return t;
+                    } else
+                        return a;
+                });
+            }
+            else if (!ko.isObservable(val) && !ko.isComputed(val) && asset.hasOwnProperty(attr))
+                this[attr] = val;
+        }
+
+    }
+
+    applicable(asset) {
+        return asset instanceof PopulationLevel ||
+            asset instanceof Workforce ||
+            asset instanceof ProductCategory ||
+            asset instanceof Product ||
+            asset instanceof Factory ||
+            asset instanceof Demand;
+    }
+}
+
 function init() {
     view.darkMode = new DarkMode();
 
@@ -2329,6 +2398,24 @@ function init() {
         ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
 
     view.tradeManager = new TradeManager();
+
+    var allIslands = view.islandManager.allIslands;
+    var selectedIsland = view.island();
+    var templates = [];
+    var arrayToTemplate = (name) => allIslands[name].map((asset, index) => {
+        var t = new Template(asset, selectedIsland, name, index);
+        templates.push(t);
+        return t;
+    });
+
+    view.island.subscribe(i => templates.forEach(t => t.parentInstance(i)));
+    
+    view.template = {
+        populationLevels: arrayToTemplate("populationLevels"),
+        categories: arrayToTemplate("categories"),
+        consumers: arrayToTemplate("consumers"),
+        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds")
+    }
 
     ko.applyBindings(view, $(document.body)[0]);
 
