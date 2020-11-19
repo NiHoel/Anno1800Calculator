@@ -820,7 +820,7 @@ class Factory extends Consumer {
         if (!this.icon)
             this.icon = this.product.icon;
 
-        this.extraDemand = new Demand({ guid: this.product.guid }, assetsMap);
+        this.extraDemand = new FactoryDemand({factory: this, guid: this.product.guid }, assetsMap);
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
             if (!isFinite(val) || val == null) {
@@ -1082,6 +1082,16 @@ class FactoryDemandSwitch {
 
     }
 
+}
+
+class FactoryDemand extends Demand {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+        this.factory(config.factory);
+    }
+
+    updateFixedProductFactory() {
+    }
 }
 
 class Need extends Demand {
