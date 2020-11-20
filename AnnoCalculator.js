@@ -530,7 +530,19 @@ class Island {
     }
 
     reset() {
+        {
+            var deletedRoutes = view.tradeManager.routes().filter(r => r.to === this || r.from === this);
+            deletedRoutes.forEach(r => view.tradeManager.remove(r));
+        }
+
+        {
+            var deletedRoutes = view.tradeManager.npcRoutes().filter(r => r.to === this);
+            deletedRoutes.forEach(r => view.tradeManager.remove(r));
+        }
+
         this.assetsMap.forEach(a => {
+            if (a instanceof Option)
+                a.checked(false);
             if (a instanceof Product)
                 a.fixedFactory(null);
             if (a instanceof Consumer)
@@ -542,15 +554,18 @@ class Island {
                     a.palaceBuffChecked(false);
                 a.percentBoost(100);
                 a.extraAmount(0);
+                a.extraGoodProductionList.checked(true);
             }
 
             if (a instanceof PopulationLevel) {
                 a.existingBuildings(0);
                 a.amount(0);
             }
-            if (a instanceof Item)
+            if (a instanceof Item) {
+                a.checked(false);
                 for (var i of a.equipments)
                     i.checked(false);
+            }
 
             if (a.guid == 1010240)
                 a.fixedFactory(this.assetsMap.get(1010318));
@@ -713,7 +728,7 @@ class Factory extends Consumer {
             if (this.palaceBuff && this.palaceBuffChecked())
                 factor += 1 / this.palaceBuff.additionalOutputCycle;
 
-            if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting)
+            if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting && this.extraGoodProductionList.checked())
                 for (var e of this.extraGoodProductionList.selfEffecting())
                     if(e.item.checked())
                         factor += (e.Amount || 1) / e.additionalOutputCycle;
@@ -1371,6 +1386,13 @@ class ExtraGoodProductionList {
 
             return total;
         });
+        this.amountWithSelf = ko.computed(() => {
+            var total = 0;
+            for (var i of (this.entries() || []))
+                total += i.amount();
+
+            return total;
+        })
     }
 }
 

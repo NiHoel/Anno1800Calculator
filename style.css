@@ -6,7 +6,6 @@ body {
 body {
     font-family: Verdana;
     font-size: small;
-    margin: 20px 0;
     color: #000;
 }
 
@@ -86,6 +85,24 @@ h1 {
 
 .modal-xl {
     max-width: 1140px;
+}
+
+nav {
+    position: fixed !important;
+    width: 100%;
+    z-index: 1000;
+    margin-top: -1rem;
+    padding: 0 .5rem!important;
+}
+
+.bg-dark nav {
+    border-bottom: 1px solid #222;
+}
+
+.icon-navbar {
+    margin: -.125rem;
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .ui-fieldset {
