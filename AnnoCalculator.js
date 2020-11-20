@@ -579,7 +579,7 @@ class Consumer extends NamedElement {
 
         this.demands = new Set();
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
-        this.existingBuildings = ko.observable(0);
+        this.existingBuildings = createIntInput(0);
         this.items = [];
 
         this.outputAmount = ko.computed(() => this.amount());
@@ -629,19 +629,17 @@ class Consumer extends NamedElement {
             sum += a;
         });
 
-        if (sum < -EPSILON) {
-            if (sum < this.extraDemand.amount()) {
+        if (this.extraDemand && sum + this.extraDemand.amount() < -EPSILON) {
+            if (sum < 0) {
                 this.extraDemand.updateAmount(0);
                 this.amount(0);
             } else {
 
-                this.extraDemand.updateAmount(this.extraDemand.amount() - sum);
+                this.extraDemand.updateAmount(-sum);
             }
         }
         else {
-            // for initialization before creation this.extraDemand
-            var extraDemand = this.extraDemand ? this.extraDemand.amount() : 0;
-            var val = Math.max(0, sum - extraDemand);
+            var val = Math.max(0, sum);
             if (val < 1e-16)
                 val = 0;
             this.amount(val);
@@ -682,10 +680,10 @@ class Factory extends Consumer {
 
         this.editable = ko.observable(false);
 
-        this.extraAmount = ko.observable(0);
+        this.extraAmount = createFloatInput(0);
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
 
-        this.percentBoost = ko.observable(100);
+        this.percentBoost = createIntInput(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
         if (this.module) {
@@ -1093,7 +1091,7 @@ class PopulationNeed extends Need {
         this.residents = 0;
         this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
-        this.percentBoost = ko.observable(100);
+        this.percentBoost = createFloatInput(100);
         this.percentBoost.subscribe(val => {
             val = parseFloat(val);
             if (val <= 0)
@@ -1181,8 +1179,8 @@ class PopulationLevel extends NamedElement {
         super(config);
 
         this.hotkey = ko.observable(null);
-        this.amount = ko.observable(0);
-        this.existingBuildings = ko.observable(0);
+        this.amount = createIntInput(0);
+        this.existingBuildings = createIntInput(0);
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
         this.region = assetsMap.get(config.region);
@@ -1191,6 +1189,7 @@ class PopulationLevel extends NamedElement {
             if (n.tpmin > 0 && assetsMap.get(n.guid))
                 this.needs.push(new PopulationNeed(n, assetsMap));
         });
+
         this.amount.subscribe(val => {
             if (val < 0)
                 this.amount(0);
@@ -1198,17 +1197,16 @@ class PopulationLevel extends NamedElement {
                 this.needs.forEach(n => n.updateAmount(parseInt(val)))
         });
         this.existingBuildings.subscribe(val => {
-            val = parseInt(val);
-            this.existingBuildings(val);
             if (view.settings.existingBuildingsInput.checked())
                 this.needs.forEach(n => n.updateAmount(parseInt(val * config.fullHouse)))
-        })
+        });
         view.settings.existingBuildingsInput.checked.subscribe(enabled => {
             if (enabled)
-                this.existingBuildings(Math.max(this.existingBuildings(), Math.ceil(parseInt(this.amount()) / config.fullHouse)))
+                this.existingBuildings(Math.max(this.existingBuildings(),
+                    Math.ceil(parseInt(this.amount()) / config.fullHouse)));
             else
                 this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
-        })
+        });
     }
 
     incrementAmount() {
@@ -1547,11 +1545,8 @@ class TradeRoute {
     constructor(config) {
         $.extend(this, config);
 
-        this.amount = ko.observable(config.amount || 0);
-        this.amount.subscribe(val => {
-            if (typeof val !== "number")
-                this.amount(parseFloat(val) || 0);
-        })
+        this.amount = createFloatInput(0);
+        this.amount(config.amount);
     }
 
     getOpposite(list) {
@@ -2504,6 +2499,34 @@ function formatPercentage(number) {
         str = '+' + str;
 
     return str;
+}
+
+function createIntInput(init) {
+    var obs = ko.observable(init);
+    obs.subscribe(val => {
+        var num = parseInt(val);
+
+        if (typeof num == "number" && isFinite(num) && val != num)
+            obs(num);
+        else if (typeof num != "number" || !isFinite(num))
+            obs(init);
+    });
+
+    return obs;
+}
+
+function createFloatInput(init) {
+    var obs = ko.observable(init);
+    obs.subscribe(val => {
+        var num = parseFloat(val);
+
+        if (typeof num == "number" && isFinite(num) && val != num)
+            obs(num);
+        else if (typeof num != "number" || !isFinite(num))
+            obs(init);
+    });
+
+    return obs;
 }
 
 function factoryReset() {
