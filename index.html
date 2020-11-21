@@ -734,7 +734,7 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if: $root.settings.tradeRoutes.checked()">
+                        <div data-bind="if: $root.settings.tradeRoutes.checked() && $data instanceof Factory">
                             <div data-bind="with: $data.tradeList">
 
                                 <h6><span data-bind="text: $root.settings.tradeRoutes.name">Trade Routes</span></h6>
@@ -867,7 +867,7 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                        <div data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked())">
                             <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
@@ -893,7 +893,7 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                                <tr data-bind="if: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                                <tr data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked())">
                                     <!-- extra goods -->
                                     <td>
                                         <span data-bind="text: $root.texts.extraNeed.name"></span>
@@ -912,7 +912,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr data-bind="if: $data.percentBoost">
                                     <!-- boost -->
                                     <td>
                                         <span data-bind="text: $root.texts.productionBoost.name"></span>
@@ -929,7 +929,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
+                                <tr data-bind="if: $data.editable() || $root.settings.missingBuildingsHighlight.checked() && (!$data.region || !$data.island.region || $data.region === $data.island.region) ">
                                     <!-- existing buildings -->
                                     <td>
                                         <span data-bind="text: $root.texts.existingNumberOfBuildings.name"></span>
@@ -946,7 +946,7 @@
 
                                     </td>
                                 </tr>
-                                <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked()">
+                                <tr data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.overProduction">
                                     <!-- overproduction -->
                                     <td>
                                         <span data-bind="text: $root.texts.overproduction.name"></span>
@@ -987,20 +987,6 @@
                                     </td>
                                 </tr>
                                 <tr data-bind="if: $data.module && $data.moduleChecked()">
-                                    <!-- extra goods module -->
-                                    <td>
-                                        <span data-bind="text: $root.texts.extraGoods.name"></span>
-                                        <span>: </span>
-                                        <span data-bind="text: $data.module.name"></span>
-                                    </td>
-                                    <td>
-                                        <div class="float-right">
-                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr data-bind="if: $data.module && $data.moduleChecked()">
                                     <!-- consumption module -->
                                     <td>
                                         <span data-bind="text: $root.texts.consumption.name"></span>
@@ -1018,7 +1004,7 @@
                         </table>
                         <hr />
 
-                        <div data-bind="if: $data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked()">
+                        <div data-bind="if: $data instanceof Factory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
 
 
                             <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
@@ -1353,6 +1339,14 @@
                         <div data-bind="foreach: $data.consumers">
                             <div data-bind="visible: !$data.island.region || $data.region === $data.island.region">
                                 <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
+                                    <div class="ui-fchain-item-tr-button" data-bind="visible: $root.settings.additionalProduction.checked()">
+                                        <div>
+                                            <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
+                                                <span class="fa fa-sliders"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                     <div class="ui-fchain-item-icon mb-2"><img src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 

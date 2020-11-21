@@ -403,6 +403,7 @@ class Island {
                 continue; // power plant not constructable in this region
 
             this.categories[1].consumers.push(pl);
+            pl.editable(true);
             var pr = pl.getInputs()[0].product;
             let n = new PowerPlantNeed({ guid: pr.guid, factory: pl, product: pr }, assetsMap);
             pl.existingBuildings.subscribe(() => n.updateAmount());
@@ -592,6 +593,8 @@ class Consumer extends NamedElement {
         this.amount = ko.observable(0);
         this.boost = ko.observable(1);
 
+        this.editable = ko.observable(false);
+
         this.demands = new Set();
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
         this.existingBuildings = createIntInput(0);
@@ -692,8 +695,6 @@ class PalaceBuff extends NamedElement {
 class Factory extends Consumer {
     constructor(config, assetsMap, island) {
         super(config, assetsMap, island);
-
-        this.editable = ko.observable(false);
 
         this.extraAmount = createFloatInput(0);
         this.extraGoodProductionList = new ExtraGoodProductionList(this);
@@ -1713,6 +1714,9 @@ class TradeManager {
         this.routes = ko.observableArray();
 
         view.selectedFactory.subscribe(f => {
+            if (!(f instanceof Factory))
+                return;
+
             var usedIslands = new Set(f.tradeList.routes().flatMap(r => [r.from, r.to]));
             var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != f.tradeList.island);
             islands.sort((a, b) => {
