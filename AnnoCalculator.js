@@ -514,8 +514,8 @@ class Island {
         this.top2Population = ko.computed(() => {
             var useHouses = view.settings.existingBuildingsInput.checked();
             var comp = useHouses
-                ? (a, b) => a.existingBuildings() < b.existingBuildings()
-                : (a, b) => a.amount() < b.amount();
+                ? (a, b) => b.existingBuildings() - a.existingBuildings()
+                : (a, b) => b.amount()- a.amount();
 
             return [...this.populationLevels].sort(comp).slice(0, 2).filter(l => useHouses ? l.existingBuildings() : l.amount());
         });
@@ -523,8 +523,8 @@ class Island {
         this.top5Factories = ko.computed(() => {
             var useBuildings = view.settings.missingBuildingsHighlight.checked();
             var comp = useBuildings
-                ? (a, b) => a.existingBuildings() < b.existingBuildings()
-                : (a, b) => a.buildings() < b.buildings();
+                ? (a, b) => b.existingBuildings() - a.existingBuildings()
+                : (a, b) => b.buildings() - a.buildings();
 
             return [...this.factories].sort(comp).slice(0, 5).filter(f => useBuildings ? f.existingBuildings() : f.buildings());
         });
@@ -785,7 +785,7 @@ class Factory extends Consumer {
         });
 
         this.visible = ko.computed(() => {
-            if (this.amount() > 0 || this.extraAmount() > 0 || this.existingBuildings() > 0)
+            if (this.amount() > 0 || this.extraAmount() != 0 || this.existingBuildings() > 0 || this.extraGoodProductionList.amount() || this.tradeList.amount())
                 return true;
 
             if (this.region && this.island.region && this.region != this.island.region)
@@ -1336,7 +1336,7 @@ class Item extends NamedElement {
                     return true;
 
             return false;
-        })
+        });
     }
 }
 
@@ -1437,6 +1437,21 @@ class GoodConsumptionUpgrade extends Option {
                     need.goodConsumptionUpgradeList.add(entry);
             }
         }
+
+        this.visible = ko.computed(() => {
+            if (!view.island || !view.island())
+                return true;
+
+            var region = view.island().region;
+            if (!region)
+                return true;
+
+            for (var l of this.populationLevels)
+                if (l.region === region)
+                    return true;
+
+            return false;
+        });
     }
 }
 
@@ -1729,8 +1744,11 @@ class TradeManager {
                     return sIdxA > sIdxB;
                 }
             });
-            f.tradeList.export(f.overProduction() > 0);
-            f.tradeList.newAmount(Math.abs(f.overProduction()));
+            var overProduction = f.overProduction();
+            if (overProduction == 0)
+                overProduction = -f.computedExtraAmount();
+            f.tradeList.export(overProduction > 0);
+            f.tradeList.newAmount(Math.abs(overProduction));
 
             f.tradeList.unusedIslands(islands);
         });
@@ -1846,8 +1864,8 @@ class TradeManager {
         route.toFactory.tradeList.routes.remove(route);
         this.routes.remove(route);
 
-        route.toFactory.tradeList.unusedIslands.push(route.from);
-        route.fromFactory.tradeList.unusedIslands.push(route.to);
+        route.toFactory.tradeList.unusedIslands.unshift(route.from);
+        route.fromFactory.tradeList.unusedIslands.unshift(route.to);
     }
 
     islandDeleted(island) {
@@ -2170,9 +2188,9 @@ class IslandManager {
             var sIdxB = view.sessions.indexOf(b.session);
 
             if (sIdxA == sIdxB) {
-                return a.name() > b.name();
+                return a.name() - b.name();
             } else {
-                return sIdxA > sIdxB;
+                return sIdxA - sIdxB;
             }
         });
     }

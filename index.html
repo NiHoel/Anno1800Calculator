@@ -140,7 +140,7 @@
     <!-- /#help-dialog -->
     <!-- #factory-choose-dialog -->
     <div id="factory-choose-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 data-bind="text: $root.texts.chooseFactories.name">Choose Factory for each Product</h4>
@@ -292,18 +292,18 @@
                                 <td>
                                     <span data-bind="foreach: $data.equipments" class="inline-list-centered">
 
-                                        <span style="flex-basis: fit-content;">
+                                        <span data-bind="visible: !$root.island().region || $data.factory.region == $root.island().region" style="flex-basis: fit-content;">
                                             <span class="custom-control custom-checkbox">
                                                 <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
                                                 <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
-
+                                                    <span class="mr-2" style="flex-basis: fit-content;">
+                                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon  : null, alt: $data.factory.name, for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                    </span>
                                                 </label>
                                             </span>
                                         </span>
 
-                                        <span class="mr-2" style="flex-basis: fit-content;">
-                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon  : null, alt: $data.factory.name, for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" style="margin-right: 0.75em; margin-left: -0.25em;" />
-                                        </span>
+                                       
                                     </span>
                                 </td>
 
@@ -365,9 +365,9 @@
                             </button>
                         </div>
                     </form>
-                    <table class="table table-striped">
+                    <table class="table">
                         <tbody data-bind="foreach: $data.upgrades">
-                            <tr>
+                            <tr data-bind="visible: $data.visible">
                                 <td>
 
                                     <span class="custom-control custom-checkbox">
@@ -838,7 +838,7 @@
 
 
 
-                                    <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.sessionExtendedName()"></select>
+                                    <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.sessionExtendedName() /* + '\t' + i.assetsMap.get($data.factory.guid).overProduction() + ' t/min' */"></select>
                                     <div style="display: flex">
                                         <div class="mr-2">
 
@@ -885,7 +885,7 @@
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() > 0">
+                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() || $data.extraGoodProductionList.amount() || $data.tradeList.amount()">
                                         <span data-bind="text: $root.texts.apply.name">Apply</span>
                                     </button>
                                 </div>
@@ -1230,8 +1230,8 @@
                                                         <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat($data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
                                                         <span>x</span>
                                                         <div class="btn-group" role="group">
-                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => decrementBuildings(), enable:  $data.instance().buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().decrementBuildings(), enable:  $data.instance().buildings() >= 1.01" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
                                                         </div>
                                                     </div>
                                                 </div>
