@@ -486,6 +486,10 @@ input[type=number]::-webkit-inner-spin-button {
     color: #f8f9fa;
 }
 
+#help-dialog p, #help-dialog span {
+    text-align: justify;
+}
+
 .danger-icon {
     position: absolute;
     color: red;

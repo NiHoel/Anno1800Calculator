@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Sauerbraten95">
+    <meta name="author" content="DuxVitae">
     <title>Anno 1800 Calculator</title>
 
 
@@ -127,11 +127,11 @@
 
                 </div>
                 <div class="modal-body">
-                    <a href="https://www.youtube.com/watch?v=fxzYSh-92Ng" target="_blank">
+                    <a class="mb-3" href="https://www.youtube.com/watch?v=fxzYSh-92Ng" target="_blank">
                         <img class="img-thumbnail img-responsive" src="CalculatorScreenshot.jpg" />
                     </a>
                     <br />
-                    <span data-bind="text: texts.helpContent.name" style="white-space:pre-wrap"></span>
+                    <div class="mt-3" data-bind="html: texts.helpContent.name"></div>
 
                 </div>
             </div>
@@ -648,7 +648,7 @@
                     <button type="button" class="btn">
                         <img data-toggle="modal" data-target="#island-management-dialog" class="icon-navbar" src="icon_map.png" />
                     </button>
-                    <button type="button" class="btn">
+                    <button type="button" class="btn" data-bind="enable: $root.settings.tradeRoutes.checked()">
                         <img data-toggle="modal" data-target="#trade-routes-management-dialog" class="icon-navbar" src="icon_shiptrade.png" />
                     </button>
                 </div>

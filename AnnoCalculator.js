@@ -2639,7 +2639,7 @@ function checkAndShowNotifications() {
                         // settings
                         type: 'success',
                         placement: { align: 'center' },
-                        timer: 10000
+                        timer: 60000
                     });
             }
 
