@@ -871,7 +871,7 @@
                             <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
-                                    <span data-bind="text: formatNumber(Math.ceil(10*parseFloat(-$data.tradeList.amount()))/10)"></span>
+                                    <span data-bind="text: formatNumber(-$data.tradeList.amount())"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div data-bind="if: $root.settings.additionalProduction.checked()">
@@ -881,7 +881,7 @@
 
                                         </label>
                                     </span>
-                                    <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.extraGoodProductionList.amountWithSelf()))/100)"></span>
+                                    <span data-bind="text: formatNumber($data.extraGoodProductionList.amountWithSelf())"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div>
@@ -968,7 +968,7 @@
                                     <td>
                                         <div class="float-right">
                                             <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.palaceBuff.additionalOutputCycle))/100)"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber($data.outputAmount() / $data.palaceBuff.additionalOutputCycle)"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -982,7 +982,7 @@
                                     <td>
                                         <div class="float-right">
                                             <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.outputAmount() / $data.module.additionalOutputCycle))/100)"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber($data.outputAmount() / $data.module.additionalOutputCycle)"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -996,7 +996,7 @@
                                     <td>
                                         <div class="float-right">
                                             <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*$data.moduleDemand.amount())/100)"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber($data.moduleDemand.amount())"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -1019,7 +1019,7 @@
 
                                         </td> <!-- factory icon -->
                                         <td>
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.amount()))/100)"></span>
+                                            <span data-bind="text: formatNumber($data.amount())"></span>
                                             <span> t/min</span>
 
                                         </td>
@@ -1274,7 +1274,7 @@
                                                 </div>
                                             </div>
                                             <div class="ui-fchain-item-amount" href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.instance().amount()))/100)"></span><span> t/min</span></div>
+                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
 
                                             </div>
 
@@ -1325,7 +1325,7 @@
                                                 </div>
                                             </div>
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.outputAmount.name}" style="border-top-color: inherit; border-top-style: solid; border-top-width: 1px;">
-                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().outputAmount()))/100)"></span><span> t/min</span></div>
+                                                <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().outputAmount())"></span><span> t/min</span></div>
                                             </div>
 
 
@@ -1380,7 +1380,7 @@
                                     </div>
 
                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <div class="ui-fchain-item-load"><span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().amount()))/100)"></span><span> t/min</span></div>
+                                        <div class="ui-fchain-item-load"><span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span></div>
 
                                     </div>
                                 </div>
@@ -1456,7 +1456,7 @@
                                             </div>
                                             <div class="ui-fchain-item-load">
                                                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                                    <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.instance().amount()))/100)"></span><span> t/min</span>
+                                                    <span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span>
                                                 </span>
                                             </div>
                                         </div>
@@ -1486,7 +1486,7 @@
                                                 </div>
                                                 <div class="ui-fchain-item-load">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                                        <span data-bind="text: formatNumber(Math.ceil(100*parseFloat($data.instance().amount()))/100)"></span><span> t/min</span>
+                                                        <span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span>
                                                     </span>
                                                 </div>
                                             </div>
@@ -1521,7 +1521,7 @@
                                 </div>
                                 <div class="ui-fchain-item-load">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().amount()))/100)"></span><span> t/min</span>
+                                        <span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span>
                                     </span>
                                 </div>
 
@@ -1543,7 +1543,7 @@
                                     </div>
                                     <div class="ui-fchain-item-load">
                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                            <span data-bind="text: formatNumber(Math.ceil(100*parseFloat( $data.instance().amount()))/100)"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span>
                                         </span>
                                     </div>
 

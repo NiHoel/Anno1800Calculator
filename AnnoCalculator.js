@@ -1179,7 +1179,7 @@ class BuildingMaterialsNeed extends Need {
             existingBuildingsOutput *= 1 + 1 / this.factory().palaceBuff.additionalOutputCycle;
 
         var overProduction = existingBuildingsOutput - otherDemand;
-        this.amount(Math.max(0, overProduction - EPSILON));
+        this.amount(Math.max(0, overProduction - 0.000000001));
     }
 
     updateFixedProductFactory() { }
@@ -2525,7 +2525,11 @@ function removeSpaces(string) {
     return string.replace(/\W/g, "");
 }
 
-window.formatNumber = new Intl.NumberFormat(navigator.language || "en").format;
+var formater = new Intl.NumberFormat(navigator.language || "en").format;
+function formatNumber(num) {
+    var rounded = Math.ceil(100 * parseFloat(num)) / 100;
+    return formater(rounded);
+}
 
 function getStep(id) {
     return parseFloat($('#' + id).attr('step') || 1);
