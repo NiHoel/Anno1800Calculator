@@ -87,6 +87,11 @@ h1 {
     max-width: 1140px;
 }
 
+.dismiss {
+    color: #222;
+    cursor: pointer;
+}
+
 nav {
     position: fixed !important;
     width: 100%;

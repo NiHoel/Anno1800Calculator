@@ -275,7 +275,7 @@
                         </thead>
                         <tbody data-bind="foreach: $root.island().extraGoodItems">
                             <tr data-bind="visible: $data.visible">
-                                <td><img class="icon-sm"  src="" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
+                                <td><img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
                                 <td>
                                     <span data-bind="foreach: $data.extraGoods" class="inline-list-centered">
@@ -303,7 +303,7 @@
                                             </span>
                                         </span>
 
-                                       
+
                                     </span>
                                 </td>
 
@@ -382,7 +382,7 @@
                                         <div>
                                             <span data-bind="text: formatPercentage($data.amount)"></span>
                                             <span class="ml-1 mr-2" style="flex-basis: fit-content;" data-bind="if: $data.product">
-                                                <img class="icon-sm"  src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, title: $data.product.name}" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, title: $data.product.name}" style="margin-right: 0.75em; margin-left: -0.25em;" />
                                             </span>
                                         </div>
 
@@ -446,24 +446,27 @@
                     <table class="table table-striped">
 
                         <tbody data-bind="foreach: $root.islandManager.islandCandidates">
-                            <tr>
-                                <td>
-                                    <div data-bind="if: $data.session">
-                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
-                                    </div>
-                                </td>
-                                <td data-bind="text: $data.name"></td>
-                                <td>
-                                    <span class="float-right">
-                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => {$root.islandManager.islandNameInput($data.name), $root.islandManager.sessionInput($data.session)}">
-                                            <span class="fa fa-pencil"> </span>
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data.name, $data.session)">
-                                            <span class="fa fa-plus"> </span>
-                                        </button>
-                                    </span>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <span data-bind="click: () => $root.islandManager.deleteCandidate($data)" aria-hidden="true" class="dismiss">×</span>
+                            </td>
+                            <td>
+                                <div data-bind="if: $data.session">
+                                    <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}"/>
+                                </div>
+                            </td>
+                            <td data-bind="text: $data.name"></td>
+                            <td>
+                                <span class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => {$root.islandManager.islandNameInput($data.name), $root.islandManager.sessionInput($data.session)}">
+                                        <span class="fa fa-pencil"> </span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data.name, $data.session)">
+                                        <span class="fa fa-plus"> </span>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
 
@@ -484,8 +487,8 @@
                                 <td>
                                     <div class="inline-list">
                                         <span class="mr-3">
-                                            <img class="icon-sm" src="icon_residence.png"data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
-                                            <img class="icon-sm" src="icon_house.png"  data-bind="visible: $root.settings.existingBuildingsInput.checked()">
+                                            <img class="icon-sm" src="icon_residence.png" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                            <img class="icon-sm" src="icon_house.png" data-bind="visible: $root.settings.existingBuildingsInput.checked()">
                                         </span>
                                         <span data-bind="if: !$data.top2Population().length">0</span>
                                         <!-- ko foreach: $data.top2Population -->
@@ -1243,8 +1246,8 @@
                                                         <span data-bind="text: $data.instance().existingBuildings()"></span>
                                                         <span>x</span>
                                                         <div class="btn-group" role="group">
-                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().existingBuildings(parseInt($data.instance().existingBuildings() + 1))" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
-                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().existingBuildings(parseInt($data.instance().existingBuildings() - 1)), enable: $data.instance().existingBuildings() >= 1" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().existingBuildings(parseInt($data.instance().existingBuildings())+1)" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
+                                                            <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().existingBuildings(parseInt($data.instance().existingBuildings())-1), enable: $data.instance().existingBuildings() >= 1" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1346,7 +1349,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
                                     <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 

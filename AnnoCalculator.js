@@ -2134,6 +2134,11 @@ class IslandManager {
         this.sortUnusedNames();
     }
 
+    deleteCandidate(candidate) {
+        this.unusedNames.delete(candidate.name);
+        this.islandCandidates.remove(candidate);
+    }
+
     getByName(name) {
         return name == ALL_ISLANDS ? this.allIslands : this.serverNamesMap.get(name);
     }
@@ -2146,7 +2151,7 @@ class IslandManager {
             return;
 
         var island = null;
-        var bestMatch = Math.Infinity;
+        var bestMatch = 0;
 
         for (var isl of view.islands()) {
             var match = this.compareNames(isl.name(), name);
@@ -2204,9 +2209,9 @@ class IslandManager {
             var sIdxB = view.sessions.indexOf(b.session);
 
             if (sIdxA == sIdxB) {
-                return a.name > b.name;
+                return a.name - b.name;
             } else {
-                return sIdxA > sIdxB;
+                return sIdxA - sIdxB;
             }
         });
     }
