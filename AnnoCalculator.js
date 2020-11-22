@@ -78,7 +78,10 @@ class NamedElement {
 
             text = this.locaText["english"];
             return text ? text : config.name;
-        })
+        });
+
+        if(this.iconPath && params && params.icons)
+            this.icon = params.icons[this.iconPath];
     }
 }
 
@@ -397,7 +400,7 @@ class Island {
             this.categories.push(c);
         }
 
-        for (let powerPlant of params.powerPlants) {
+        for (let powerPlant of (params.powerPlants||[])) {
             var pl = assetsMap.get(powerPlant.guid);
             if (!pl)
                 continue; // power plant not constructable in this region
@@ -438,7 +441,7 @@ class Island {
                 }
         }
 
-        for (let upgrade of params.goodConsumptionUpgrades) {
+        for (let upgrade of (params.goodConsumptionUpgrades || [])) {
             let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
             if (!u.populationLevels.length)
                 continue;
