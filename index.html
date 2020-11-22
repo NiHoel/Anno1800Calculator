@@ -155,7 +155,7 @@
                             <div class="input-group mb-3">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">
-                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                        <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                     </span>
                                     <span class="input-group-text" data-bind="text: name"></span>
                                 </div>
@@ -182,7 +182,7 @@
                                     <span data-bind="text: name"></span>
                                 </div>
 
-                                <div class="ui-fchain-item-icon" data-bind="foreach: $data.factories"><img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
+                                <div class="ui-fchain-item-icon" data-bind="foreach: $data.factories"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
 
 
                                 <div data-bind="foreach: $data.replacementArray">
@@ -275,7 +275,7 @@
                         </thead>
                         <tbody data-bind="foreach: $root.island().extraGoodItems">
                             <tr data-bind="visible: $data.visible">
-                                <td><img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
+                                <td><img class="icon-sm"  src="" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
                                 <td data-bind="text: $data.name"></td> <!-- item name -->
                                 <td>
                                     <span data-bind="foreach: $data.extraGoods" class="inline-list-centered">
@@ -375,14 +375,14 @@
                                         <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-checked' }" src-only style="vertical-align: top;"></label>
                                     </span>
                                 </td>
-                                <td><img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- upgrade icon -->
+                                <td><img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- upgrade icon -->
                                 <td data-bind="text: $data.name"></td> <!-- upgrade name -->
                                 <td>
                                     <span data-bind="foreach: $data.entries" class="inline-list-centered">
                                         <div>
                                             <span data-bind="text: formatPercentage($data.amount)"></span>
                                             <span class="ml-1 mr-2" style="flex-basis: fit-content;" data-bind="if: $data.product">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, title: $data.product.name}" style="margin-right: 0.75em; margin-left: -0.25em;" />
+                                                <img class="icon-sm"  src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon  : null, alt: $data.product.name, title: $data.product.name}" style="margin-right: 0.75em; margin-left: -0.25em;" />
                                             </span>
                                         </div>
 
@@ -484,14 +484,14 @@
                                 <td>
                                     <div class="inline-list">
                                         <span class="mr-3">
-                                            <img src="icon_residence.png" width="25" height="25" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
-                                            <img src="icon_house.png" width="25" height="25" data-bind="visible: $root.settings.existingBuildingsInput.checked()">
+                                            <img class="icon-sm" src="icon_residence.png"data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
+                                            <img class="icon-sm" src="icon_house.png"  data-bind="visible: $root.settings.existingBuildingsInput.checked()">
                                         </span>
                                         <span data-bind="if: !$data.top2Population().length">0</span>
                                         <!-- ko foreach: $data.top2Population -->
                                         <span class="inline-list">
                                             <span class="ui-tier-unit-icon" class="mr-3">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
                                             </span>
                                             <span class="mr-3" data-bind="text: $root.settings.existingBuildingsInput.checked() ? $data.existingBuildings() : formatNumber($data.amount())"></span>
@@ -502,13 +502,13 @@
                                 <td>
                                     <div class="inline-list">
                                         <span class="mr-3">
-                                            <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                            <img class="icon-sm" src="icon_resource_storage_amount.png">
                                         </span>
                                         <span data-bind="if: !$data.top5Factories().length">0</span>
                                         <!-- ko foreach: $data.top5Factories -->
                                         <span class="inline-list">
                                             <span class="mr-1">
-                                                <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
                                             </span>
                                             <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
@@ -696,7 +696,7 @@
 
                                                     </label>
                                                 </span>
-                                                <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
+                                                <img class="icon-sm" class="mr-2" src="" data-bind="attr: { src: $data.item.icon ? $data.item.icon : null}"><!-- item icon -->
                                                 <span data-bind="text: $data.name"></span> <!-- item name -->
                                             </div>
                                         </td>
@@ -707,7 +707,7 @@
                                                     <span style="flex: 100 1 auto;"></span>
 
                                                     <span style="flex: auto;">
-                                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
+                                                        <img class="icon-sm" src="" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
                                                     </span>
 
                                                     <span style="flex: 100 1 auto;"></span>
@@ -967,7 +967,7 @@
                                     </td>
                                     <td>
                                         <div class="float-right">
-                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                            <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
                                             <span data-bind="text: formatNumber($data.outputAmount() / $data.palaceBuff.additionalOutputCycle)"></span><span> t/min</span>
                                         </div>
                                     </td>
@@ -981,7 +981,7 @@
                                     </td>
                                     <td>
                                         <div class="float-right">
-                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
+                                            <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
                                             <span data-bind="text: formatNumber($data.outputAmount() / $data.module.additionalOutputCycle)"></span><span> t/min</span>
                                         </div>
                                     </td>
@@ -995,7 +995,7 @@
                                     </td>
                                     <td>
                                         <div class="float-right">
-                                            <img class="mr-2" src="" width="25" height="25" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
+                                            <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.moduleDemand.product.icon ? $data.moduleDemand.product.icon : null, alt: $data.moduleDemand.product.name}">
                                             <span data-bind="text: formatNumber($data.moduleDemand.amount())"></span><span> t/min</span>
                                         </div>
                                     </td>
@@ -1014,8 +1014,8 @@
 
                                         <td>
 
-                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
-                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
+                                            <img class="icon-sm" src="" data-bind="attr: { src: $data.item.item.icon ? $data.item.item.icon : null, alt: $data.item.name}"> <!-- item icon -->
+                                            <img class="icon-sm" src="" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name}">
 
                                         </td> <!-- factory icon -->
                                         <td>
@@ -1080,7 +1080,7 @@
                                             <label class="custom-control-label" data-bind="attr: { for: $data.upgrade.guid + '-checked' }" src-only style="vertical-align: top;"></label>
                                         </span>
                                     </td>
-                                    <td><img src="" width="25" height="25" data-bind="attr: { src: $data.upgrade.icon ? $data.upgrade.icon : null}"></td> <!-- upgrade icon -->
+                                    <td><img class="icon-sm" src="" data-bind="attr: { src: $data.upgrade.icon ? $data.upgrade.icon : null}"></td> <!-- upgrade icon -->
                                     <td data-bind="text: $data.upgrade.name"></td> <!-- upgrade name -->
                                     <td><span data-bind="text: formatPercentage($data.amount)"></span></td>
 
@@ -1115,7 +1115,7 @@
                         <div data-bind="foreach: $root.template.populationLevels">
                             <div class="ui-tier-unit" data-bind="visible: !$root.island().region || $root.island().region == $data.region">
                                 <div class="ui-tier-unit-icon mb-1">
-                                    <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                    <img class="icon-tile" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                     <img src="icon_residence.png" class="subscript-icon" data-bind="visible: !$root.settings.existingBuildingsInput.checked()">
                                     <img src="icon_house.png" class="subscript-icon" data-bind="visible: $root.settings.existingBuildingsInput.checked()" style="margin-bottom: -5px;">
                                 </div>
@@ -1167,7 +1167,7 @@
                         </div> -->
                         <div data-bind="foreach: $root.template.workforce">
                             <div class="ui-tier-unit">
-                                <div class="ui-tier-unit-icon"><img data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
+                                <div class="ui-tier-unit-icon"><img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
                                 <!--<div class="ui-tier-unit-name" data-bind="text: name"></div>-->
                                 <div class="ui-fchain-item-count">
                                     <span data-bind="text: formatNumber($data.instance().amount())"></span>
@@ -1208,7 +1208,7 @@
                                         <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
 
                                         <div class="ui-fchain-item-icon mb-2">
-                                            <img src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                            <img class="icon-tile" src="" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
                                         </div>
                                         <div class="ui-fchain-item-boost">
                                             <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.productionBoost.name}, visible: !$root.settings.hideProductionBoost.checked()">
@@ -1291,7 +1291,7 @@
                                                     </div>
                                                 </div>
                                                 <div data-bind="if: !!$data.module" style="flex: auto;">
-                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                                    <img class="icon-sm" src="" data-bind="attr: { src: $data.module.icon ? $data.module.icon  : null, alt: $data.module.name, for: $data.guid + '-module' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                                                 </div>
 
                                                 <!-- palace buff -->
@@ -1304,7 +1304,7 @@
                                                     </div>
                                                 </div>
                                                 <div data-bind="if: !!$data.palaceBuff" style="flex: auto;">
-                                                    <img src="" width="25" height="25" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                                                    <img class="icon-sm" src="" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff' }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                                                 </div>
                                                 <div style="flex: 100 1 auto;"></div>
                                             </div>
@@ -1348,7 +1348,7 @@
                                     </div>
                                     
                                     <div class="ui-fchain-item-name" data-bind="text: $data.getRegionExtendedName(), visible: !$root.settings.hideNames.checked()"></div>
-                                    <div class="ui-fchain-item-icon mb-2"><img src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
+                                    <div class="ui-fchain-item-icon mb-2"><img class="icon-tile" src="" data-bind="attr: { src: $data.icon, alt: $data.name }"></div>
 
 
                                     <!-- buildings input  -->
@@ -1417,7 +1417,7 @@
 
                                         <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                         <div class="ui-fchain-item-icon">
-                                            <img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
+                                            <img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
                                         </div>
 
                                         <div data-bind="visible: $root.settings.consumptionModifier.checked()">
@@ -1471,7 +1471,7 @@
 
                                             <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
                                             <div class="ui-fchain-item-icon">
-                                                <img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
+                                                <img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }">
                                             </div>
 
                                             <div style="margin: auto">
@@ -1512,7 +1512,7 @@
                         <div data-bind="visible:  $data.instance().amount">
                             <div class="ui-fchain-item">
                                 <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
-                                <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
+                                <div class="ui-fchain-item-icon"><img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                         <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
@@ -1534,7 +1534,7 @@
                             <div data-bind="visible:  $data.instance().amount">
                                 <div class="ui-fchain-item">
                                     <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
-                                    <div class="ui-fchain-item-icon"><img src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
+                                    <div class="ui-fchain-item-icon"><img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
                                     <div class="ui-fchain-item-count">
                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
                                             <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>

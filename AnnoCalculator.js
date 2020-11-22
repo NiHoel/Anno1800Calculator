@@ -2463,7 +2463,8 @@ function init() {
         populationLevels: arrayToTemplate("populationLevels"),
         categories: arrayToTemplate("categories"),
         consumers: arrayToTemplate("consumers"),
-        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds")
+        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds"),
+        workforce: arrayToTemplate("workforce")
     }
 
     ko.applyBindings(view, $(document.body)[0]);
