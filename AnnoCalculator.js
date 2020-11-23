@@ -80,7 +80,7 @@ class NamedElement {
             return text ? text : config.name;
         });
 
-        if(this.iconPath && params && params.icons)
+        if (this.iconPath && params && params.icons)
             this.icon = params.icons[this.iconPath];
     }
 }
@@ -149,7 +149,7 @@ class Island {
             this.workforce.push(w);
         }
 
-        for (let consumer of (params.powerPlants||[])) {
+        for (let consumer of (params.powerPlants || [])) {
             //if (this.region && this.region.guid != consumer.region)
             //    continue;
 
@@ -400,7 +400,7 @@ class Island {
             this.categories.push(c);
         }
 
-        for (let powerPlant of (params.powerPlants||[])) {
+        for (let powerPlant of (params.powerPlants || [])) {
             var pl = assetsMap.get(powerPlant.guid);
             if (!pl)
                 continue; // power plant not constructable in this region
@@ -518,7 +518,7 @@ class Island {
             var useHouses = view.settings.existingBuildingsInput.checked();
             var comp = useHouses
                 ? (a, b) => b.existingBuildings() - a.existingBuildings()
-                : (a, b) => b.amount()- a.amount();
+                : (a, b) => b.amount() - a.amount();
 
             return [...this.populationLevels].sort(comp).slice(0, 2).filter(l => useHouses ? l.existingBuildings() : l.amount());
         });
@@ -734,7 +734,7 @@ class Factory extends Consumer {
 
             if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting && this.extraGoodProductionList.checked())
                 for (var e of this.extraGoodProductionList.selfEffecting())
-                    if(e.item.checked())
+                    if (e.item.checked())
                         factor += (e.Amount || 1) / e.additionalOutputCycle;
 
             return factor;
@@ -824,7 +824,7 @@ class Factory extends Consumer {
         if (!this.icon)
             this.icon = this.product.icon;
 
-        this.extraDemand = new FactoryDemand({factory: this, guid: this.product.guid }, assetsMap);
+        this.extraDemand = new FactoryDemand({ factory: this, guid: this.product.guid }, assetsMap);
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
             if (!isFinite(val) || val == null) {
@@ -935,8 +935,8 @@ class Demand extends NamedElement {
 
                 var factor = 1;
 
-                if(this.factory() && this.factory().extraGoodFactor)
-                 factor = this.factory().extraGoodFactor();
+                if (this.factory() && this.factory().extraGoodFactor)
+                    factor = this.factory().extraGoodFactor();
 
                 return amount / factor;
 
@@ -1655,7 +1655,7 @@ class TradeList {
         if (this.factory.outputs) {
             var traders = view.productsToTraders.get(this.factory.outputs[0].Product);
             if (traders)
-                this.npcRoutes = traders.map(t => new NPCTradeRoute($.extend({},t, { to: island, toFactory: factory })));
+                this.npcRoutes = traders.map(t => new NPCTradeRoute($.extend({}, t, { to: island, toFactory: factory })));
         }
 
         this.amount = ko.computed(() => {
@@ -1814,7 +1814,7 @@ class TradeManager {
             json = text ? JSON.parse(text) : [];
             for (var r of json) {
                 var to = resolve(r.to);
- 
+
                 if (!to)
                     continue;
 
@@ -1884,6 +1884,63 @@ class TradeManager {
     }
 }
 
+class ProductionChainView {
+    constructor() {
+        this.factoryToDemands = new Map();
+        this.demands = ko.computed(() => {
+            var chain = [];
+            let traverse = d => {
+                if (d.factory && d.amount) {
+                    var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
+                    var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
+                    if (Math.abs(a) < EPSILON)
+                        return;
+
+
+                    if (!this.factoryToDemands.has(f)) {
+                        var demandAggregate = {
+                            amount: a,
+                            factory: f,
+                            demands: [d]
+                        }
+
+                        this.factoryToDemands.set(f, demandAggregate);
+                        chain.push(demandAggregate);
+                    } else {
+                        var aggregate = this.factoryToDemands.get(f);
+                        aggregate.amount += a;
+                        aggregate.demands.push(d);
+                    }
+
+                }
+
+                for (var e of d.demands)
+                    traverse(e);
+            }
+
+            this.factoryToDemands.clear();
+            for (var d of view.selectedFactory().demands) {
+                traverse(d);
+            }
+
+            if (view.selectedFactory().extraDemand)
+                traverse(view.selectedFactory().extraDemand);
+
+            for (var c of chain) {
+                var factor = 1;
+
+                if (c.factory.extraGoodFactor)
+                    factor = c.factory.extraGoodFactor();
+
+                var inputAmount = c.amount / factor;
+                c.buildings = Math.max(0, inputAmount) / c.factory.tpmin / c.factory.boost();
+            }
+
+            return chain;
+        });
+    }
+}
+
 class PopulationReader {
 
     constructor() {
@@ -1925,7 +1982,7 @@ class PopulationReader {
 
 
             if (!json.version || json.version.startsWith("v1")) {
-                view.island().populationLevels.forEach(function(element) {
+                view.island().populationLevels.forEach(function (element) {
                     element.amount(0);
                 });
                 if (json.farmers) {
@@ -2386,14 +2443,14 @@ function init() {
     view.assetsMap = new Map();
 
     view.regions = [];
-    for (let region of (params.regions||[])) {
+    for (let region of (params.regions || [])) {
         let r = new Region(region, view.assetsMap);
         view.assetsMap.set(r.guid, r);
         view.regions.push(r);
     }
 
     view.sessions = [];
-    for (let session of (params.sessions||[])) {
+    for (let session of (params.sessions || [])) {
         let s = new Session(session, view.assetsMap);
         view.assetsMap.set(s.guid, s);
         view.sessions.push(s);
@@ -2453,6 +2510,7 @@ function init() {
     view.selectedFactory = ko.observable(view.island().factories[0]);
     view.selectedGoodConsumptionUpgradeList =
         ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
+    view.productionChain = new ProductionChainView();
 
     view.tradeManager = new TradeManager();
 
@@ -2466,7 +2524,7 @@ function init() {
     });
 
     view.island.subscribe(i => templates.forEach(t => t.parentInstance(i)));
-    
+
     view.template = {
         populationLevels: arrayToTemplate("populationLevels"),
         categories: arrayToTemplate("categories"),

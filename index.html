@@ -786,7 +786,7 @@
                                             <td>
                                                 <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > EPSILON">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.exportOverproduction.name}">
-                                                        <span data-bind="text: Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
+                                                        <span data-bind="text: formatNumber($parent.factory.overProduction())"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() + $parent.factory.overProduction())">
                                                             <span class="fa fa-sign-in"> </span>
                                                         </button>
@@ -794,7 +794,7 @@
                                                 </div>
                                                 <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -EPSILON">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
-                                                        <span data-bind="text: -Math.ceil(100 * $parent.factory.overProduction()) / 100"></span>
+                                                        <span data-bind="text: formatNumber(-$parent.factory.overProduction())"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() - $parent.factory.overProduction())">
                                                             <span class="fa fa-sign-in"> </span>
                                                         </button>
@@ -956,7 +956,7 @@
                                     </td>
                                     <td>
                                         <div class="float-right">
-                                            <span data-bind="text: Math.ceil(100*parseFloat($data.overProduction()))/100"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber($data.overProduction())"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -1005,10 +1005,10 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <hr />
+                        
 
                         <div data-bind="if: $data instanceof Factory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
-
+                            <hr />
 
                             <h6><span data-bind="text: $root.texts.extraGoods.name">Extra Goods</span><span> </span><img src="" width="35" height="35" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}" /></h6>
                             <table class="table table-striped">
@@ -1033,6 +1033,27 @@
 
 
                         </div>
+                        <div data-bind="visible: $root.productionChain.demands().length > 1">
+                            <hr />
+                            <div class="row" data-bind="foreach: $root.productionChain.demands" style="justify-content: center">
+                                <div class="col-4 col-md-2">
+
+                                    <div class="ui-fchain-item-icon">
+                                        <img class="icon-tile" src="" data-bind="attr: { src: $data.factory.icon ? $data.factory.icon : null, alt: $data.factory.name }">
+                                    </div>
+                                    <div class="ui-fchain-item-count">
+                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
+                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.buildings) : formatNumber(Math.ceil($data.buildings))"></span>
+                                            <span>x</span>
+                                        </span>
+                                    </div>
+                                    <div class="ui-fchain-item-name mb-3">
+                                        <a href="#" data-bind="text: $data.factory.name, visible: !$root.settings.hideNames.checked(), click: () => $root.selectedFactory($data.factory)"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -1230,7 +1251,7 @@
                                                 <!-- buildings display for non-construction products -->
                                                 <div class="ui-fchain-item-count" data-bind="visible: !$data.editable()">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat($data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                                                         <span>x</span>
                                                         <div class="btn-group" role="group">
                                                             <button type="button" class="btn btn-secondary" data-bind="click: () => $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
@@ -1271,7 +1292,7 @@
                                                 <div class="ui-fchain-item-count" data-bind="visible: $data.editable() &&  $data.instance().buildings() > $data.instance().existingBuildings()">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}" style="display: flex">
                                                         <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                                                         <span>x</span>
                                                     </div>
                                                 </div>
@@ -1373,7 +1394,7 @@
                                     <div class="ui-fchain-item-count" data-bind="visible:  $data.instance().buildings() >  $data.instance().existingBuildings()">
                                         <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}">
                                             <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                                             <span>x</span>
                                             <div class="btn-group" role="group">
                                                 <button type="button" class="btn btn-secondary" data-bind="click: () =>  $data.instance().incrementBuildings(), enable:  $data.instance().buildings() > 0" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
@@ -1448,12 +1469,9 @@
                                         </div>
 
                                         <div style="margin: auto">
-                                            <div data-bind="visible: $root.settings.consumptionModifier.checked() && !($data instanceof Need)">
-                                                <div style="height: calc(2.25rem + 2px);"></div>
-                                            </div>
                                             <div class="ui-fchain-item-count">
                                                 <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat($data.instance().buildings()))/100 : Math.ceil($data.instance().buildings())"></span>
+                                                    <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil($data.instance().buildings())"></span>
                                                     <span>x</span>
                                                 </span>
                                             </div>
@@ -1483,7 +1501,7 @@
                                                 </div>
                                                 <div class="ui-fchain-item-count">
                                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat($data.instance().buildings()))/100 : Math.ceil($data.instance().buildings())"></span>
+                                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil($data.instance().buildings())"></span>
                                                         <span>x</span>
                                                     </span>
                                                 </div>
@@ -1518,7 +1536,7 @@
                                 <div class="ui-fchain-item-icon"><img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
                                 <div class="ui-fchain-item-count">
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                                         <span>x</span>
                                     </span>
                                 </div>
@@ -1540,7 +1558,7 @@
                                     <div class="ui-fchain-item-icon"><img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
                                     <div class="ui-fchain-item-count">
                                         <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? Math.ceil(100*parseFloat( $data.instance().buildings()))/100 : Math.ceil( $data.instance().buildings())"></span>
+                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
                                             <span>x</span>
                                         </span>
                                     </div>
