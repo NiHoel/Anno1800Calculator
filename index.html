@@ -1221,7 +1221,7 @@
                                 <div data-bind="visible: $data.instance().visible">
 
                                     <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
-                                        <div class="ui-fchain-item-tr-button" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.missingBuildingsHighlight.checked() || $root.settings.tradeRoutes.checked()">
+                                        <div class="ui-fchain-item-tr-button">
                                             <div>
                                                 <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
                                                     <span class="fa fa-sliders"></span>
@@ -1363,7 +1363,7 @@
                         <div data-bind="foreach: $data.consumers">
                             <div data-bind="visible: !$data.island.region || $data.region === $data.island.region">
                                 <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
-                                    <div class="ui-fchain-item-tr-button" data-bind="visible: $root.settings.additionalProduction.checked()">
+                                    <div class="ui-fchain-item-tr-button">
                                         <div>
                                             <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
                                                 <span class="fa fa-sliders"></span>
