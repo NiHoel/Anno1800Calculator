@@ -28,7 +28,8 @@
     <script type="text/javascript" src="params_2020-10-22_full.js"></script>
 </head>
 <body>
-    <noscript>This site requires JavaScript!</noscript>
+<noscript>This site requires JavaScript!</noscript>
+<div id="loader" data-bind="visible: false"></div>
     <!-- #params-dialog -->
     <div id="params-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -1125,7 +1126,7 @@
             </div>
         </div>
         <!-- #/good-consumption-upgrade-dialog -->
-        <div>
+        <div class="animate-bottom">
             <!-- population input field -->
             <fieldset class="ui-fieldset" id="residents-view">
                 <legend data-bind="text:$root.texts.residents.name">Residents</legend>
