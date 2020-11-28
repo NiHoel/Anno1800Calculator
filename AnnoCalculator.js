@@ -1,5 +1,6 @@
 let versionCalculator = "v3.9";
-let EPSILON = 0.01;
+let ACCURACY = 0.01;
+let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
 
 
@@ -646,11 +647,11 @@ class Consumer extends NamedElement {
         var sum = 0;
         this.demands.forEach(d => {
             var a = d.amount();
-            //            if (a <= -EPSILON || a > 0)
+            //            if (a <= -ACCURACY || a > 0)
             sum += a;
         });
 
-        if (this.extraDemand && sum + this.extraDemand.amount() < -EPSILON) {
+        if (this.extraDemand && sum + this.extraDemand.amount() < -ACCURACY) {
             if (sum < 0) {
                 this.extraDemand.updateAmount(0);
                 this.amount(0);
@@ -774,7 +775,7 @@ class Factory extends Consumer {
         });
 
         this.amount.subscribe(() => {
-            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() < 0 && this.computedExtraAmount() + EPSILON < this.extraAmount())
+            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() < 0 && this.computedExtraAmount() + ACCURACY < this.extraAmount())
                 setTimeout(() => this.updateExtraGoods(), 10);
         });
 
@@ -788,7 +789,7 @@ class Factory extends Consumer {
         });
 
         this.visible = ko.computed(() => {
-            if (this.amount() > 0 || this.extraAmount() != 0 || this.existingBuildings() > 0 || this.extraGoodProductionList.amount() || this.tradeList.amount())
+            if (Math.abs(this.amount()) > EPSILON || Math.abs(this.extraAmount()) > EPSILON || this.existingBuildings() > 0 || Math.abs(this.extraGoodProductionList.amount()) > EPSILON || Math.abs(this.tradeList.amount()) > EPSILON)
                 return true;
 
             if (this.region && this.island.region && this.region != this.island.region)
@@ -886,7 +887,7 @@ class Factory extends Consumer {
         if (val < -Math.ceil(amount * 100) / 100)
             val = - Math.ceil(amount * 100) / 100;
 
-        if (Math.abs(val - this.extraAmount()) < EPSILON)
+        if (Math.abs(val - this.extraAmount()) < ACCURACY)
             return;
 
         this.extraAmount(val);
@@ -895,6 +896,23 @@ class Factory extends Consumer {
             for (var route of this.tradeList.routes()) {
                 route.getOppositeFactory(this).updateExtraGoods(depth - 1);
             }
+    }
+
+    applyConfigGlobally() {
+        for (var isl of view.islands()) {
+            var other = isl.assetsMap.get(this.guid);
+
+            for (var i = 0; i < this.items.length; i++)
+                other.items[i].checked(this.items[i].checked());
+
+            other.percentBoost(this.percentBoost());
+
+            if (this.moduleChecked)
+                other.moduleChecked(this.moduleChecked());
+
+            if (this.palaceBuffChecked)
+                other.palaceBuffChecked(this.palaceBuffChecked());
+        }
     }
 }
 
@@ -1182,7 +1200,7 @@ class BuildingMaterialsNeed extends Need {
             existingBuildingsOutput *= 1 + 1 / this.factory().palaceBuff.additionalOutputCycle;
 
         var overProduction = existingBuildingsOutput - otherDemand;
-        this.amount(Math.max(0, overProduction - 0.000000001));
+        this.amount(Math.max(0, overProduction - EPSILON));
     }
 
     updateFixedProductFactory() { }
@@ -1722,6 +1740,27 @@ class TradeList {
         view.tradeManager.add(route);
     }
 
+    onShow() {
+        var usedIslands = new Set(this.routes().flatMap(r => [r.from, r.to]));
+        var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != this.island);
+        islands.sort((a, b) => {
+            var sIdxA = view.sessions.indexOf(a.session);
+            var sIdxB = view.sessions.indexOf(b.session);
+
+            if (sIdxA == sIdxB) {
+                return a.name() > b.name();
+            } else {
+                return sIdxA > sIdxB;
+            }
+        });
+        var overProduction = this.factory.overProduction();
+        if (overProduction == 0)
+            overProduction = -this.factory.computedExtraAmount();
+        this.export(overProduction > 0);
+        this.newAmount(Math.abs(overProduction));
+
+        this.unusedIslands(islands);
+    }
 }
 
 class TradeManager {
@@ -1735,25 +1774,8 @@ class TradeManager {
             if (!(f instanceof Factory))
                 return;
 
-            var usedIslands = new Set(f.tradeList.routes().flatMap(r => [r.from, r.to]));
-            var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != f.tradeList.island);
-            islands.sort((a, b) => {
-                var sIdxA = view.sessions.indexOf(a.session);
-                var sIdxB = view.sessions.indexOf(b.session);
-
-                if (sIdxA == sIdxB) {
-                    return a.name() > b.name();
-                } else {
-                    return sIdxA > sIdxB;
-                }
-            });
-            var overProduction = f.overProduction();
-            if (overProduction == 0)
-                overProduction = -f.computedExtraAmount();
-            f.tradeList.export(overProduction > 0);
-            f.tradeList.newAmount(Math.abs(overProduction));
-
-            f.tradeList.unusedIslands(islands);
+            if (f.tradeList)
+                f.tradeList.onShow();
         });
 
 
@@ -1893,7 +1915,7 @@ class ProductionChainView {
                 if (d.factory && d.amount) {
                     var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
                     var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
-                    if (Math.abs(a) < EPSILON)
+                    if (Math.abs(a) < ACCURACY)
                         return;
 
 
@@ -2595,6 +2617,8 @@ function removeSpaces(string) {
 var formater = new Intl.NumberFormat(navigator.language || "en").format;
 function formatNumber(num) {
     var rounded = Math.ceil(100 * parseFloat(num)) / 100;
+	if(Math.abs(rounded) < EPSILON)
+		rounded = 0;
     return formater(rounded);
 }
 
@@ -2613,8 +2637,8 @@ function getMax(id) {
 ko.components.register('number-input-increment', {
     template:
         `<div class="input-group-btn-vertical" >
-                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + EPSILON; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
-                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - EPSILON; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + ACCURACY; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - ACCURACY; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
                                                     </div>`
 });
 
@@ -2681,6 +2705,58 @@ function exportConfig() {
     }());
 
     saveData(localStorage, ("Anno1800CalculatorConfig") + ".json");
+}
+
+function batchImports(source, destinations, factories) {
+    if (!(source instanceof Island))
+        source = view.islandManager.getByName(source);
+
+    for (var dest of destinations) {
+        if (!(dest instanceof Island))
+            dest = view.islandManager.getByName(dest);
+
+        for (var f of factories) {
+            var list = dest.assetsMap.get(f).tradeList;
+
+            if (list.factory.overProduction() > -ACCURACY)
+                continue;
+
+            list.onShow();
+            if (list.unusedIslands.indexOf(source) == -1)
+                continue;
+
+            list.selectedIsland(source);
+            list.export(false);
+            list.newAmount(Math.abs(list.factory.overProduction()));
+            list.create();
+        }
+    }
+}
+
+function batchExports(sources, destination, factories) {
+    if (!(destination instanceof Island))
+        destination = view.islandManager.getByName(destination);
+
+    for (var src of sources) {
+        if (!(src instanceof Island))
+            src = view.islandManager.getByName(src);
+
+        for (var f of factories) {
+            var list = src.assetsMap.get(f).tradeList;
+
+            if (list.factory.overProduction() < ACCURACY)
+                continue;
+
+            list.onShow();
+            if (list.unusedIslands.indexOf(destination) == -1)
+                continue;
+
+            list.selectedIsland(destination);
+            list.export(true);
+            list.newAmount(Math.abs(list.factory.overProduction()));
+            list.create();
+        }
+    }
 }
 
 function checkAndShowNotifications() {

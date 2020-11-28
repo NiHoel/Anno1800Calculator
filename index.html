@@ -28,8 +28,8 @@
     <script type="text/javascript" src="params_2020-10-22_full.js"></script>
 </head>
 <body>
-<noscript>This site requires JavaScript!</noscript>
-<div id="loader" data-bind="visible: false"></div>
+    <noscript>This site requires JavaScript!</noscript>
+    <div id="loader" data-bind="visible: false"></div>
     <!-- #params-dialog -->
     <div id="params-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -447,27 +447,27 @@
                     <table class="table table-striped">
 
                         <tbody data-bind="foreach: $root.islandManager.islandCandidates">
-                        <tr>
-                            <td>
-                                <span data-bind="click: () => $root.islandManager.deleteCandidate($data)" aria-hidden="true" class="dismiss">×</span>
-                            </td>
-                            <td>
-                                <div data-bind="if: $data.session">
-                                    <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}"/>
-                                </div>
-                            </td>
-                            <td data-bind="text: $data.name"></td>
-                            <td>
-                                <span class="float-right">
-                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => {$root.islandManager.islandNameInput($data.name), $root.islandManager.sessionInput($data.session)}">
-                                        <span class="fa fa-pencil"> </span>
-                                    </button>
-                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data.name, $data.session)">
-                                        <span class="fa fa-plus"> </span>
-                                    </button>
-                                </span>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    <span data-bind="click: () => $root.islandManager.deleteCandidate($data)" aria-hidden="true" class="dismiss">×</span>
+                                </td>
+                                <td>
+                                    <div data-bind="if: $data.session">
+                                        <img src="" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
+                                    </div>
+                                </td>
+                                <td data-bind="text: $data.name"></td>
+                                <td>
+                                    <span class="float-right">
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => {$root.islandManager.islandNameInput($data.name), $root.islandManager.sessionInput($data.session)}">
+                                            <span class="fa fa-pencil"> </span>
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data.name, $data.session)">
+                                            <span class="fa fa-plus"> </span>
+                                        </button>
+                                    </span>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -602,7 +602,7 @@
                                 </td>
                                 <td>
                                     <div class="float-right">
-                                        <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
+                                        <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -ACCURACY">
                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                         </span>
                                         <div class="input-group input-group-short spinner">
@@ -785,7 +785,7 @@
                                             </td> -->
 
                                             <td>
-                                                <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > EPSILON">
+                                                <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > ACCURACY">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.exportOverproduction.name}">
                                                         <span data-bind="text: formatNumber($parent.factory.overProduction())"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() + $parent.factory.overProduction())">
@@ -793,7 +793,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -EPSILON">
+                                                <div data-bind="if: !$data.isExport($parent) && $parent.factory.overProduction() < -ACCURACY">
                                                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
                                                         <span data-bind="text: formatNumber(-$parent.factory.overProduction())"></span>
                                                         <button class="btn btn-light btn-sm" data-bind="click: () => $data.amount($data.amount() - $parent.factory.overProduction())">
@@ -816,7 +816,7 @@
                                                                 <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
                                                             </span>
                                                         </div>
-                                                        <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -EPSILON">
+                                                        <span data-bind="if: !$data.isExport($parent) && $root.settings.missingBuildingsHighlight.checked() && $data.fromFactory.overProduction() < -ACCURACY">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>
@@ -906,7 +906,7 @@
 
 
                                         <div class="float-right">
-                                            <span data-bind="if: $data.extraAmount() < -EPSILON + $data.computedExtraAmount()">
+                                            <span data-bind="if: $data.extraAmount() < -ACCURACY + $data.computedExtraAmount()">
                                                 <span class="fa fa-exclamation-triangle danger-icon"></span>
                                             </span>
                                             <div class="input-group input-group-short spinner">
@@ -1006,7 +1006,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        
+
 
                         <div data-bind="if: $data instanceof Factory && ($data.extraGoodProductionList.nonZero().length && $root.settings.additionalProduction.checked())">
                             <hr />
@@ -1055,6 +1055,11 @@
                             </div>
                         </div>
 
+                    </div>
+                    <div class="modal-footer">
+                        <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally">
+                            <span data-bind="text: $root.texts.applyGlobally.name()">Apply Globally</span>
+                        </btn>
                     </div>
                 </div>
             </div>
@@ -1221,7 +1226,7 @@
                             <div data-bind="foreach: $data.factories">
                                 <div data-bind="visible: $data.instance().visible">
 
-                                    <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() ? 'danger' : ''">
+                                    <div class="ui-fchain-item" data-bind="css: $root.settings.missingBuildingsHighlight.checked() &&  $data.instance().buildings() >  $data.instance().existingBuildings() + ACCURACY ? 'danger' : ''">
                                         <div class="ui-fchain-item-tr-button">
                                             <div>
                                                 <button class="btn btn-light btn-sm" data-bind="click: () => {$root.selectedFactory($data.instance())}" data-toggle="modal" data-target="#factory-config-dialog">
@@ -1339,7 +1344,7 @@
                                                 <div class="input-group input-group-sm spinner mb-3">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">+ </span>
-                                                        <span data-bind="visible: $data.instance().extraAmount() < -EPSILON  + $data.instance().computedExtraAmount()">
+                                                        <span data-bind="visible: $data.instance().extraAmount() < -ACCURACY  + $data.instance().computedExtraAmount()">
                                                             <span class="fa fa-exclamation-triangle danger-icon"></span>
                                                         </span>
                                                     </div>
