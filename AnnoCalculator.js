@@ -1,19 +1,9 @@
-let versionCalculator = "v3.9";
-let EPSILON = 0.01;
+let versionCalculator = "v4.0";
+let ACCURACY = 0.01;
+let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
 
-var languageCodes = {
-    'en': 'english',
-    'de': 'german',
-    'fr': 'french',
-    'ru': 'russian',
-    'ko': 'korean',
-    'ja': 'japanese',
-    'zh': 'chinese',
-    'it': 'italien',
-    'es': 'spanish',
-    'pl': 'polish'
-}
+
 
 view = {
     settings: {
@@ -89,11 +79,21 @@ class NamedElement {
 
             text = this.locaText["english"];
             return text ? text : config.name;
-        })
+        });
+
+        if (this.iconPath && params && params.icons)
+            this.icon = params.icons[this.iconPath];
     }
 }
 
 class Region extends NamedElement { }
+class Session extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+
+        this.region = assetsMap.get(config.region);
+    }
+}
 
 class Option extends NamedElement {
     constructor(config) {
@@ -104,7 +104,7 @@ class Option extends NamedElement {
 }
 
 class Island {
-    constructor(params, localStorage) {
+    constructor(params, localStorage, session) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
             this.isAllIslands = function () { return false; };
@@ -115,9 +115,23 @@ class Island {
         this.storage = localStorage;
         var isNew = !localStorage.length;
 
-        var assetsMap = new Map();
+        this.session = session || this.storage.getItem("session");
+        this.session = this.session instanceof Session ? this.session : view.assetsMap.get(this.session);
+        this.region = this.session ? this.session.region : null;
 
-        this.regions = [];
+        this.storage.setItem("session", this.session ? this.session.guid : null);
+
+        var assetsMap = new Map();
+        for (var key of view.assetsMap.keys())
+            assetsMap.set(key, view.assetsMap.get(key));
+
+        this.sessionExtendedName = ko.pureComputed(() => {
+            if (!this.session)
+                return this.name();
+
+            return `${this.session.name()} - ${this.name()}`;
+        });
+
         this.populationLevels = [];
         this.consumers = [];
         this.factories = [];
@@ -126,28 +140,28 @@ class Island {
         this.buildingMaterialsNeeds = [];
         this.multiFactoryProducts = [];
         this.items = [];
-
-        for (let region of params.regions) {
-            let r = new Region(region, assetsMap);
-            assetsMap.set(r.guid, r);
-            this.regions.push(r);
-        }
+        this.replaceInputItems = [];
+        this.extraGoodItems = [];
+        this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
 
         for (let workforce of params.workforce) {
-            let w = new Workforce(workforce, assetsMap)
+            let w = new Workforce(workforce, assetsMap);
             assetsMap.set(w.guid, w);
             this.workforce.push(w);
         }
 
-        for (let consumer of params.powerPlants) {
-            let f = new Consumer(consumer, assetsMap)
+        for (let consumer of (params.powerPlants || [])) {
+            //if (this.region && this.region.guid != consumer.region)
+            //    continue;
+
+            let f = new Consumer(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
 
             if (localStorage) {
                 {
                     let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.existingBuildings(parseInt(localStorage.getItem(id)));
 
                     f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
@@ -161,8 +175,15 @@ class Island {
             this.consumers.push(f);
         }
 
+        if (!this.region || this.region.guid === 5000000) {
+            for (let buff of (params.palaceBuffs || [])) {
+                let f = new PalaceBuff(buff, assetsMap);
+                assetsMap.set(f.guid, f);
+            }
+        }
+
         for (let factory of params.factories) {
-            let f = new Factory(factory, assetsMap)
+            let f = new Factory(factory, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
             this.factories.push(f);
@@ -170,15 +191,23 @@ class Island {
             if (localStorage) {
                 if (f.moduleChecked) { // set moduleChecked before boost, otherwise boost would be increased
                     let id = f.guid + ".module.checked";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.moduleChecked(parseInt(localStorage.getItem(id)));
 
                     f.moduleChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
                 }
 
+                if (f.palaceBuff) {
+                    let id = f.guid + ".palaceBuff.checked";
+                    if (localStorage.getItem(id) != null)
+                        f.palaceBuffChecked(parseInt(localStorage.getItem(id)));
+
+                    f.palaceBuffChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+
                 {
                     let id = f.guid + ".percentBoost";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.percentBoost(parseInt(localStorage.getItem(id)));
 
                     f.percentBoost.subscribe(val => {
@@ -188,13 +217,13 @@ class Island {
                             f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
                             return;
                         }
-                        localStorage.setItem(id, val)
+                        localStorage.setItem(id, val);
                     });
                 }
 
                 {
                     let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         f.existingBuildings(parseInt(localStorage.getItem(id)));
 
                     f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
@@ -215,7 +244,7 @@ class Island {
                 if (localStorage) {
                     {
                         let id = p.guid + ".percentBoost";
-                        if (localStorage.getItem(id)) {
+                        if (localStorage.getItem(id) != null) {
                             let b = parseInt(localStorage.getItem(id))
                             p.factories.forEach(f => f.percentBoost(b));
                             localStorage.removeItem(id);
@@ -225,9 +254,10 @@ class Island {
 
                     {
                         let id = p.guid + ".fixedFactory";
-                        if (localStorage.getItem(id))
+                        if (localStorage.getItem(id) != null)
                             p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
-                        p.fixedFactory.subscribe(f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
+                        p.fixedFactory.subscribe(
+                            f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
                     }
                 }
 
@@ -237,20 +267,45 @@ class Island {
         }
 
         for (let item of (params.items || [])) {
-            let i = new Item(item, assetsMap);
+            let i = new Item(item, assetsMap, this.region);
+            if (!i.factories.length)
+                continue;  // Affects no factories in this region
+
             assetsMap.set(i.guid, i);
             this.items.push(i);
 
-            i.factories.forEach(f => { if (f) f.items.push(i) });
+            if (i.replacements)
+                this.replaceInputItems.push(i);
+
+            if (i.additionalOutputs)
+                this.extraGoodItems.push(i);
 
             if (localStorage) {
-                let id = i.guid + ".checked";
-                if (localStorage.getItem(id))
-                    i.checked(parseInt(localStorage.getItem(id)));
+                let oldId = i.guid + ".checked";
+                var oldChecked = false;
+                if (localStorage.getItem(oldId) != null)
+                    oldChecked = parseInt(localStorage.getItem(oldId));
 
-                i.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                for (var equip of i.equipments) {
+                    let id = `${equip.factory.guid}[${i.guid}].checked`;
+
+                    if (oldChecked)
+                        equip.checked(true);
+
+                    if (localStorage.getItem(id) != null)
+                        equip.checked(parseInt(localStorage.getItem(id)));
+
+                    equip.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+
+                localStorage.removeItem(oldId);
             }
         }
+
+        this.extraGoodItems.sort((a, b) => a.name() > b.name());
+        view.settings.language.subscribe(() => {
+            this.extraGoodItems.sort((a, b) => a.name() > b.name());
+        });
 
         // must be set after items so that extraDemand is correctly handled
         this.consumers.forEach(f => f.referenceProducts(assetsMap));
@@ -258,21 +313,21 @@ class Island {
         // setup demands induced by modules
         for (let factory of params.factories) {
             let f = assetsMap.get(factory.guid);
-            if (f.module)
+            if (f && f.module)
                 f.moduleDemand = new Demand({ guid: f.module.getInputs()[0].Product, region: f.region }, assetsMap);
         }
 
 
-
         for (let level of params.populationLevels) {
-            let l = new PopulationLevel(level, assetsMap)
+
+            let l = new PopulationLevel(level, assetsMap);
             assetsMap.set(l.guid, l);
             this.populationLevels.push(l);
 
             if (localStorage) {
                 {
                     let id = l.guid + ".amount";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         l.amount(parseInt(localStorage.getItem(id)));
 
                     l.amount.subscribe(val => {
@@ -287,7 +342,7 @@ class Island {
                 }
                 {
                     let id = l.guid + ".existingBuildings";
-                    if (localStorage.getItem(id))
+                    if (localStorage.getItem(id) != null)
                         l.existingBuildings(parseInt(localStorage.getItem(id)));
 
                     l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
@@ -305,7 +360,7 @@ class Island {
                 if (localStorage) {
                     {
                         let id = `${l.guid}[${n.guid}].checked`;
-                        if (localStorage.getItem(id))
+                        if (localStorage.getItem(id) != null)
                             n.checked(parseInt(localStorage.getItem(id)))
 
                         n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
@@ -314,14 +369,14 @@ class Island {
 
                     {
                         let id = `${l.guid}[${n.guid}].percentBoost`;
-                        if (localStorage.getItem(id))
-                            n.percentBoost(parseInt(localStorage.getItem(id)));
+                        if (localStorage.getItem(id) != null)
+                            n.percentBoost(parseFloat(localStorage.getItem(id)));
 
                         n.percentBoost.subscribe(val => {
-                            val = parseInt(val);
+                            val = parseFloat(val);
 
                             if (val == null || !isFinite(val) || isNaN(val)) {
-                                n.percentBoost(parseInt(localStorage.getItem(id)) || 100);
+                                n.percentBoost(parseFloat(localStorage.getItem(id)) || 100);
                                 return;
                             }
                             localStorage.setItem(id, val);
@@ -346,9 +401,13 @@ class Island {
             this.categories.push(c);
         }
 
-        for (let powerPlant of params.powerPlants) {
+        for (let powerPlant of (params.powerPlants || [])) {
             var pl = assetsMap.get(powerPlant.guid);
+            if (!pl)
+                continue; // power plant not constructable in this region
+
             this.categories[1].consumers.push(pl);
+            pl.editable(true);
             var pr = pl.getInputs()[0].product;
             let n = new PowerPlantNeed({ guid: pr.guid, factory: pl, product: pr }, assetsMap);
             pl.existingBuildings.subscribe(() => n.updateAmount());
@@ -359,17 +418,20 @@ class Island {
             if (p)
                 for (let b of p.factories) {
                     if (b) {
-                        b.editable = true;
+                        b.editable(true);
                         let n = new BuildingMaterialsNeed({ guid: p.guid, factory: b, product: p }, assetsMap);
                         b.boost.subscribe(() => n.updateAmount());
                         b.existingBuildings.subscribe(() => n.updateAmount());
                         b.amount.subscribe(() => n.updateAmount());
+                        b.extraAmount.subscribe(() => n.updateAmount());
+                        if (b.palaceBuff)
+                            b.palaceBuffChecked.subscribe(() => n.updateAmount());
                         this.buildingMaterialsNeeds.push(n);
 
                         if (localStorage) {
                             let oldId = b.guid + ".buildings";
                             let id = b.guid + ".existingBuildings"
-                            if (localStorage.getItem(id) || localStorage.getItem(oldId))
+                            if (localStorage.getItem(id) != null || localStorage.getItem(oldId))
                                 b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
 
                             b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
@@ -380,25 +442,61 @@ class Island {
                 }
         }
 
+        for (let upgrade of (params.goodConsumptionUpgrades || [])) {
+            let u = new GoodConsumptionUpgrade(upgrade, assetsMap, this.populationLevels);
+            if (!u.populationLevels.length)
+                continue;
+
+            assetsMap.set(u.guid, u);
+            this.allGoodConsumptionUpgrades.upgrades.push(u);
+
+            if (localStorage) {
+                let id = u.guid + ".checked";
+                if (localStorage.getItem(id) != null)
+                    u.checked(parseInt(localStorage.getItem(id)));
+
+                u.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+            }
+        }
+
+        for (let level of this.populationLevels)
+            for (let need of level.needs) {
+                this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
+            }
+
+
         // negative extra amount must be set after the demands of the population are generated
         // otherwise it would be set to zero
         for (let f of this.factories) {
 
             if (localStorage) {
-                let id = f.guid + ".extraAmount";
-                if (localStorage.getItem(id)) {
-                    f.extraAmount(parseFloat(localStorage.getItem(id)));
+                {
+                    let id = f.guid + ".extraAmount";
+                    if (localStorage.getItem(id) != null) {
+                        f.extraAmount(parseFloat(localStorage.getItem(id)));
+                    }
+
+                    f.extraAmount.subscribe(val => {
+                        val = parseFloat(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val)) {
+                            f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
+                            return;
+                        }
+                        localStorage.setItem(id, val);
+                    });
                 }
 
-                f.extraAmount.subscribe(val => {
-                    val = parseFloat(val);
-
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
-                        return;
+                {
+                    let id = f.guid + ".extraGoodProductionList.checked";
+                    if (localStorage.getItem(id) != null) {
+                        f.extraGoodProductionList.checked(parseInt(localStorage.getItem(id)));
                     }
-                    localStorage.setItem(id, val);
-                });
+
+                    f.extraGoodProductionList.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0))
+                }
+
+
             } else {
                 f.extraAmount.subscribe(val => {
                     if (val == null || !isFinite(val) || isNaN(val)) {
@@ -411,12 +509,45 @@ class Island {
         // force update once all pending notifications are processed
         setTimeout(() => { this.buildingMaterialsNeeds.forEach(b => b.updateAmount()) }, 1000);
 
+        this.workforce = this.workforce.filter(w => w.demands.length);
+
         this.assetsMap = assetsMap;
         this.products = products;
+
+
+        this.top2Population = ko.computed(() => {
+            var useHouses = view.settings.existingBuildingsInput.checked();
+            var comp = useHouses
+                ? (a, b) => b.existingBuildings() - a.existingBuildings()
+                : (a, b) => b.amount() - a.amount();
+
+            return [...this.populationLevels].sort(comp).slice(0, 2).filter(l => useHouses ? l.existingBuildings() : l.amount());
+        });
+
+        this.top5Factories = ko.computed(() => {
+            var useBuildings = view.settings.missingBuildingsHighlight.checked();
+            var comp = useBuildings
+                ? (a, b) => b.existingBuildings() - a.existingBuildings()
+                : (a, b) => b.buildings() - a.buildings();
+
+            return [...this.factories].sort(comp).slice(0, 5).filter(f => useBuildings ? f.existingBuildings() : f.buildings());
+        });
     }
 
     reset() {
+        {
+            var deletedRoutes = view.tradeManager.routes().filter(r => r.to === this || r.from === this);
+            deletedRoutes.forEach(r => view.tradeManager.remove(r));
+        }
+
+        {
+            var deletedRoutes = view.tradeManager.npcRoutes().filter(r => r.to === this);
+            deletedRoutes.forEach(r => view.tradeManager.remove(r));
+        }
+
         this.assetsMap.forEach(a => {
+            if (a instanceof Option)
+                a.checked(false);
             if (a instanceof Product)
                 a.fixedFactory(null);
             if (a instanceof Consumer)
@@ -424,16 +555,22 @@ class Island {
             if (a instanceof Factory) {
                 if (a.moduleChecked)
                     a.moduleChecked(false);
+                if (a.palaceBuffChecked)
+                    a.palaceBuffChecked(false);
                 a.percentBoost(100);
                 a.extraAmount(0);
+                a.extraGoodProductionList.checked(true);
             }
 
             if (a instanceof PopulationLevel) {
                 a.existingBuildings(0);
                 a.amount(0);
             }
-            if (a instanceof Item)
+            if (a instanceof Item) {
                 a.checked(false);
+                for (var i of a.equipments)
+                    i.checked(false);
+            }
 
             if (a.guid == 1010240)
                 a.fixedFactory(this.assetsMap.get(1010318));
@@ -449,8 +586,10 @@ class Island {
 }
 
 class Consumer extends NamedElement {
-    constructor(config, assetsMap) {
+    constructor(config, assetsMap, island) {
         super(config);
+
+        this.island = island;
 
         if (config.region)
             this.region = assetsMap.get(config.region);
@@ -458,14 +597,20 @@ class Consumer extends NamedElement {
         this.amount = ko.observable(0);
         this.boost = ko.observable(1);
 
+        this.editable = ko.observable(false);
+
         this.demands = new Set();
         this.buildings = ko.computed(() => Math.max(0, parseFloat(this.amount())) / this.tpmin);
-        this.existingBuildings = ko.observable(0);
+        this.existingBuildings = createIntInput(0);
         this.items = [];
+
+        this.outputAmount = ko.computed(() => this.amount());
 
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
         this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+
+        this.tradeList = new TradeList(island, this);
     }
 
     getInputs() {
@@ -502,23 +647,21 @@ class Consumer extends NamedElement {
         var sum = 0;
         this.demands.forEach(d => {
             var a = d.amount();
-            //            if (a <= -EPSILON || a > 0)
+            //            if (a <= -ACCURACY || a > 0)
             sum += a;
         });
 
-        if (sum < -EPSILON) {
-            if (sum < this.extraDemand.amount()) {
+        if (this.extraDemand && sum + this.extraDemand.amount() < -ACCURACY) {
+            if (sum < 0) {
                 this.extraDemand.updateAmount(0);
                 this.amount(0);
             } else {
 
-                this.extraDemand.updateAmount(this.extraDemand.amount() - sum);
+                this.extraDemand.updateAmount(-sum);
             }
         }
         else {
-            // for initialization before creation this.extraDemand
-            var extraDemand = this.extraDemand ? this.extraDemand.amount() : 0;
-            var val = Math.max(0, sum - extraDemand);
+            var val = Math.max(0, sum);
             if (val < 1e-16)
                 val = 0;
             this.amount(val);
@@ -547,13 +690,20 @@ class Module extends Consumer {
     }
 }
 
-class Factory extends Consumer {
+class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
         super(config, assetsMap);
+    }
+}
 
-        this.extraAmount = ko.observable(0);
+class Factory extends Consumer {
+    constructor(config, assetsMap, island) {
+        super(config, assetsMap, island);
 
-        this.percentBoost = ko.observable(100);
+        this.extraAmount = createFloatInput(0);
+        this.extraGoodProductionList = new ExtraGoodProductionList(this);
+
+        this.percentBoost = createIntInput(100);
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
 
         if (this.module) {
@@ -566,15 +716,44 @@ class Factory extends Consumer {
                     var val = Math.max(1, parseInt(this.percentBoost()) - this.module.productivityUpgrade);
                     this.percentBoost(val);
                 }
-            })
+            });
             //moduleDemand created in island constructor after referencing products
         }
 
+        if (config.palaceBuff) {
+            this.palaceBuff = assetsMap.get(config.palaceBuff);
+            this.palaceBuffChecked = ko.observable(false);
+        }
+
+        this.extraGoodFactor = ko.computed(() => {
+            var factor = 1;
+            if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
+                factor += 1 / this.module.additionalOutputCycle;
+
+            if (this.palaceBuff && this.palaceBuffChecked())
+                factor += 1 / this.palaceBuff.additionalOutputCycle;
+
+            if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting && this.extraGoodProductionList.checked())
+                for (var e of this.extraGoodProductionList.selfEffecting())
+                    if (e.item.checked())
+                        factor += (e.Amount || 1) / e.additionalOutputCycle;
+
+            return factor;
+        });
+
+        this.requiredOutputAmount = ko.computed(() => {
+            var amount = Math.max(0, parseFloat(this.amount() + parseFloat(this.extraAmount())));
+            return amount / this.extraGoodFactor();
+        });
+
+        this.producedOutputAmount = ko.computed(() => {
+            return parseInt(this.existingBuildings()) * this.boost() * this.tpmin;
+        });
+
+        this.outputAmount = ko.computed(() => Math.max(this.requiredOutputAmount(), this.producedOutputAmount()));
 
         this.buildings = ko.computed(() => {
-            var buildings = Math.max(0, parseFloat(this.amount()) + parseFloat(this.extraAmount())) / this.tpmin / this.boost();
-            if (this.module && this.moduleChecked() && this.module.additionalOutputCycle)
-                buildings *= this.module.additionalOutputCycle / (this.module.additionalOutputCycle + 1);
+            var buildings = this.requiredOutputAmount() / this.tpmin / this.boost();
 
             if (this.moduleDemand)
                 if (this.moduleChecked())
@@ -585,6 +764,52 @@ class Factory extends Consumer {
         });
 
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+
+        this.computedExtraAmount = ko.computed(() => {
+            return (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) + this.tradeList.amount();
+        });
+
+        this.computedExtraAmount.subscribe(() => {
+            if (view.settings.autoApplyExtraNeed.checked())
+                setTimeout(() => this.updateExtraGoods(), 10);
+        });
+
+        this.amount.subscribe(() => {
+            if (view.settings.autoApplyExtraNeed.checked() && this.computedExtraAmount() < 0 && this.computedExtraAmount() + ACCURACY < this.extraAmount())
+                setTimeout(() => this.updateExtraGoods(), 10);
+        });
+
+        this.overProduction = ko.computed(() => {
+            var val = 0;
+
+            if (view.settings.missingBuildingsHighlight.checked())
+                var val = this.existingBuildings() * this.boost() * this.tpmin * this.extraGoodFactor();
+
+            return val - this.amount() - this.extraAmount();
+        });
+
+        this.visible = ko.computed(() => {
+            if (Math.abs(this.amount()) > EPSILON || Math.abs(this.extraAmount()) > EPSILON || this.existingBuildings() > 0 || Math.abs(this.extraGoodProductionList.amount()) > EPSILON || Math.abs(this.tradeList.amount()) > EPSILON)
+                return true;
+
+            if (this.region && this.island.region && this.region != this.island.region)
+                return false;
+
+            if (view.settings.showAllConstructableFactories.checked())
+                return true;
+
+            if (this.editable()) {
+                if (this.region && this.island.region)
+                    return this.region === this.island.region;
+
+                if (!this.region || this.region.guid === 5000000)
+                    return true;
+
+                return false;
+            }
+
+            return false;
+        });
     }
 
 
@@ -600,7 +825,7 @@ class Factory extends Consumer {
         if (!this.icon)
             this.icon = this.product.icon;
 
-        this.extraDemand = new Demand({ guid: this.product.guid }, assetsMap);
+        this.extraDemand = new FactoryDemand({ factory: this, guid: this.product.guid }, assetsMap);
         this.extraAmount.subscribe(val => {
             val = parseFloat(val);
             if (!isFinite(val) || val == null) {
@@ -655,6 +880,40 @@ class Factory extends Consumer {
     decrementPercentBoost() {
         this.percentBoost(parseInt(this.percentBoost()) - 1);
     }
+
+    updateExtraGoods(depth) {
+        var val = this.computedExtraAmount();
+        var amount = this.amount();
+        if (val < -Math.ceil(amount * 100) / 100)
+            val = - Math.ceil(amount * 100) / 100;
+
+        if (Math.abs(val - this.extraAmount()) < ACCURACY)
+            return;
+
+        this.extraAmount(val);
+
+        if (depth > 0)
+            for (var route of this.tradeList.routes()) {
+                route.getOppositeFactory(this).updateExtraGoods(depth - 1);
+            }
+    }
+
+    applyConfigGlobally() {
+        for (var isl of view.islands()) {
+            var other = isl.assetsMap.get(this.guid);
+
+            for (var i = 0; i < this.items.length; i++)
+                other.items[i].checked(this.items[i].checked());
+
+            other.percentBoost(this.percentBoost());
+
+            if (this.moduleChecked)
+                other.moduleChecked(this.moduleChecked());
+
+            if (this.palaceBuffChecked)
+                other.palaceBuffChecked(this.palaceBuffChecked());
+        }
+    }
 }
 
 class Product extends NamedElement {
@@ -679,6 +938,7 @@ class Demand extends NamedElement {
 
         this.amount = ko.observable(0);
 
+
         this.product = assetsMap.get(this.guid);
         if (!this.product)
             throw `No Product ${this.guid}`;
@@ -687,31 +947,36 @@ class Demand extends NamedElement {
         if (this.product) {
             this.updateFixedProductFactory(this.product.fixedFactory());
             this.product.fixedFactory.subscribe(f => this.updateFixedProductFactory(f));
+
+            this.inputAmount = ko.computed(() => {
+                var amount = parseFloat(this.amount());
+
+                var factor = 1;
+
+                if (this.factory() && this.factory().extraGoodFactor)
+                    factor = this.factory().extraGoodFactor();
+
+                return amount / factor;
+
+            });
+
             if (this.consumer)
                 this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
 
             if (this.product.differentFactoryInputs) {
                 this.demands = [new FactoryDemandSwitch(this, assetsMap)];
-                this.amount.subscribe(val => this.demands[0].updateAmount(val));
+                this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
             }
             else
                 this.demands = this.factory().getInputs().map(input => {
                     var d;
-                    let items = this.factory().items.filter(item => item.replacements.has(input.Product));
+                    let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
                     if (items.length)
                         d = new ItemDemandSwitch(this, input, items, assetsMap);
                     else
                         d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
 
-                    this.amount.subscribe(val => {
-                        var factory = this.factory();
-                        var amount = val * input.Amount;
-
-                        if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
-                            amount *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
-
-                        d.updateAmount(amount)
-                    });
+                    this.inputAmount.subscribe(val => d.updateAmount(val * input.Amount));
 
                     return d;
                 });
@@ -721,12 +986,9 @@ class Demand extends NamedElement {
                 this.factory().updateAmount();
             });
 
-             this.buildings = ko.computed(() => {
+            this.buildings = ko.computed(() => {
                 var factory = this.factory();
-                var buildings = Math.max(0, parseFloat(this.amount())) / factory.tpmin / factory.boost();
-                
-                if (factory.module && factory.moduleChecked() && factory.module.additionalOutputCycle)
-                    buildings *= factory.module.additionalOutputCycle / (factory.module.additionalOutputCycle + 1);
+                var buildings = Math.max(0, this.inputAmount()) / factory.tpmin / factory.boost();
 
                 return buildings;
             });
@@ -801,7 +1063,7 @@ class FactoryDemandSwitch {
             for (var input of factory.getInputs()) {
 
                 var d;
-                let items = factory.items.filter(item => item.replacements.has(input.Product));
+                let items = factory.items.filter(item => item.replacements && item.replacements.has(input.Product));
                 if (items.length)
                     d = new ItemDemandSwitch(consumer, input, items, assetsMap);
                 else
@@ -844,13 +1106,23 @@ class FactoryDemandSwitch {
 
 }
 
+class FactoryDemand extends Demand {
+    constructor(config, assetsMap) {
+        super(config, assetsMap);
+        this.factory(config.factory);
+    }
+
+    updateFixedProductFactory() {
+    }
+}
+
 class Need extends Demand {
     constructor(config, assetsMap) {
         super(config, assetsMap);
         this.allDemands = [];
 
         let treeTraversal = node => {
-            if (node instanceof Demand)
+            if (node instanceof Demand && !(node instanceof Need))
                 this.allDemands.push(node);
             (node.demands || []).forEach(treeTraversal);
         }
@@ -864,11 +1136,12 @@ class PopulationNeed extends Need {
         super(config, assetsMap);
 
         this.residents = 0;
+        this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
-        this.percentBoost = ko.observable(100);
+        this.percentBoost = createFloatInput(100);
         this.percentBoost.subscribe(val => {
-            val = parseInt(val);
-            if (val < 1)
+            val = parseFloat(val);
+            if (val <= 0)
                 this.percentBoost(1);
         })
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
@@ -919,8 +1192,15 @@ class BuildingMaterialsNeed extends Need {
     updateAmount() {
         var otherDemand = 0;
         this.factory().demands.forEach(d => otherDemand += d == this ? 0 : d.amount());
-        var overProduction = this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() - otherDemand;
-        this.amount(Math.max(0, overProduction));
+
+        var existingBuildingsOutput =
+            this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost();
+
+        if (this.factory().palaceBuff && this.factory().palaceBuffChecked())
+            existingBuildingsOutput *= 1 + 1 / this.factory().palaceBuff.additionalOutputCycle;
+
+        var overProduction = existingBuildingsOutput - otherDemand;
+        this.amount(Math.max(0, overProduction - EPSILON));
     }
 
     updateFixedProductFactory() { }
@@ -946,15 +1226,17 @@ class PopulationLevel extends NamedElement {
         super(config);
 
         this.hotkey = ko.observable(null);
-        this.amount = ko.observable(0);
-        this.existingBuildings = ko.observable(0);
+        this.amount = createIntInput(0);
+        this.existingBuildings = createIntInput(0);
         this.noOptionalNeeds = ko.observable(false);
         this.needs = [];
+        this.region = assetsMap.get(config.region);
 
         config.needs.forEach(n => {
             if (n.tpmin > 0 && assetsMap.get(n.guid))
                 this.needs.push(new PopulationNeed(n, assetsMap));
         });
+
         this.amount.subscribe(val => {
             if (val < 0)
                 this.amount(0);
@@ -962,17 +1244,16 @@ class PopulationLevel extends NamedElement {
                 this.needs.forEach(n => n.updateAmount(parseInt(val)))
         });
         this.existingBuildings.subscribe(val => {
-            val = parseInt(val);
-            this.existingBuildings(val);
             if (view.settings.existingBuildingsInput.checked())
                 this.needs.forEach(n => n.updateAmount(parseInt(val * config.fullHouse)))
-        })
+        });
         view.settings.existingBuildingsInput.checked.subscribe(enabled => {
             if (enabled)
-                this.existingBuildings(Math.max(this.existingBuildings(), Math.ceil(parseInt(this.amount()) / config.fullHouse)))
+                this.existingBuildings(Math.max(this.existingBuildings(),
+                    Math.ceil(parseInt(this.amount()) / config.fullHouse)));
             else
                 this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
-        })
+        });
     }
 
     incrementAmount() {
@@ -1023,13 +1304,15 @@ class WorkforceDemand extends NamedElement {
     }
 }
 
-class Item extends Option {
-    constructor(config, assetsMap) {
+class Item extends NamedElement {
+    constructor(config, assetsMap, region) {
         super(config);
-        this.replacements = new Map();
-        this.replacementArray = [];
 
-        if (this.replaceInputs)
+        if (this.replaceInputs) {
+            this.replacements = new Map();
+            this.replacementArray = [];
+
+
             this.replaceInputs.forEach(r => {
                 this.replacementArray.push({
                     old: assetsMap.get(r.OldInput),
@@ -1037,8 +1320,646 @@ class Item extends Option {
                 });
                 this.replacements.set(r.OldInput, r.NewInput);
             });
+        }
+
+        if (this.additionalOutputs) {
+            this.extraGoods = this.additionalOutputs.map(p => assetsMap.get(p.Product));
+        }
 
         this.factories = this.factories.map(f => assetsMap.get(f));
+        this.equipments =
+            this.factories.map(f => new EquippedItem({ item: this, factory: f, locaText: this.locaText }, assetsMap));
+
+        this.checked = ko.pureComputed({
+            read: () => {
+                for (var eq of this.equipments)
+                    if (!eq.checked())
+                        return false;
+
+                return true;
+            },
+            write: (checked) => {
+                this.equipments.forEach(e => e.checked(checked));
+            }
+
+        });
+
+        this.visible = ko.computed(() => {
+            if (!view.island || !view.island())
+                return true;
+
+            var region = view.island().region;
+            if (!region)
+                return true;
+
+            for (var f of this.factories)
+                if (f.region === region)
+                    return true;
+
+            return false;
+        });
+    }
+}
+
+class EquippedItem extends Option {
+    constructor(config, assetsMap) {
+        super(config);
+
+        this.replacements = config.item.replacements;
+        this.replacementArray = config.item.replacementArray;
+
+        if (config.item.additionalOutputs) {
+            this.extraGoods = config.item.additionalOutputs.map(cfg => {
+                var config = $.extend(true, {}, cfg, { item: this, factory: this.factory });
+                return new ExtraGoodProduction(config, assetsMap);
+            })
+        }
+
+        this.factory.items.push(this);
+    }
+}
+
+class ExtraGoodProduction {
+    constructor(config, assetsMap) {
+        this.item = config.item;
+        this.factory = config.factory;
+
+        this.product = assetsMap.get(config.Product);
+        this.additionalOutputCycle = config.AdditionalOutputCycle;
+        this.Amount = config.Amount;
+
+        this.amount = ko.computed(() => !!this.item.checked() * config.Amount * this.factory.outputAmount() / this.additionalOutputCycle);
+
+        for (var f of this.product.factories) {
+            f.extraGoodProductionList.entries.push(this);
+
+            if (f == this.factory)
+                f.extraGoodProductionList.selfEffecting.push(this);
+        }
+    }
+}
+
+class ExtraGoodProductionList {
+    constructor(factory) {
+        this.factory = factory;
+
+        this.checked = ko.observable(true);
+        this.selfEffecting = ko.observableArray();
+
+        this.entries = ko.observableArray();
+        this.nonZero = ko.computed(() => {
+            return this.entries().filter(i => i.amount());
+        });
+        this.amount = ko.computed(() => {
+            var total = 0;
+            for (var i of (this.entries() || []))
+                if (this.selfEffecting.indexOf(i) == -1) // self effects considered in factory.extraGoodFactor
+                    total += i.amount();
+
+            return total;
+        });
+        this.amountWithSelf = ko.computed(() => {
+            var total = 0;
+            for (var i of (this.entries() || []))
+                total += i.amount();
+
+            return total;
+        })
+    }
+}
+
+class GoodConsumptionUpgrade extends Option {
+    constructor(config, assetsMap, levels) {
+        super(config, assetsMap);
+
+        this.entries = [];
+        this.entriesMap = new Map();
+        this.populationLevels = config.populationLevels.map(l => assetsMap.get(l)).filter(l => !!l);
+        if (!this.populationLevels.length)
+            return;
+
+        this.populationLevelsSet = new Set(this.populationLevels);
+
+        for (var entry of config.goodConsumptionUpgrade) {
+            if (entry.AmountInPercent <= -100)
+                continue;
+
+            this.entries.push(new GoodConsumptionUpgradeEntry($.extend({ upgrade: this }, entry), assetsMap));
+            this.entriesMap.set(entry.ProvidedNeed, this.entries[this.entries.length - 1]);
+        }
+
+        for (var level of levels) {
+            if (!this.populationLevelsSet.has(level))
+                continue;
+
+            for (var need of level.needs) {
+                var entry = this.entriesMap.get(need.product.guid);
+                if (entry)
+                    need.goodConsumptionUpgradeList.add(entry);
+            }
+        }
+
+        this.visible = ko.computed(() => {
+            if (!view.island || !view.island())
+                return true;
+
+            var region = view.island().region;
+            if (!region)
+                return true;
+
+            for (var l of this.populationLevels)
+                if (l.region === region)
+                    return true;
+
+            return false;
+        });
+    }
+}
+
+class NewspaperNeedConsumption {
+    constructor() {
+        this.selectedEffects = ko.observableArray();
+        this.allEffects = [];
+        this.amount = ko.observable(100);
+        this.selectedBuff = ko.observable(0);
+        this.selectableBuffs = ko.observableArray();
+
+        this.updateBuff();
+
+        this.selectedEffects.subscribe(() => this.updateBuff());
+
+        this.selectedEffects.subscribe(() => {
+            if (this.selectedEffects().length > 3)
+                this.selectedEffects.splice(0, 1)[0].checked(false);
+        });
+
+        this.amount = ko.computed(() => {
+            var sum = 0;
+            for (var effect of this.selectedEffects()) {
+                sum += Math.ceil(effect.amount * (1 + parseInt(this.selectedBuff()) / 100));
+            }
+
+            return sum;
+        });
+    }
+
+    add(effect) {
+        this.allEffects.push(effect);
+        effect.checked.subscribe(checked => {
+            var idx = this.selectedEffects.indexOf(effect);
+            if (checked && idx != -1 || !checked && idx == -1)
+                return;
+
+            if (checked)
+                this.selectedEffects.push(effect);
+            else
+                this.selectedEffects.remove(effect);
+        });
+    }
+
+    updateBuff() {
+        var influenceCosts = 0;
+        for (var effect of this.selectedEffects()) {
+            influenceCosts += effect.influenceCosts;
+        }
+
+        var threeSelected = this.selectedEffects().length >= 3;
+        var selectedBuff = this.selectedBuff();
+
+        this.selectableBuffs.removeAll();
+        if (influenceCosts < 50)
+            this.selectableBuffs.push(0);
+        if (influenceCosts < 150 && (!threeSelected || !this.selectableBuffs().length))
+            this.selectableBuffs.push(7);
+        if (influenceCosts < 300 && (!threeSelected || !this.selectableBuffs().length))
+            this.selectableBuffs.push(15);
+        if (!threeSelected || !this.selectableBuffs().length)
+            this.selectableBuffs.push(25);
+
+        if (this.selectableBuffs.indexOf(selectedBuff) == -1)
+            this.selectedBuff(this.selectableBuffs()[0]);
+        else
+            this.selectedBuff(selectedBuff);
+    }
+
+    apply() {
+        for (var island of view.islands()) {
+            island.allGoodConsumptionUpgrades.apply();
+        }
+    }
+}
+
+class NewspaperNeedConsumptionEntry extends Option {
+    constructor(config) {
+        super(config);
+
+        this.amount = config.articleEffects[0].ArticleValue;
+    }
+}
+
+class GoodConsumptionUpgradeEntry {
+    constructor(config, assetsMap) {
+        this.upgrade = config.upgrade;
+        this.product = assetsMap.get(config.ProvidedNeed);
+        this.amount = config.AmountInPercent;
+    }
+}
+
+class GoodConsumptionUpgradeList {
+    constructor(need) {
+        this.upgrades = [];
+        this.amount = ko.observable(100);
+        this.need = need;
+
+        this.updateAmount();
+        view.newspaperConsumption.amount.subscribe(() => this.updateAmount());
+    }
+
+    add(upgrade) {
+        this.upgrades.push(upgrade);
+        upgrade.upgrade.checked.subscribe(() => this.updateAmount());
+    }
+
+    updateAmount() {
+        var factor = (100 + view.newspaperConsumption.amount()) / 100;
+
+        var remainingSupply = 100;
+        for (var entry of this.upgrades) {
+            if (entry.upgrade.checked())
+                remainingSupply += entry.amount;
+        }
+
+        this.amount(remainingSupply * (100 + view.newspaperConsumption.amount()) / 100);
+    }
+
+    apply() {
+        this.need.percentBoost(this.amount());
+    }
+}
+
+class GoodConsumptionUpgradeIslandList {
+    constructor() {
+        this.lists = [];
+        this.upgrades = [];
+    }
+
+    apply() {
+        for (var list of this.lists) {
+            list.apply();
+        }
+    }
+}
+
+class TradeRoute {
+    constructor(config) {
+        $.extend(this, config);
+
+        this.amount = createFloatInput(0);
+        this.amount(config.amount);
+    }
+
+    getOpposite(list) {
+        if (list.island == this.from)
+            return this.to;
+        else
+            return this.from;
+    }
+
+    getOppositeFactory(factory) {
+        if (this.fromFactory == factory)
+            return this.toFactory;
+        else
+            return this.fromFactory;
+    }
+
+    isExport(list) {
+        return list.island == this.from;
+    }
+
+    delete() {
+        view.tradeManager.remove(this);
+    }
+}
+
+class NPCTrader extends NamedElement {
+    constructor(config) {
+        super(config);
+    }
+}
+
+class NPCTradeRoute {
+    constructor(config) {
+        $.extend(this, config);
+
+        this.amount = this.ProductionPerMinute;
+        this.checked = ko.observable(false);
+        this.checked.subscribe(checked => {
+            if (view.tradeManager) {
+                if (checked)
+                    view.tradeManager.npcRoutes.push(this);
+                else
+                    view.tradeManager.npcRoutes.remove(this);
+            }
+        });
+    }
+}
+
+class TradeList {
+    constructor(island, factory) {
+        this.island = island;
+        this.factory = factory;
+
+        this.routes = ko.observableArray();
+        if (this.factory.outputs) {
+            var traders = view.productsToTraders.get(this.factory.outputs[0].Product);
+            if (traders)
+                this.npcRoutes = traders.map(t => new NPCTradeRoute($.extend({}, t, { to: island, toFactory: factory })));
+        }
+
+        this.amount = ko.computed(() => {
+            var amount = 0;
+
+            for (var route of (this.npcRoutes || [])) {
+                amount -= route.checked() ? route.amount : 0;
+            }
+
+            for (var route of this.routes()) {
+                amount += (route.isExport(this) ? 1 : -1) * route.amount();
+            }
+
+            return amount;
+        });
+
+        // interface elements to create a new route
+        this.unusedIslands = ko.observableArray();
+        this.selectedIsland = ko.observable();
+        this.export = ko.observable(false);
+        this.newAmount = ko.observable(0);
+    }
+
+    canCreate() {
+        return this.selectedIsland() && !this.selectedIsland().isAllIslands() && this.newAmount();
+    }
+
+    create() {
+        if (!this.canCreate())
+            return;
+
+        var otherFactory;
+        for (var f of this.selectedIsland().factories)
+            if (f.guid == this.factory.guid) {
+                otherFactory = f;
+                break;
+            }
+
+        if (!otherFactory)
+            return;
+
+        if (this.export()) {
+            var route = new TradeRoute({
+                from: this.island,
+                to: this.selectedIsland(),
+                fromFactory: this.factory,
+                toFactory: otherFactory,
+                amount: this.newAmount()
+            });
+        } else {
+            var route = new TradeRoute({
+                to: this.island,
+                from: this.selectedIsland(),
+                toFactory: this.factory,
+                fromFactory: otherFactory,
+                amount: this.newAmount()
+            });
+        }
+
+        this.routes.push(route);
+        this.unusedIslands.remove(this.selectedIsland());
+        otherFactory.tradeList.routes.push(route);
+
+        view.tradeManager.add(route);
+    }
+
+    onShow() {
+        var usedIslands = new Set(this.routes().flatMap(r => [r.from, r.to]));
+        var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != this.island);
+        islands.sort((a, b) => {
+            var sIdxA = view.sessions.indexOf(a.session);
+            var sIdxB = view.sessions.indexOf(b.session);
+
+            if (sIdxA == sIdxB) {
+                return a.name() > b.name();
+            } else {
+                return sIdxA > sIdxB;
+            }
+        });
+        var overProduction = this.factory.overProduction();
+        if (overProduction == 0)
+            overProduction = -this.factory.computedExtraAmount();
+        this.export(overProduction > 0);
+        this.newAmount(Math.abs(overProduction));
+
+        this.unusedIslands(islands);
+    }
+}
+
+class TradeManager {
+    constructor() {
+        this.key = "tradeRoutes";
+        this.npcKey = "npcTradeRoutes";
+        this.npcRoutes = ko.observableArray();
+        this.routes = ko.observableArray();
+
+        view.selectedFactory.subscribe(f => {
+            if (!(f instanceof Factory))
+                return;
+
+            if (f.tradeList)
+                f.tradeList.onShow();
+        });
+
+
+
+        if (localStorage) {
+            // trade routes
+            var islands = new Map();
+            for (var i of view.islands())
+                if (!i.isAllIslands())
+                    islands.set(i.name(), i);
+
+            var resolve = name => name == ALL_ISLANDS ? view.islandManager.allIslands : islands.get(name);
+
+            var text = localStorage.getItem(this.key);
+            var json = text ? JSON.parse(text) : [];
+            for (var r of json) {
+                var config = {
+                    from: resolve(r.from),
+                    to: resolve(r.to),
+                    amount: parseFloat(r.amount)
+                };
+
+                if (!config.from || !config.to)
+                    continue;
+
+                config.fromFactory = config.from.assetsMap.get(r.factory);
+                config.toFactory = config.to.assetsMap.get(r.factory);
+
+                if (!config.fromFactory || !config.toFactory)
+                    continue;
+
+                var route = new TradeRoute(config);
+                this.routes.push(route);
+                config.fromFactory.tradeList.routes.push(route);
+                config.toFactory.tradeList.routes.push(route);
+            }
+
+
+            this.persistenceSubscription = ko.computed(() => {
+                var json = [];
+
+                for (var r of this.routes()) {
+                    json.push({
+                        from: r.from.isAllIslands() ? ALL_ISLANDS : r.from.name(),
+                        to: r.to.isAllIslands() ? ALL_ISLANDS : r.to.name(),
+                        factory: r.fromFactory.guid,
+                        amount: r.amount()
+                    });
+                }
+
+                localStorage.setItem(this.key, JSON.stringify(json, null, 4));
+
+                return json;
+            });
+
+            // npc trade routes
+            text = localStorage.getItem(this.npcKey);
+            json = text ? JSON.parse(text) : [];
+            for (var r of json) {
+                var to = resolve(r.to);
+
+                if (!to)
+                    continue;
+
+                var factory = to.assetsMap.get(r.factory);
+                if (!factory)
+                    continue;
+
+                factory.tradeList.npcRoutes.forEach(froute => {
+                    if (froute.trader.guid === r.trader) {
+                        froute.checked(true);
+                        this.add(froute);
+                    }
+                });
+            }
+
+
+            this.npcPersistenceSubscription = ko.computed(() => {
+                var json = [];
+
+                for (var r of this.npcRoutes()) {
+                    json.push({
+                        trader: r.trader.guid,
+                        to: r.to.isAllIslands() ? ALL_ISLANDS : r.to.name(),
+                        factory: r.toFactory.guid
+                    });
+                }
+
+                localStorage.setItem(this.npcKey, JSON.stringify(json, null, 4));
+
+                return json;
+            });
+        }
+    }
+
+    add(route) {
+        if (route instanceof NPCTradeRoute)
+            this.npcRoutes.push(route);
+        else
+            this.routes.push(route);
+    }
+
+    remove(route) {
+        if (route instanceof NPCTradeRoute) {
+            this.npcRoutes.remove(route);
+            route.checked(false);
+            return;
+        }
+
+        route.fromFactory.tradeList.routes.remove(route);
+        route.toFactory.tradeList.routes.remove(route);
+        this.routes.remove(route);
+
+        route.toFactory.tradeList.unusedIslands.unshift(route.from);
+        route.fromFactory.tradeList.unusedIslands.unshift(route.to);
+    }
+
+    islandDeleted(island) {
+        {
+            var deletedRoutes = this.routes().filter(r => r.to === island || r.from === island);
+            deletedRoutes.forEach(r => this.remove(r));
+        }
+
+        {
+            var deletedRoutes = this.npcRoutes().filter(r => r.to === island);
+            deletedRoutes.forEach(r => this.remove(r));
+        }
+    }
+}
+
+class ProductionChainView {
+    constructor() {
+        this.factoryToDemands = new Map();
+        this.demands = ko.computed(() => {
+            var chain = [];
+            let traverse = d => {
+                if (d.factory && d.amount) {
+                    var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
+                    var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
+                    if (Math.abs(a) < ACCURACY)
+                        return;
+
+
+                    if (!this.factoryToDemands.has(f)) {
+                        var demandAggregate = {
+                            amount: a,
+                            factory: f,
+                            demands: [d]
+                        }
+
+                        this.factoryToDemands.set(f, demandAggregate);
+                        chain.push(demandAggregate);
+                    } else {
+                        var aggregate = this.factoryToDemands.get(f);
+                        aggregate.amount += a;
+                        aggregate.demands.push(d);
+                    }
+
+                }
+
+                for (var e of d.demands)
+                    traverse(e);
+            }
+
+            this.factoryToDemands.clear();
+            for (var d of view.selectedFactory().demands) {
+                traverse(d);
+            }
+
+            if (view.selectedFactory().extraDemand)
+                traverse(view.selectedFactory().extraDemand);
+
+            for (var c of chain) {
+                var factor = 1;
+
+                if (c.factory.extraGoodFactor)
+                    factor = c.factory.extraGoodFactor();
+
+                var inputAmount = c.amount / factor;
+                c.buildings = Math.max(0, inputAmount) / c.factory.tpmin / c.factory.boost();
+            }
+
+            return chain;
+        });
     }
 }
 
@@ -1068,88 +1989,83 @@ class PopulationReader {
                 lang: view.settings.language(),
                 //                optimalProductivity: view.settings.optimalProductivity.checked()
             });
-        const response = await fetch(url_with_params);
-        const json = await response.json(); //extract JSON from the http response
 
-        if (!json)
-            return;
+        try {
+            const response = await fetch(url_with_params);
+            const json = await response.json(); //extract JSON from the http response
 
-        if (json.version) {
-            this.currentVersion = json.version;
-            this.checkVersion();
-        }
-
-
-        if (!json.version || json.version.startsWith("v1")) {
-            view.island().populationLevels.forEach(function (element) {
-                element.amount(0);
-            });
-            if (json.farmers) {
-                view.island().populationLevels[0].amount(json.farmers);
-            }
-            if (json.workers) {
-                view.island().populationLevels[1].amount(json.workers);
-            }
-            if (json.artisans) {
-                view.island().populationLevels[2].amount(json.artisans);
-            }
-            if (json.engineers) {
-                view.island().populationLevels[3].amount(json.engineers);
-            }
-            if (json.investors) {
-                view.island().populationLevels[4].amount(json.investors);
-            }
-            if (json.jornaleros) {
-                view.island().populationLevels[5].amount(json.jornaleros);
-            }
-            if (json.obreros) {
-                view.island().populationLevels[6].amount(json.obreros);
-            }
-        } else {
-
-            var island = null;
-            if (json.islandName) {
-                var best_match = 0;
-
-                for (var isl of view.islands()) {
-                    if (json.islandName == ALL_ISLANDS && isl.isAllIslands()) {
-                        island = isl;
-                        break;
-                    }
-
-                    var match = this.lcs_length(isl.name(), json.islandName) / Math.max(isl.name().length, json.islandName.length);
-                    if (match > 0.66 && match > best_match) {
-                        island = isl;
-                        best_match = match;
-                    }
-                }
-            }
-
-            if (!island)
+            if (!json)
                 return;
 
-            if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
-                return;
+            if (json.version) {
+                this.currentVersion = json.version;
+                this.checkVersion();
+            }
 
 
-            for (let key in json) {
-                let asset = island.assetsMap.get(parseInt(key));
-                if (asset instanceof PopulationLevel) {
-                    if (json[key].amount && view.settings.populationLevelAmount.checked()) {
-                        asset.amount(json[key].amount);
-                    }
-                    if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
-                        view.settings.existingBuildingsInput.checked(true);
-                        asset.existingBuildings(json[key].existingBuildings);
+            if (!json.version || json.version.startsWith("v1")) {
+                view.island().populationLevels.forEach(function (element) {
+                    element.amount(0);
+                });
+                if (json.farmers) {
+                    view.island().populationLevels[0].amount(json.farmers);
+                }
+                if (json.workers) {
+                    view.island().populationLevels[1].amount(json.workers);
+                }
+                if (json.artisans) {
+                    view.island().populationLevels[2].amount(json.artisans);
+                }
+                if (json.engineers) {
+                    view.island().populationLevels[3].amount(json.engineers);
+                }
+                if (json.investors) {
+                    view.island().populationLevels[4].amount(json.investors);
+                }
+                if (json.jornaleros) {
+                    view.island().populationLevels[5].amount(json.jornaleros);
+                }
+                if (json.obreros) {
+                    view.island().populationLevels[6].amount(json.obreros);
+                }
+            } else {
+
+                if (view.settings.proposeIslandNames.checked()) {
+                    for (var isl of (json.islands || [])) {
+                        view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
                     }
                 }
-                else if (asset instanceof Consumer) {
-                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
-                        asset.existingBuildings(parseInt(json[key].existingBuildings));
-                    if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
-                        asset.percentBoost(parseInt(json[key].percentBoost));
+
+                var island = null;
+                if (json.islandName) {
+                    island = view.islandManager.getByName(json.islandName);
+                }
+
+                if (!island)
+                    return;
+
+                if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
+                    return;
+
+
+                for (let key in json) {
+                    let asset = island.assetsMap.get(parseInt(key));
+                    if (asset instanceof PopulationLevel) {
+                        if (json[key].amount && view.settings.populationLevelAmount.checked()) {
+                            asset.amount(json[key].amount);
+                        }
+                        if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
+                            asset.existingBuildings(json[key].existingBuildings);
+                        }
+                    } else if (asset instanceof Consumer) {
+                        if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                            asset.existingBuildings(parseInt(json[key].existingBuildings));
+                        if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
+                            asset.percentBoost(parseInt(json[key].percentBoost));
+                    }
                 }
             }
+        } catch (e) {
         }
     }
 
@@ -1167,10 +2083,222 @@ class PopulationReader {
         }
     }
 
+
+}
+
+class IslandManager {
+    constructor(params) {
+        let islandKey = "islandName";
+        let islandsKey = "islandNames";
+
+        this.islandNameInput = ko.observable();
+        this.sessionInput = ko.observable(view.sessions[0]);
+        this.params = params;
+        this.islandCandidates = ko.observableArray();
+        this.unusedNames = new Set();
+        this.serverNamesMap = new Map();
+
+        this.showIslandOnCreation = new Option({
+            name: "Show Island on Creation",
+            locaText: texts.showIslandOnCreation
+        });
+        this.showIslandOnCreation.checked(true);
+
+        var islandNames = [];
+        if (localStorage && localStorage.getItem(islandsKey))
+            islandNames = JSON.parse(localStorage.getItem(islandsKey))
+
+        var islandName = localStorage.getItem(islandKey);
+        view.islands = ko.observableArray();
+        view.island = ko.observable();
+
+        view.island.subscribe(isl => window.document.title = isl.name());
+
+        for (var name of islandNames) {
+            var island = new Island(params, new Storage(name));
+            view.islands.push(island);
+            this.serverNamesMap.set(island.name(), island);
+
+            if (name == islandName)
+                view.island(island);
+        }
+
+        this.sortIslands();
+
+        var allIslands = new Island(params, localStorage);
+        this.allIslands = allIslands;
+        view.islands.unshift(allIslands);
+        this.serverNamesMap.set(allIslands.name(), allIslands);
+        if (!view.island())
+            view.island(allIslands);
+
+
+
+        if (localStorage) {
+            view.islands.subscribe(islands => {
+                let islandNames = JSON.stringify(islands.filter(i => !i.isAllIslands()).map(i => i.name()));
+                localStorage.setItem(islandsKey, islandNames);
+            });
+
+            view.island.subscribe(island => {
+                localStorage.setItem(islandKey, island.name());
+            });
+
+        }
+
+        this.islandExists = ko.computed(() => {
+            var name = this.islandNameInput();
+            if (!name || name == ALL_ISLANDS || name == view.texts.allIslands.name())
+                return true;
+
+            return this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name;
+        });
+    }
+
+    create(name, session) {
+        if (name == null) {
+            if (this.islandExists())
+                return;
+
+            name = this.islandNameInput();
+        }
+
+        if (this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name)
+            return;
+
+        var island = new Island(this.params, new Storage(name), session);
+        view.islands.push(island);
+        this.sortIslands();
+
+        if (this.showIslandOnCreation.checked())
+            view.island(island);
+
+        this.serverNamesMap.set(name, island);
+        var removedCandidates = this.islandCandidates.remove(i => !isNaN(this.compareNames(i.name, name)));
+        for (var c of removedCandidates) {
+            this.unusedNames.delete(c.name);
+            this.serverNamesMap.set(c.name, island);
+        }
+
+        if (name == this.islandNameInput())
+            this.islandNameInput(null);
+    }
+
+    delete(island) {
+        if (island == null)
+            island = view.island();
+
+        if (island.name() == ALL_ISLANDS || island.isAllIslands())
+            return;
+
+        if (view.island() == island)
+            view.island(view.islands()[0]);
+
+        if (view.tradeManager) {
+            view.tradeManager.islandDeleted(island);
+        }
+
+        view.islands.remove(island);
+        if (localStorage)
+            localStorage.removeItem(island.name());
+
+        for (var entry of this.serverNamesMap.entries()) {
+            if (entry[1] == island)
+                this.serverNamesMap.set(entry[0], null);
+        }
+
+        this.serverNamesMap.delete(island.name());
+        this.unusedNames.add(island.name());
+        this.islandCandidates.push({ name: island.name(), session: island.session });
+        this.sortUnusedNames();
+    }
+
+    deleteCandidate(candidate) {
+        this.unusedNames.delete(candidate.name);
+        this.islandCandidates.remove(candidate);
+    }
+
+    getByName(name) {
+        return name == ALL_ISLANDS ? this.allIslands : this.serverNamesMap.get(name);
+    }
+
+    registerName(name, session) {
+        if (name == ALL_ISLANDS || this.serverNamesMap.has(name))
+            return;
+
+        if (this.unusedNames.has(name))
+            return;
+
+        var island = null;
+        var bestMatch = 0;
+
+        for (var isl of view.islands()) {
+            var match = this.compareNames(isl.name(), name);
+            if (!isNaN(match) && match > bestMatch) {
+                island = isl;
+                bestMatch = match;
+            }
+        }
+
+        if (island) {
+            this.serverNamesMap.set(name, island);
+            var removedCandidates = this.islandCandidates.remove(i => i.name === name);
+            for (var c of removedCandidates)
+                this.unusedNames.delete(c.name);
+            return;
+        }
+
+        this.islandCandidates.push({ name: name, session: session });
+        this.unusedNames.add(name);
+        this.sortUnusedNames();
+    }
+
+    compareNames(name1, name2) {
+        var totalLength = Math.max(name1.length, name2.length);
+        var minLcsLength = totalLength - Math.round(-0.677 + 1.51 * Math.log(totalLength));
+        var lcsLength = this.lcsLength(name1, name2);
+
+        if (lcsLength >= minLcsLength)
+            return lcsLength / totalLength;
+        else
+            return NaN;
+    }
+
+    sortIslands() {
+        view.islands.sort((a, b) => {
+            if (a.isAllIslands() || a.name() == ALL_ISLANDS)
+                return false;
+            else if (b.isAllIslands() || b.name() == ALL_ISLANDS)
+                return true;
+
+            var sIdxA = view.sessions.indexOf(a.session);
+            var sIdxB = view.sessions.indexOf(b.session);
+
+            if (sIdxA == sIdxB) {
+                return a.name() - b.name();
+            } else {
+                return sIdxA - sIdxB;
+            }
+        });
+    }
+
+    sortUnusedNames() {
+        this.islandCandidates.sort((a, b) => {
+            var sIdxA = view.sessions.indexOf(a.session);
+            var sIdxB = view.sessions.indexOf(b.session);
+
+            if (sIdxA == sIdxB) {
+                return a.name - b.name;
+            } else {
+                return sIdxA - sIdxB;
+            }
+        });
+    }
+
     // Function to find length of Longest Common Subsequence of substring
     // X[0..m-1] and Y[0..n-1]
     // From https://www.techiedelight.com/longest-common-subsequence/
-    lcs_length(X, Y) {
+    lcsLength(X, Y) {
         var m = X.length, n = Y.length;
 
         // lookup table stores solution to already computed sub-problems
@@ -1198,90 +2326,106 @@ class PopulationReader {
     }
 }
 
-class IslandManager {
-    constructor(params) {
-        let islandKey = "islandName";
-        let islandsKey = "islandNames";
+class DarkMode {
+    constructor() {
+        this.checked = ko.observable(false);
 
-        this.islandNameInput = ko.observable();
-        this.params = params;
+        this.classAdditions = {
+            "body": "bg-dark",
+            //".ui-fieldset legend, body": "text-light",
+            //".form-control": "text-light bg-dark bg-darker",
+            //".custom-select": "text-light bg-dark bg-darker",
+            //".input-group-text, .modal-content": "bg-dark text-light",
+            //".btn-default": "btn-dark btn-outline-light",
+            //".btn-light": "btn-dark",
+            //".ui-fchain-item": "bg-dark",
+            //".card": "bg-dark"
+        };
 
-
-        var islandNames = [];
-        if (localStorage && localStorage.getItem(islandsKey))
-            islandNames = JSON.parse(localStorage.getItem(islandsKey))
-
-        var islandName = localStorage.getItem(islandKey);
-        view.islands = ko.observableArray();
-        view.island = ko.observable();
-
-        view.island.subscribe(isl => window.document.title = isl.name());
-
-        for (var name of islandNames) {
-            var island = new Island(params, new Storage(name));
-            view.islands.push(island);
-
-            if (name == islandName)
-                view.island(island);
-        }
-
-        var allIslands = new Island(params, localStorage);
-        view.islands.unshift(allIslands);
-        if (!view.island())
-            view.island(allIslands);
-
-
+        this.checked.subscribe(() => this.apply());
 
         if (localStorage) {
-            view.islands.subscribe(islands => {
-                let islandNames = JSON.stringify(islands.filter(i => !i.isAllIslands()).map(i => i.name()));
-                localStorage.setItem(islandsKey, islandNames);
-            });
+            let id = "darkMode.checked";
+            if (localStorage.getItem(id) != null)
+                this.checked(parseInt(localStorage.getItem(id)));
 
-            view.island.subscribe(island => {
-                localStorage.setItem(islandKey, island.name())
-            });
+            this.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
 
+    toggle() {
+        this.checked(!this.checked());
+    }
+
+    apply() {
+        if (this.checked())
+            Object.keys(this.classAdditions).forEach((key) => $(key).addClass(this.classAdditions[key]));
+        else
+            Object.keys(this.classAdditions).reverse()
+                .forEach((key) => $(key).removeClass(this.classAdditions[key]));
+    }
+}
+
+class Template {
+    constructor(asset, parentInstance, attributeName, index) {
+
+
+        this.attributeName = attributeName;
+        this.index = index;
+
+        this.name = asset.name;
+        this.guid = asset.guid;
+        this.getRegionExtendedName = asset.getRegionExtendedName;
+        this.editable = asset.editable;
+        this.region = asset.region;
+        this.hotkey = asset.hotkey;
+
+        this.templates = [];
+        this.parentInstance = ko.observable(parentInstance);
+
+        this.instance = ko.computed(() => {
+            var p = this.parentInstance();
+
+            var inst = p[this.attributeName][this.index];
+
+            this.templates.forEach(t => t.parentInstance(inst));
+
+            return inst;
+        });
+
+        for (var attr in asset) {
+            var val = asset[attr];
+
+            if (val instanceof Array) {
+                this[attr] = val.map((a, index) => {
+                    if (Template.prototype.applicable(asset)) {
+                        var t = new Template(a, this.instance(), attr, index);
+                        this.templates.push(t);
+                        return t;
+                    } else
+                        return a;
+                });
+            }
+            else if (!ko.isObservable(val) && !ko.isComputed(val) && asset.hasOwnProperty(attr))
+                this[attr] = val;
         }
 
-        this.islandExists = ko.computed(() => {
-            var name = this.islandNameInput();
-            if (!name || name == ALL_ISLANDS || name == view.texts.allIslands.name())
-                return true;
-
-            for (var island of view.islands()) {
-                if (island.name() == name)
-                    return true;
-            }
-
-            return false;
-        });
     }
 
-    create() {
-        if (this.islandExists())
-            return;
-
-        var island = new Island(this.params, new Storage(this.islandNameInput()));
-        view.islands.push(island);
-        view.island(island);
-        this.islandNameInput(null);
-    }
-
-    delete() {
-        if (view.island().name() == ALL_ISLANDS || view.island().isAllIslands())
-            return;
-
-        var island = view.island();
-        view.island(view.islands()[0]);
-        view.islands.remove(island);
-        if (localStorage)
-            localStorage.removeItem(island.name());
+    applicable(asset) {
+        return asset instanceof PopulationLevel ||
+            asset instanceof Workforce ||
+            asset instanceof ProductCategory ||
+            asset instanceof Product ||
+            asset instanceof Factory ||
+            asset instanceof Demand;
     }
 }
 
 function init() {
+    view.darkMode = new DarkMode();
 
+    // set up options
     view.settings.options = [];
     for (let attr in options) {
         let o = new Option(options[attr]);
@@ -1318,7 +2462,62 @@ function init() {
         }
     }
 
+    view.assetsMap = new Map();
 
+    view.regions = [];
+    for (let region of (params.regions || [])) {
+        let r = new Region(region, view.assetsMap);
+        view.assetsMap.set(r.guid, r);
+        view.regions.push(r);
+    }
+
+    view.sessions = [];
+    for (let session of (params.sessions || [])) {
+        let s = new Session(session, view.assetsMap);
+        view.assetsMap.set(s.guid, s);
+        view.sessions.push(s);
+    }
+
+
+
+    // set up newspaper
+    view.newspaperConsumption = new NewspaperNeedConsumption();
+    if (localStorage) {
+        let id = "newspaperPropagandaBuff";
+        if (localStorage.getItem(id) != null)
+            view.newspaperConsumption.selectedBuff(localStorage.getItem(id));
+
+        view.newspaperConsumption.selectedBuff.subscribe(val => localStorage.setItem(id, val));
+    }
+
+    for (var e of (params.newspaper || [])) {
+        var effect = new NewspaperNeedConsumptionEntry(e);
+        view.newspaperConsumption.add(effect);
+
+        if (localStorage) {
+            let id = effect.guid + ".checked";
+            if (localStorage.getItem(id) != null)
+                effect.checked(parseInt(localStorage.getItem(id)));
+
+            effect.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
+
+    // set up NPC traders
+    view.productsToTraders = new Map();
+    for (var t of (params.traders || [])) {
+        var trader = new NPCTrader(t);
+
+        for (var r of t.goodsProduction) {
+            var route = $.extend({}, r, { trader: trader });
+            if (view.productsToTraders.has(r.Good))
+                view.productsToTraders.get(r.Good).push(route);
+            else
+                view.productsToTraders.set(r.Good, [route]);
+        }
+    }
+
+    // set up island management
     view.islandManager = new IslandManager(params);
 
     if (localStorage) {
@@ -1329,14 +2528,38 @@ function init() {
         view.settings.language.subscribe(val => localStorage.setItem(id, val));
     }
 
+    // set up modal dialogs
+    view.selectedFactory = ko.observable(view.island().factories[0]);
+    view.selectedGoodConsumptionUpgradeList =
+        ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
+    view.productionChain = new ProductionChainView();
 
+    view.tradeManager = new TradeManager();
+
+    var allIslands = view.islandManager.allIslands;
+    var selectedIsland = view.island();
+    var templates = [];
+    var arrayToTemplate = (name) => allIslands[name].map((asset, index) => {
+        var t = new Template(asset, selectedIsland, name, index);
+        templates.push(t);
+        return t;
+    });
+
+    view.island.subscribe(i => templates.forEach(t => t.parentInstance(i)));
+
+    view.template = {
+        populationLevels: arrayToTemplate("populationLevels"),
+        categories: arrayToTemplate("categories"),
+        consumers: arrayToTemplate("consumers"),
+        buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds"),
+        workforce: arrayToTemplate("workforce")
+    }
 
     ko.applyBindings(view, $(document.body)[0]);
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
-
-
+    // set up key bindings
     var keyBindings = ko.computed(() => {
         var bindings = new Map();
 
@@ -1350,7 +2573,7 @@ function init() {
 
             for (var c of name.toLowerCase()) {
                 if (!bindings.has(c)) {
-                    bindings.set(c, $(`.ui-race-unit-name[race-unit-guid=${l.guid}] ~ .input .input-group input`));
+                    bindings.set(c, $(`.ui-tier-unit-name[tier-unit-guid=${l.guid}] ~ .input .input-group input`));
                     l.hotkey(c);
                     break;
                 }
@@ -1358,7 +2581,7 @@ function init() {
         }
 
         return bindings;
-    })
+    });
 
     $(document).on("keydown", (evt) => {
         if (evt.altKey || evt.ctrlKey || evt.shiftKey)
@@ -1391,6 +2614,77 @@ function removeSpaces(string) {
     return string.replace(/\W/g, "");
 }
 
+var formater = new Intl.NumberFormat(navigator.language || "en").format;
+function formatNumber(num) {
+    var rounded = Math.ceil(100 * parseFloat(num)) / 100;
+	if(Math.abs(rounded) < EPSILON)
+		rounded = 0;
+    return formater(rounded);
+}
+
+function getStep(id) {
+    return parseFloat($('#' + id).attr('step') || 1);
+}
+
+function getMin(id) {
+    return parseFloat($('#' + id).attr('min') || -Infinity);
+}
+
+function getMax(id) {
+    return parseFloat($('#' + id).attr('max') || Infinity);
+}
+
+ko.components.register('number-input-increment', {
+    template:
+        `<div class="input-group-btn-vertical" >
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) + getStep(id) + ACCURACY; var step = getStep(id); obs(Math.floor(val/step)*step)}, enable: obs() < getMax(id)"><i class="fa fa-caret-up"></i></button>
+                                                        <button class="btn btn-default" type="button" data-bind="click: () => {var val = parseFloat(obs()) - getStep(id) - ACCURACY; var step = getStep(id); obs(Math.ceil(val/step)*step)}, enable: obs() > getMin(id)"><i class="fa fa-caret-down"></i></button>
+                                                    </div>`
+});
+
+function formatPercentage(number) {
+    var str = window.formatNumber(Math.ceil(10 * parseFloat(number)) / 10) + ' %';
+    if (number > 0)
+        str = '+' + str;
+
+    return str;
+}
+
+function createIntInput(init) {
+    var obs = ko.observable(init);
+    obs.subscribe(val => {
+        var num = parseInt(val);
+
+        if (typeof num == "number" && isFinite(num) && val != num)
+            obs(num);
+        else if (typeof num != "number" || !isFinite(num))
+            obs(init);
+    });
+
+    return obs;
+}
+
+function createFloatInput(init) {
+    var obs = ko.observable(init);
+    obs.subscribe(val => {
+        var num = parseFloat(val);
+
+        if (typeof num == "number" && isFinite(num) && val != num)
+            obs(num);
+        else if (typeof num != "number" || !isFinite(num))
+            obs(init);
+    });
+
+    return obs;
+}
+
+function factoryReset() {
+    if (localStorage)
+        localStorage.clear();
+
+    location.reload();
+}
+
 function isLocal() {
     return window.location.protocol == 'file:' || /localhost|127\.0\.0\.1/.test(window.location.host.replace);
 }
@@ -1411,6 +2705,58 @@ function exportConfig() {
     }());
 
     saveData(localStorage, ("Anno1800CalculatorConfig") + ".json");
+}
+
+function batchImports(source, destinations, factories) {
+    if (!(source instanceof Island))
+        source = view.islandManager.getByName(source);
+
+    for (var dest of destinations) {
+        if (!(dest instanceof Island))
+            dest = view.islandManager.getByName(dest);
+
+        for (var f of factories) {
+            var list = dest.assetsMap.get(f).tradeList;
+
+            if (list.factory.overProduction() > -ACCURACY)
+                continue;
+
+            list.onShow();
+            if (list.unusedIslands.indexOf(source) == -1)
+                continue;
+
+            list.selectedIsland(source);
+            list.export(false);
+            list.newAmount(Math.abs(list.factory.overProduction()));
+            list.create();
+        }
+    }
+}
+
+function batchExports(sources, destination, factories) {
+    if (!(destination instanceof Island))
+        destination = view.islandManager.getByName(destination);
+
+    for (var src of sources) {
+        if (!(src instanceof Island))
+            src = view.islandManager.getByName(src);
+
+        for (var f of factories) {
+            var list = src.assetsMap.get(f).tradeList;
+
+            if (list.factory.overProduction() < ACCURACY)
+                continue;
+
+            list.onShow();
+            if (list.unusedIslands.indexOf(destination) == -1)
+                continue;
+
+            list.selectedIsland(destination);
+            list.export(true);
+            list.newAmount(Math.abs(list.factory.overProduction()));
+            list.create();
+        }
+    }
 }
 
 function checkAndShowNotifications() {
@@ -1440,7 +2786,7 @@ function checkAndShowNotifications() {
                         // settings
                         type: 'success',
                         placement: { align: 'center' },
-                        timer: 10000
+                        timer: 60000
                     });
             }
 
@@ -1548,411 +2894,5 @@ $(document).ready(function () {
         }
     });
 
-
+    $('[data-toggle="popover"]').popover();
 })
-
-texts = {
-    allIslands: {
-        "french": "Toutes les îles",
-        "english": "All Islands",
-        "italian": "Tutte le isole",
-        "chinese": "所有岛屿",
-        "spanish": "Todas las islas",
-        "japanese": "すべての島",
-        "taiwanese": "所有島嶼",
-        "polish": "Wszystkie wyspy",
-        "german": "Alle Inseln",
-        "korean": "모든 섬",
-        "russian": "Все острова"
-    },
-    residents: {
-        "french": "Résidents",
-        "english": "Residents",
-        "italian": "Residenti",
-        "chinese": "居民",
-        "spanish": "Residentes",
-        "japanese": "住民",
-        "taiwanese": "居民",
-        "polish": "Mieszkańcy",
-        "german": "Einwohner",
-        "korean": "주민",
-        "russian": "Жители"
-    },
-    workforce: {
-        english: "Required Workforce",
-        german: "Benötigte Arbeitskraft",
-        korean: "필요한 인력"
-    },
-    productionBoost: {
-        "french": "Productivité",
-        "brazilian": "Production",
-        "english": "Productivity",
-        "portuguese": "Production",
-        "italian": "Produzione",
-        "chinese": "生产力",
-        "spanish": "Productividad",
-        "japanese": "生産性",
-        "taiwanese": "生產力",
-        "polish": "Wydajność",
-        "german": "Produktivität",
-        "korean": "생산성",
-        "russian": "Производительность"
-    },
-    reset: {
-        "english": "Reset",
-        "french": "Réinitialiser",
-        "german": "Zurücksetzen",
-        "korean": "재설정",
-        "portuguese": "Reset",
-        "brazilian": "Reset",
-        "taiwanese": "重設",
-        "chinese": "重设",
-        "spanish": "Reiniciar",
-        "italian": "Azzera",
-        "russian": "Сбросить",
-        "polish": "Wyzeruj",
-        "japanese": "リセット"
-    },
-    requiredNumberOfBuildings: {
-        english: "Required Number of Buildings",
-        german: "Benötigte Anzahl an Gebäuden",
-        korean: "필요한 건물 수"
-    },
-    existingNumberOfBuildings: {
-        english: "Existing Number of Buildings",
-        german: "Vorhandene Anzahl an Gebäuden",
-        korean: "현재 건물 수"
-    },
-    existingNumberOfBuildingsIs: {
-        english: "Is:",
-        german: "Ist:",
-        korean: "현재:"
-    },
-    requiredNumberOfBuildings: {
-        english: "Required:",
-        german: "Benötigt:",
-        korean: "필요:"
-    },
-    requiredNumberOfBuildingsDescription: {
-        english: "Required number of buildings to produce consumer products",
-        german: "Benötigte Gebäudeanzahl zur Produktion von Verbrauchsgütern",
-        korean: "소비재 생산에 필요한 건물 수"
-    },
-    tonsPerMinute: {
-        english: "Production in Tons per Minute",
-        german: "Produktion in Tonnen pro Minute",
-        korean: "분당 생산량"
-    },
-    language: {
-        english: "Language",
-        german: "Sprache",
-        korean: "언어"
-    },
-    islandName: {
-        english: "New island name",
-        german: "Neuer Inselname",
-        korean: "새로운 섬 이름"
-    },
-    selectedIsland: {
-        english: "Selected Island",
-        german: "Ausgewählte Insel",
-        korean: "선택된 섬"
-    },
-    settings: {
-        english: "Settings",
-        german: "Einstellungen",
-        korean: "설정"
-    },
-    help: {
-        english: "Help",
-        german: "Hilfe",
-        korean: "도움말"
-    },
-    chooseFactories: {
-        english: "Modify Production Chains",
-        german: "Modifiziere Produktionsketten",
-        korean: "생산 체인 수정"
-    },
-    noFixedFactory: {
-        english: "Automatic: same region as consumer",
-        german: "Automatisch: gleichen Region wie Verbraucher",
-        korean: "자동 : 소비자와 동일한 지역"
-    },
-    consumptionModifier: {
-        english: "Modify the percental amount of consumption for this tier and product",
-        german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe",
-        korean: "이 계층 및 제품의 사용량(백분율)을 수정하십시요"
-    },
-    download: {
-        english: "Downloads",
-        german: "Downloads",
-        korean: "다운로드"
-    },
-    downloadConfig: {
-        english: "Import / Export configuration.",
-        german: "Konfiguration importieren / exportieren.",
-        korean: "설정 가져오기 / 내보내기"
-    },
-    downloadCalculator: {
-        english: "Download the calculator (source code of this website) to run it locally. To do so, extract the archive and double click index.html.",
-        german: "Lade den Warenrechner (Quellcode dieser Seite) herunter, um ihn lokal auszuführen. Zum Ausführen, extrahiere das Archiv und doppelklicke auf index.html.",
-        korean: "Anno 계산기 (이 웹 사이트의 소스 코드)를 다운로드 하여 로컬로 실행 하십시오. 압축을 풀고 index.html 실행 하십시오."
-    },
-    downloadCalculatorServer: {
-        english: `Download a standalone executable that reads the current population count while playing the game. Usage:
-1. Download server application and calculator (using the source code from above).
-2. Start Anno 1800.
-3. Start server (Server.exe) and open downloaded calculator (index.html).
-4. Expand the population statistics (global or island) or open the statistics screen (finance, production, population) to update the values in the calculator.
-
- See the following link for more information: `,
-        german: `Lade eine ausführbare Datei herunter, die beim Spielen die aktuellen Bevölkerungszahlen erfasst. Verwendung:
-1. Lade die Serveranwendung und den Warenrechner (siehe obiger Quellcode) herunter.
-2. Starte Anno 1800.
-3. Führe den Server (Server.exe) aus und öffne den heruntergeladenen Warenrechner (index.html).
-4. Klappe die Bevölkerungsstatistiken (global oder inselweit) aus oder öffne das Statistikmenü (Finanzen, Produktion, Bevölkerung), um die Werte im Warenrechner zu aktualisieren.
-
-Siehe folgenden Link für weitere Informationen: `,
-        korean: `게임을 하는 동안 현재 인구 수를 읽는 실행 파일을 다운로드 하십시오. 방법:
-1. 서버 프로그램 및 계산기를 다운로드 하십시오. (위의 소스 코드 사용).
-2. Anno 1800을 실행 하십시오.
-3. 서버 (Server.exe)를 실행하고 다운로드한 Anno1800 계산기 (index.html)를 엽니다.
-4. 인구 통계 (모든 섬 또는 일부 섬)를 펼쳐서 열거나 통계 화면 (금융, 생산, 인구)을 열어 계산기의 값을 업데이트하십시오.
-  자세한 내용은 다음 링크를 참조하십시오: `
-    },
-    serverUpdate: {
-        english: "A new server version is available. Click the download button.",
-        german: "Eine neue Serverversion ist verfügbar. Klicke auf den Downloadbutton.",
-        korean: "새로운 서버 버전을 사용할 수 있습니다. 다운로드 버튼을 클릭하십시오."
-    },
-    calculatorUpdate: {
-        english: "A new calculator version is available. Click the download button.",
-        german: "Eine neue Version des Warenrechners ist verfügbar. Klicke auf den Downloadbutton.",
-        korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
-    },
-    newFeature: {
-        english: "Game Update 9 - Land of Lions",
-        german: "Game Update 9 - Land der Löwen",
-        korean: "게임 업데이트 9 - 사자의 땅"
-    },
-    helpContent: {
-        german:
-            `Verwendung: Trage die aktuellen oder angestrebten Einwohner pro Stufe in die oberste Reihe ein. Die Produktionsketten aktualisieren sich automatisch sobald man die Eingabe verlässt. Es werden nur diejenigen Fabriken angezeigt, die benötigt werden.
-
-Der Buchstabe in eckigen Klammern vor dem Bevölkerungsnamen ist der Hotkey zum Fokussieren des Eingabefeldes. Die Anzahl dort kann ebenfalls durch Drücken der Pfeiltasten erhöht und verringert werden.
-
-In der darunterliegenden Reihe wird die Arbeitskraft angezeigt, die benötigt wird, um alle Gebäude zu betreiben (jeweils auf die nächste ganze Fabrik gerundet).
-
-Danach folgen zwei große Abschnitte, die sich wiederum in Unterabschnitte unterteilen. Der erste gibt einen Überblick über alle benötigten Gebäude, sortiert nach dem produzierten Warentyp. Der zweite schlüsselt die einzelnen Produktionsketten nach Bevölkerungsstufen auf. Jeder der Abschnitte kann durch einen Klick auf die Überschrift zusammengeklappt werden. Durch das Abwählen des Kontrollkästchens wird das entsprechende Bedürfnis von der Berechnung ausgenommen.
-
-In jeder Kachel wird der Name der Fabrik, das Icon der hergestellten Ware, der Boost für den Gebäudetyp, die Anzahl der benötigten Gebäude und die Produktionsrate in Tonnen pro Minute angezeigt. Die Anzahl der Gebäude wird mit zwei Nachkommastellen angezeigt, um die Höhe der Überkapazitäten direkt ablesen zu können. Daneben befinden sich zwei Buttons. Diese versuchen den Boost so einzustellen, dass alle Gebäude des Typs bestmöglich ausgelastet sind und dabei ein Gebäude mehr (+) bzw. eines weniger (-) benötigt wird.
-
-Da Baumaterialien sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im Gegensatz zu Warenrechnern früherer Annos) mit aufgeführt, um so den Verbrauch von Minen besser planen zu können. Es muss die Anzahl der Endbetriebe per Hand eingegeben werden.
-
-Über das Zahnrad am rechten oberen Bildschirmrand gelangt man zu den Einstellungen. Dort können die Sprache ausgewählt und die Menge der dargestellten Informationen angepasst werden.
-
-Über die drei Zahnräder neben dem Einstellungsdialog öffnet sich der Dialog zur Modifikation der Produktionsketten. In der oberen Hälfte kann die Fabrik ausgewählt werden, die die dargestellte Ware herstellen soll. In der unter Hälfte können Spezialisten aktiviert werden, welche die Eingangswaren der Fabriken verändern. Standardmäßig ist die Gleiche-Region-Regel eingestellt. Exemplarisch besagt diese, dass das Holz für die Destillerien in der Neuen Welt, das Holz für Nähmaschinen aber in der Alten Welt produziert wird.
-
-Über den Downloadbutton kann dieser Rechner sowie eine zusätzliche Serveranwendung heruntergeladen werden. Mit der Serveranwendung lassen sich die Bevölkerungszahlen, Produktivitäten sowie Fabrikanzahl automatisch aus dem Statisitkmenü des Spiels auslesen. Ich danke meinem Kollegen Josua Bloeß für die Umsetzung.
-
-Haftungsausschluss:
-Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.
-Dies sind insbesondere, aber nicht ausschließlich alle Icons der Bevölkerung, Waren und Gegenstände sowie die Daten der Produktionsketten und die Verbrachswerte der Bevölkerung.
-
-Diese Software steht unter der MIT-Lizenz.
-
-
-Autor:
-Nico Höllerich
-
-Fehler und Verbesserungen:
-Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
-
-        english:
-            `Usage: Enter the current or desired number of residents per level into the top most row. The production chains will update automatically when one leaves the input field. Only the required factories are displayed.
-
-The letter in square brackets before the resident's name is the hotkey to focus the input field. There, one can use the arrow keys to inc-/decrement the number.
-
-The row below displays the workforce that is required to run all buildings (rounded towards the next complete factory).
-
-Afterwards two big sections follow that are subdivided into smaller sections. The first one gives an overview of the required buildings sorted by the type of good that is produced. The second one lists the individual production chains for each population level. Clicking the heading collapses each section. Deselecting the checkbox leads to the need being excluded from the calculation.
-
-Each card displays the name of the factory, the icon of the produced good, the boost for the given type of building, the number of required buildings, and the production rate in tons per minute. The number of buildings has two decimal places to directly show the amount of overcapacities. There are two buttons next to it. Those try to adjust the boost such that all buildings operate at full capacity and one more (+) or one building less (-) is required.
-
-Since construction materials share intermediate products with consumables they are explicitly listed (unlike in calculators for previous Annos) to better plan the production of mines. The number of factories must be entered manually.
-
-When clicking on the cog wheel in the upper right corner of the screen the settings dialog opens. There, one can chose the language, give the browser tab a name and customize the information presented by the calculator.
-
-The three cog wheels next to the settings dialog open a dialog to modify the production chains. In the upper part, the factory can be chosen to produce the noted product. In the lower part, specialists that change the input for factories can be applied. By default, the same region policy is selected. By example, this means that the wood for desitilleries is produced in the New World while the wood for sewing machines is produced in the Old World.
-
-Pressing the download button one can download the configuration, this calculator and an additional server application. The server application automatically reads the population, productivity and factory count from the statistics menu in the game. I thank my colleague Josua Bloeß for the implementation.
-
-Disclaimer:
-The calculator is provided without warranty of any kind. The work was NOT endorsed by Ubisoft Blue Byte in any kind. All the assets from Anno 1800 game are © by Ubsioft.
-These are especially but not exclusively all the icons of population, goods and items and the data of production chains and the consumptions values of population.
-
-This software is under the MIT license.
-
-
-Author:
-Nico Höllerich
-
-Bugs and improvements:
-If you encounter any bugs or inconveniences or if you want to suggest improvements, create an Issue on GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)`,
-
-        korean:
-            `사용법 : 레벨 당 현재 또는 원하는 주민 수를 최상위 행에 입력하십시오. 
-주민 이름 앞에 사각 괄호 안에 있는 알파벳은 입력필드 단축키 입니다. 그곳에 화살표 키를 사용해서 인구를 줄이거나 높일 수 있습니다.
-
-생산 체인은 입력 필드를 벗어나면 자동으로 업데이트됩니다. 필요한 건물만 표시됩니다.
-아래 행에는 모든 건물을 운영하는 데 필요한 인력이 표시됩니다 (다음 완전한 공장으로 반올림).
-그 후 두 개의 큰 섹션이 이어지고 더 작은 섹션으로 세분됩니다. 첫 번째는 필요한 건물의 유형을 생산 된 제품 유형별로 정렬하여 보여줍니다. 
-두 번째는 각 인구 수준에 대한 개별 생산 체인을 나열합니다. 제목을 클릭하면 각 섹션이 축소됩니다. 네모 확인란을 선택 취소하면 계산에서 제외됩니다. 
-각 카드에는 건물 이름, 생산 된 제품의 아이콘, 건물 유형에 대한 생산성, 필요한 건물 수 및 분당 생산률이 표시됩니다. 
-건물 수에는 과잉 용량을 직접 표시하기 위해 소수점 이하 두 자리로 표시되어 있습니다. 그리고 우측에 두 개의 버튼이 있습니다. 모든 건물이 최대 용량으로 작동하고 한 개 이상 (+) 또는 한 개 미만 (-)이 필요하도록 생산성 조정을 시도합니다.
-건설재는 소모품과 중간 제품을 공유하므로 광산 생산 계획을 개선하기 위해 명시 적으로 표시됩니다. 팩토리 수는 수동으로 입력해야합니다.
-
-화면 오른쪽 상단에있는 톱니 바퀴를 클릭하면 설정 대화 상자가 열립니다. 거기에서 언어를 선택하고 브라우저 탭에 이름을 지정하고 Anno1800 계산기가 제공하는 정보를 사용자 정의 할 수 있습니다.
-설정 대화 상자 옆에있는 3 개의 톱니 바퀴는 생산 체인을 수정하는 대화 상자를 엽니다. 상단에는 제품을 생산하기 생산건물의 지역을 선택할 수 있습니다. 하단에는 생산건물의 생산성을 변경하는 전문가를 적용할 수 있습니다. 
-기본값은 소비자와 동일한 지역 정책이 선택됩니다. 예를 들어, 이는 데시 빌리 용 목재가 신세계에서 생산되고 재봉틀 용 목재는 구세계에서 생산됨을 의미합니다.
-
-다운로드 버튼을 누르면 설정,Anno1800 계산기 및 추가 서버 프로그램을 다운로드 할 수 있습니다. 
-서버 프로그램은 게임의 통계 메뉴에서 인구, 생산 및 재정-생산 건물을 자동으로 가져옵니다. 구현에 도움을 준 동료 Josua Bloeß에게 감사드립니다.
-
-추신:
-Anno1800 계산기는 어떠한 종류의 보증도 제공되지 않습니다. 이 프로그램은 Ubisoft Blue Byte가 어떤 종류의 보증도 하지 않았습니다. Anno 1800 게임의 모든 것은 Ubsioft의 자산 입니다.
-특히 인구, 상품 및 품목의 아이콘과 생산 체인 데이터 및 인구의 소비 가치를 모두 포함하는 것은 아닙니다.
-이 소프트웨어는 MIT 에게 라이센스가 있습니다.
-
-개발자:
-Nico Höllerich
-버그 및 개선 사항 :
-버그 나 불편한 점이 있거나 개선을 제안하려면 GitHub (https://github.com/NiHoel/Anno1800Calculator/issues)에 문의하십시오`
-    }
-}
-
-options = {
-    "existingBuildingsInput": {
-        "name": "Input number of houses instead of residents",
-        "locaText": {
-            "english": "Input number of houses instead of residents",
-            "german": "Gib Anzahl an Häusern anstelle der Einwohner ein",
-            "korean": "주민 수 대신 주택 수를 입력"
-        }
-    },
-    "noOptionalNeeds": {
-        "name": "Do not produce luxury goods",
-        "locaText": {
-            "english": "Do not produce luxury goods",
-            "german": "Keine Luxusgüter produzieren",
-            "korean": "사치품을 생산하지 않습니다."
-        }
-    },
-    "decimalsForBuildings": {
-        "name": "Show number of buildings with decimals",
-        "locaText": {
-            "english": "Show number of buildings with decimals",
-            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
-            "korean": "건물 수를 소수점 단위로 표시"
-        }
-    },
-    "missingBuildingsHighlight": {
-        "name": "Highlight missing buildings",
-        "locaText": {
-            "english": "Highlight missing buildings",
-            "german": "Fehlende Gebäude hervorheben",
-            "korean": "부족한 건물 강조"
-        }
-    },
-    "additionalProduction": {
-        "name": "Show input field for additional production",
-        "locaText": {
-            "english": "Show input field for additional production (negative values possible)",
-            "german": "Zeige Eingabefeld für Zusatzproduktion (negative Werte möglich)",
-            "korean": "추가 생산을 위한 입력 필드 표시 (음수 값 가능)"
-        }
-    },
-    "consumptionModifier": {
-        "name": "Show input field for percental consumption modification",
-        "locaText": {
-            "english": "Show input field for percental consumption modification",
-            "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs",
-            "korean": "소비 수정(백분율)을 위한 입력 필드 표시"
-        }
-    },
-    "hideNames": {
-        "name": "Hide the names of products, factories, and population levels",
-        "locaText": {
-            "english": "Hide the names of products, factories, and population levels",
-            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen",
-            "korean": "제품, 건물명 및 인구 이름 숨기기"
-        }
-    },
-    "hideProductionBoost": {
-        "name": "Hide the input fields for production boost",
-        "locaText": {
-            "english": "Hide the input fields for production boost",
-            "german": "Verberge das Eingabefelder für Produktionsboosts",
-            "korean": "생산성 입력 필드 숨기기"
-        }
-    },
-    "hideNewWorldConstructionMaterial": {
-        "name": "Hide factory cards for construction material that produce in the new world",
-        "locaText": {
-            "english": "Hide factory cards for construction material that is produced in the New world",
-            "german": "Verberge die Fabrikkacheln für Baumaterial, das in der Neuen Welt produziert wird",
-            "korean": "새로운 지역(북극)에서 생산되는 건축 자재 숨기기"
-        }
-    }
-}
-
-serverOptions = {
-    "populationLevelAmount": {
-        "name": "PopulationLevel Amount",
-        "locaText": {
-            "english": "Update residents count",
-            "german": "Aktualisiere Einwohneranzahl",
-            "korean": "주민 수 가져오기"
-        }
-    },
-    "populationLevelExistingBuildings": {
-        "name": "PopulationLevel ExistingBuildings",
-        "locaText": {
-            "english": "Update houses count",
-            "german": "Aktualisiere Häuseranzahl",
-            "korean": "주택 수 가져오기"
-        }
-    },
-    "factoryExistingBuildings": {
-        "name": "FactoryExistingBuildings",
-        "locaText": {
-            "english": "Update factories count",
-            "german": "Aktualisiere Fabrikanzahl",
-            "korean": "생산건물 수 가져오기"
-        }
-    },
-    "factoryPercentBoost": {
-        "name": "FactoryPercentBoost",
-        "locaText": {
-            "english": "Update productivity",
-            "german": "Aktualisiere Produktivität",
-            "korean": "생산성 가져오기"
-        }
-    },
-    /*    "optimalProductivity": {
-            "name": "Optimal Productivity",
-            "locaText": {
-                "english": "Read maximum possible productivity instead of current average",
-                "german": "Lies best mögliche Produktivität anstelle des gegenwärtigen Durchschnitts aus",
-                "korean": "평균 대신 최대 생산성을 가져오기"
-            }
-        }, */
-    "updateSelectedIslandOnly": {
-        "name": "Update selected islands only",
-        "locaText": {
-            "english": "Restrict updates to the selected island",
-            "german": "Beschränke Updates auf die ausgewählte Insel",
-            "korean": "선택한 섬만 가져오기"
-        }
-    }
-}
