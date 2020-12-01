@@ -366,7 +366,7 @@
                                 <span data-bind="text: formatPercentage($root.newspaperConsumption.amount())"></span>
                             </div>
 
-                            <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $root.newspaperConsumption.apply()">
+                            <button data-dismiss="modal" class="btn btn-light btn-sm" data-bind="click: () => $root.newspaperConsumption.apply(), visible: $root.islands().length > 1">
                                 <span data-bind="text: $root.texts.applyGlobally.name">Apply globally</span>
                             </button>
                         </div>
@@ -1062,7 +1062,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally">
+                        <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
                             <span data-bind="text: $root.texts.applyGlobally.name()">Apply Globally</span>
                         </btn>
                     </div>
