@@ -270,6 +270,19 @@ texts = {
         "japanese": "消費",
         "russian": "Потребление"
     },
+    "totalCapacity": {
+        "english": "Total Capacity",
+        "chinese": "总容量",
+        "taiwanese": "總容量",
+        "italian": "Capienza totale",
+        "spanish": "Capacidad total",
+        "german": "Gesamtkapazität",
+        "polish": "Pojemność całkowita",
+        "french": "Capacité totale",
+        "korean": "총 수용량",
+        "japanese": "総収容能力",
+        "russian": "Общая вместимость"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",
@@ -335,6 +348,45 @@ texts = {
     exportOverproduction: {
         english: "Export overproduction",
         german: "Überproduktion exportieren"
+    },
+    loadingSpeed: {
+        "english": "Loading Speed",
+        "chinese": "装货速度",
+        "taiwanese": "裝貨速度",
+        "italian": "Velocità caricamento",
+        "spanish": "Velocidad de carga",
+        "german": "Ladegeschwindigkeit",
+        "polish": "Szybkość załadunku",
+        "french": "Vitesse de chargement",
+        "korean": "화물 선적 속도",
+        "japanese": "積み込み速度",
+        "russian": "Скорость погрузки"
+    },
+    duration: {
+        "english": "Duration",
+        "chinese": "持续时间",
+        "taiwanese": "持續時間",
+        "italian": "Durata",
+        "spanish": "Duración",
+        "german": "Dauer",
+        "polish": "Czas trwania",
+        "french": "Durée",
+        "korean": "지속 시간",
+        "japanese": "持続時間",
+        "russian": "Длительность"
+    },
+    exportPyramid: {
+        "english": "Your Specialty Exports",
+        "polish": "Specjalizacje eksportowe",
+        "spanish": "Tus especialidades de exportación",
+        "taiwanese": "你的專屬出口貨物",
+        "german": "Exportwaren-Pyramide",
+        "chinese": "你的专属出口货物",
+        "italian": "Le tue esportazioni di specialità",
+        "korean": "전문 수출품",
+        "french": "Vos exportations ",
+        "japanese": "あなたの名産輸出品",
+        "russian": "Специализация экспорта"
     },
     language: {
         "english": "Text Language",
@@ -432,8 +484,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "NEU: Zusatzwarenverwaltung, Zeitungseffekt und Handelsrouten. Alles drei muss erst über die Einstellungen aktiviert werden. Über das neue Fabrikkonfigurationsmenü können Routen erstellt, Items ausgerüstet und Zusatzwaren angewendet werden. Siehe die Hilfe für weitere Informationen.",
-        german: "NEW: Extra goods management, newspaper effects and trade routes. All three features must be activated in the settings. From the new factory configuration dialog one can create routes, equip items, and apply extra goods. See the help for more information.",
+        english: "Game Update 10: Docklands with trade contracts.",
+        german: "Game Update 10: Speicherstadt mit Handelsverträgen.",
     },
     helpContent: {
         german:
@@ -461,7 +513,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <span class="btn-group bg-dark mr-2 float-left">
 <button type="button" class="btn"><img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icon_newspaper.png" /></button>
 <button class="btn text-light"><span class="fa fa-cogs"></span></button>
-<button type="button" class="btn"><img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_itemsockets2.png" /></button>
+<button type="button" class="btn"><img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" /></button>
 </span>
 <p>Die Buttons hierfür befinden sich links in der Navigationsleiste. Zeitung und Zusatzwaren müssen allerdings erst in den Einstellungen aktiviert werden, da damit weitere Eingabefelder auf den Verbrauchs- bzw. Fabrikkacheln angezeigt werden.</p><br/>
 
@@ -481,7 +533,7 @@ Siehe folgenden Link für weitere Informationen: `,
     <p>Zum anderen können Items mit <b>Zusatzwaren</b> berücksichtigt werden. Vorher muss aber die zugehörige Einstellung (Zusatzwaren) aktiviert werden. Mit der Option werden in den Fabrikkacheln zwei zusätzliche Informationen angezeigt: Ein Eingabefeld, das den <b>Zusatzbedarf</b> darstellt, welcher sich aus Importen / Exporten von Handelsrouten sowie den Zusatzwaren zusammensetzt. Da es sich um Bedarf handelt, werden die Zusatzwaren hier negativ eingetragen. Außerdem wird unter dem Strich der (benötigte) <b>Output der Fabrik</b> angezeigt (was im Ausgangslager der Fabrik erzeugt wird). Darin berücksichtigt sind der Bedarf auf der aktuellen Insel, Im- und Exporte. Nicht berücksichtigt sind Zusatzwaren aus Modulen und Palasteffekten, die auf magische Weise im Kontor landen.</p>
 </div><br/>
 
-<span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"><img class="icon-navbar" src="icon_itemsockets2.png" /></button></span>
+<span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"><img class="icon-navbar" src="icon_add_goods_socket_white.png" /></button></span>
 <p>Zunächst muss festgelegt werden, welche Fabriken mit welchen Items ausgerüstet sind. Dies kann über das Einstellungsmenü (Button rechts oben an jeder Fabrik) geschehen oder über die Zusatzwaren-Itemübersicht, bei der die Fabriken per Checkbox ausgewählt werden können. Den <b>Ertrag der Zusatzwaren</b> wird bei den Fabriken angezeigt, die das Produkt normalerweise herstellen. Dort muss dann auf den Button <b>Anwenden</b> geklickt werden, um die Werte einzutragen und den neuen Bedarf zu berechnen. Zusatzwaren lassen sich durch die Checkbox aus der Berechnung herausnehmen. Dies ist notwendig, wenn mehrere Fabriken dasselbe Produkt herstellen, da andernfalls die Zusatzwaren mehrfach gutgeschrieben würden.</p><br/>
 <p>Mit der Einstellung <b>automatisch anwenden</b> wird der <b>Zusatzbedarf</b> bei Änderung der Werte von <b>Zusatzwaren</b> oder <b>Handelsrouten</b> angepasst. Dabei ist allerdings Vorsicht geboten, da es in seltenen Fällen zu Endlosschleifen beim Updaten kommen kann. Dies kann sich dadurch ausdrücken, dass der Warenrechner nur sehr langsam reagiert oder Elemente flackern. In solchen Fällen empfiehlt es sich, das automatische Anwenden kurzzeitig zu deaktivieren. Sollte das Problem fortbestehen, exportieren Sie bitte die Konfiguration des Warenrechners, eröffnen  ein Issue auf GitHub (siehe unten) und fügen die Konfiguration an.</p><br/>
 <p>Items, die in keine der beiden Kategorien fallen, sind aus Gründen der Übersichtlichkeit nicht aufgeführt. Der <b>Produktionsboost</b> muss z. B. komplett manuell ausgerechnet und eingetragen werden.</p><br/>
@@ -507,6 +559,14 @@ Siehe folgenden Link für weitere Informationen: `,
 <span> in der Navigationsleiste einstellen. Andernfalls kann es z.B. passieren, dass vorhandene Gebäude bei Kohleminen eingetragen sind, der Bedarf aber bei Köhlereien anfällt. Grundsätzlich lässt sich schwer abbilden, wenn dieselbe Ware von verschiedenen Fabriktypen hergestellt wird. In solchen Fällen ist es empfehlenswert, sich im Warenrechner nur <b>auf einen Fabriktyp zu beschränken</b> und die Produktion der anderen per künstlicher Handelsroute von einer künstlichen Insel zu simulieren.</span><br/>
 <br/>
 
+<h5>Speicherstadt</h5>
+<span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"> <img class="icon-navbar" src="icon_docklands_2d_white.png"> </button></span>
+<p>Die Speicherstadt bietet enormes Potential, Waren einzutauschen und sich auf effiziente Produktionen zu beschränken. Jedoch bietet das Spiel nur eingeschränkte Möglichkeiten, um die für den Export notwendigen Produktionskapazitäten zu berechnen. Im Warenrechner werden die Handelsverträge deshalb in t/min angegeben. Der Rechner ermittelt dann, wie viele Tonnen gehandelt werden müssen, um den gewünschten Warenfluss zu erreichen. Um das Feature verwenden zu können, muss es zunächst in den Einstellungen aktiviert werden. Anschließend erscheint - wie bei Handelsrouten und Zusatzwaren - das Eingabefeld für Zusatzbedarf, über den die Werte intern verrechnet werden. Das <b>Anlegen eines Vertrags</b> ähnelt dem einer Handelsroute. Im <b>Konfigurationsdialog einer Fabrik</b> werden die Warenmenge und das Tauschprodukt eingestellt. Mittels des Schiebereglers in der Mitte kann eingestellt werden, ob die Ware der ausgewählten Fabrik exportiert oder importiert werden. Wird kein Regler angezeigt, dann kann die Ware nicht importiert werden. <b>Beim Einstellen des Tauschprodukts taucht bei manchen Produkten ein zusätzliches Auswahlfeld auf.</b> Dort muss die Fabrik eingestellt werden, dem die Ware abgezogen bzw. zugeschrieben wird. Bei sämtlichen Auswahlfeldern kann durch Eingeben der Anfangsbuchstaben direkt zum Begriff gesprungen werden. Der Plus-Button erstellt die Route. Anschließend wird die Route in der Export-Fabrik und der Import-Fabrik angezeigt. Außerdem werden alle Verträge im Speicherstadt-Menü angezeigt. Mit einem Klick auf die Produkt-Icons kann zwischen den Menüs gewechselt werden.</p>
+<p>Im oberen Bereich des Menüs wird die <b>Export-Pyramide</b> angezeigt und bearbeitet. Hierfür müssen ein Produkt und der Multiplikator ausgewählt und hinzugefügt werden. Zum Umsortieren müssen erst die alten Produkte gelöscht und mit anderen Multiplikatoren neu erstellt werden. Bereits eingestellte Verträge werden dann so angepasst, dass die importierten Tonnen pro Minute gleich bleiben.</p>
+<p>Im unteren Bereich befindet sich die Übersicht über alle Verträge und zusammenfassende Informationen zum Handel. Hierfür muss als erstes die <b>Ladegeschwindigkeit des Piers</b> eingestellt werden, an dem Morris handelt. Die Information hierzu kann dem unteren Bereich des Anlegestellen-Infomenüs entnommen werden. Der Rechner ermittelt dann die Umschlagsdauer des Händlers, den Gesamtwarenumschlag in t/min, die benötigte Insellagerkapazität und die einzustellenden Tonnen pro Vertrag. Bei der Berechnung der Werte ist der Ladegeschwindigkeitsbonus des Händlers und die Dauer zum Betreten und Verlassen der Session bereits mit eingerechnet. Sollte dort ∞ stehen, dann übersteigt der eingestellte Warenumschlag den maximal möglichen des Händlers. Dann müssen die Verträge auf mehrere Inseln verteilt, die Ladegeschwindigkeit erhöht oder das Handelsvolumen reduziert werden</p>
+<p>Eine Besonderheit ergibt sich bei <b>Allen Inseln</b> (standardmäßig ausgewählt, wenn Inselverwaltung deaktiviert). Dort ist es erlaubt dieselbe Ware <b>zu importieren und exportieren</b>, um so Verträge für mehrere Speicherstädte zusammenfassen zu können. Allerdings werden keine zusammenfassenden Informationen zum Handel angezeigt.</p>
+<br/>
+
 <h5>Haftungsausschluss</h5>
 <p>Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.</p><br/>
 <p>Darunter fallen insbesondere, aber nicht ausschließlich alle Icons, Bezeichnungen und Verbrauchswerte.</p><br/>
@@ -516,6 +576,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <h5>Autor</h5>
 <p>Nico Höllerich</p>
 <p>hoellerich.nico@freenet.de</p>
+<br/>
 
 <h5>Fehler und Verbesserungen</h5>
 <span>Falls Sie auf Fehler oder Unannehmlichkeiten stoßen oder Verbesserungen vorschlagen möchten, erstellen Sie ein Issue auf GitHub (</span><a href="https://github.com/NiHoel/Anno1800Calculator/issues">https://github.com/NiHoel/Anno1800Calculator/issues</a><span>)</span>`,
@@ -545,7 +606,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <span class="btn-group bg-dark mr-2 float-left">
 <button type="button" class="btn"><img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icon_newspaper.png" /></button>
 <button class="btn text-light"><span class="fa fa-cogs"></span></button>
-<button type="button" class="btn"><img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_itemsockets2.png" /></button>
+<button type="button" class="btn"><img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" /></button>
 </span>
 <p>The buttons are found in the left of the navigation bar. Newspaper and extra goods need to be activated in the settings menu. The reason is that additional input fields will be displayed on the factory and consumption tiles.</p><br/>
 
@@ -565,7 +626,7 @@ Siehe folgenden Link für weitere Informationen: `,
     <p>The second category contains those items that generate <b>extra goods</b>. First, the corresponding setting (extra goods) needs to be activated. The option adds two pieces of information to the factory tiles: An input field that displays the <b>extra demand</b> which is put together form imports, exports, and extra goods. Since it is a demand extra goods are entered with negative values. The value below the line shows the (required) <b>factory output</b> (what is generated in the factory output storage). This includes the demand on the island, imports, and exports. It does not include extra goods from modules and place effects, which are magically transferred into the island storage.</p>
 </div><br/>
 
-<span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"><img class="icon-navbar" src="icon_itemsockets2.png" /></button></span>
+<span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"><img class="icon-navbar" src="icon_add_goods_socket_white.png" /></button></span>
 <p>First, one must select with which items a factory is equipped. One can do this from the factory configuration dialog (button on the top right of the factory tile) or from the extra goods item overview, where each checkbox represents a factory. A factory that would normally produce this product shows the <b>gained extra goods</b>. There, one must click the <b>Apply</b> button to enter the values into extra demands and calculate the new demand. Extra goods can be excluded from calculation by unchecking the checkbox. This is necessary in case several factories produce the same good. Otherwise the gained extra goods would be added multiple times.</p><br/>
 <p>If the setting <b>automatically apply</b> is active and the values for <b>gained extra goods</b> or <b>trade route imports/exports</b> change, the extra demand is automatically adjusted. But be careful when using this setting. In rare cases the calculator might caught up in an infinite loop to update the values. Effects are that the calculator responds slowly or elements flicker. In these cases, deactivate the setting briefly. If problems persist, please export the config, open an issue on GitHub (see below) and attach the config.</p><br/>
 <p>Items that fall in neither of the two categories are not included for clarity. E.g. the <b>production boost</b> needs to be calculated and entered without any support.</p><br/>
@@ -589,6 +650,14 @@ Siehe folgenden Link für weitere Informationen: `,
 <button class="btn text-light"><span class="fa fa-cogs"></span></button>
 </span>
 <span> in the navigation bar. Otherwise it may happen that for instance existing coal mines produce sufficient goods, but the demand is associated with charcoal kilns. It is not possible to produce one input good for one factory by different other factories. One must <b>stick with one type of factory</b> and simulate the production of other factories by artificial trade routes from artificial islands.</span><br/>
+<br/>
+
+<h5>Docklands</h5>
+<span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"> <img class="icon-navbar" src="icon_docklands_2d_white.png"> </button></span>
+<p>Docklands offers an enormous potential to trade goods and to focus on efficient production chains. But the game provides limited information to compute the required production capacities required for the export. Therefore, trade contracts in the calculator are based on t/min. The calculator computes the amount in tons that must be entered into the in-game contract to achieve the desired flow of goods. There is a checkbox in the settings to activate the docklands feature. After activation, an input box for extra demand appears - as it does when activating extra goods or trade routes. The calculator uses extra demand internally to account for the effects of trade routes etc. <b>Creating a contract</b> is like creating a trade route. One configures the number of goods and the exchange product in the <b>factory configuration dialog</b>. The switch in the middle toggles between exporting and importing the product of the selected factory. If no switch is shown, the good cannot be imported. <b>When selecting particular exchange products, an additional selection box appears.</b> There, one has to choose the factory where the good is added or subtracted. In every selection box, one can directly jump to the term by typing the first letters. The plus button creates a route. Afterwards, the route is shown at the import and export factory. The docklands dialog shows an overview of all contracts for one island. One can switch between the dialogs by clicking on the product icons.</p>
+<p>The upper part of the dialog shows the <b>export pyramid</b>. New entries are added by selecting a product and a multiplier. Rearranging the pyramid is achieved by deleting and recreating the entries. Existing contracts are updated such that the imported tons per minute remain the same.</p>
+<p>The lower part of the dialog shows an overview of all contracts and summary information about the trade. First of all, one has to enter the <b>loading speed of the pier</b> where Tobias trades. The loading speed is displayed in the lower part of the pier's information panel in the game. The calculator computes the trading duration, the total stock turnover in t/min, the island's required storage capacity, and the tons one must enter for each contract. The calculation of these values includes the loading speed bonus for Tobias and the duration to enter and leave the session. In case ∞ is displayed, the entered stock turnover exceeds the maximum. Then, one must distribute the contracts over more islands, increase the loading speed or reduce the traded volume.</p>
+<p><b>All Islands</b> (selected by default, if no island management is active) behaves a bit different. It allows to <b>import and export</b> the same good so that one can aggregate the contracts of several docklands. But it does not show the summary information about the trade.</p>
 <br/>
 
 <h5>Disclaimer</h5>
@@ -649,6 +718,25 @@ options = {
             "russian": "Дополнительные товары"
         }
     },
+    "contracts": {
+        "name": "Contracts",
+        //guid: 132271
+        "dialog": "contract-management-dialog",
+        "locaText": {
+            "english": "Docklands",
+            //"guid": 410083,
+            "polish": "Okno na świat",
+            "spanish": "Zona portuaria",
+            "taiwanese": "港灣",
+            "german": "Speicherstadt",
+            "chinese": "港湾",
+            "italian": "Area portuale",
+            "korean": "부둣가",
+            "french": "Zone portuaire",
+            "japanese": "港湾地区",
+            "russian": "Доки"
+        }
+    },
     "autoApplyExtraNeed": {
         "name": "Automatically update extra need when trade routes or extra goods change",
         "locaText": {
@@ -671,6 +759,13 @@ options = {
             "english": "Highlight missing buildings",
             "german": "Fehlende Gebäude hervorheben",
             "korean": "부족한 건물 강조"
+        }
+    },
+    "needUnlockConditions": {
+        "name": "Consider unlock conditions for needs",
+        "locaText": {
+            "english": "Consider unlock conditions for needs",
+            "german": "Freischaltbedingungen der Bedürfnisse berücksichtigen",
         }
     },
     "noOptionalNeeds": {

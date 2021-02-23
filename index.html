@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2020-10-22_full.js"></script>
+    <script type="text/javascript" src="params_2021-02-23_full.js"></script>
 </head>
 <body>
     <noscript>This site requires JavaScript!</noscript>
@@ -553,7 +553,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
                 </div>
-                <span class="modal-body">
+                <div class="modal-body">
                     <table class="table table-striped table-sm" data-bind="if: $root.tradeManager.npcRoutes().length">
                         <tbody class="mb-3" data-bind="foreach: $root.tradeManager.npcRoutes">
                             <tr>
@@ -630,9 +630,9 @@
                         </tbody>
                     </table>
 
+                </div>
             </div>
         </div>
-    </div>
     </div>
     <!-- #/trade-routes-management-dialog -->
     <!-- navbar -->
@@ -646,7 +646,10 @@
                     <span class="fa fa-cogs"> </span>
                 </button>
                 <button type="button" class="btn" data-bind="enable: $root.settings.additionalProduction.checked()">
-                    <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_itemsockets2.png" />
+                    <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icon_add_goods_socket_white.png" />
+                </button>
+                <button type="button" class="btn" data-bind="enable: $root.settings.contracts.checked(), visible: $root.island().contractManager">
+                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icon_docklands_2d_white.png" />
                 </button>
             </div>
             <div class="input-group input-group-sm" data-bind="visible: $root.islands().length > 1" style="width: unset;">
@@ -774,20 +777,20 @@
                                             </td> <!-- island name -->
                                             <!-- factory summary -->
                                             <!--<td data-bind="with: $data.getOpposite($parent)">
-                                                <div style="display: flex; flex-flow: wrap; justify-content: center">
-                                                    <span class="mr-3">
-                                                        <img src="icon_resource_storage_amount.png" width="25" height="25">
-                                                    </span>
-                                                    <span data-bind="if: !$data.top5Factories().length">0</span>
-                                                    <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
-                                                        <span class="mr-1">
-                                                            <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                            <div style="display: flex; flex-flow: wrap; justify-content: center">
+                                                <span class="mr-3">
+                                                    <img src="icon_resource_storage_amount.png" width="25" height="25">
+                                                </span>
+                                                <span data-bind="if: !$data.top5Factories().length">0</span>
+                                                <span data-bind="foreach: $data.top5Factories" style="display: flex; flex-flow: wrap; justify-content: center">
+                                                    <span class="mr-1">
+                                                        <img src="" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
 
-                                                        </span>
-                                                        <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
                                                     </span>
-                                                </div>
-                                            </td> -->
+                                                    <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                                </span>
+                                            </div>
+                                        </td> -->
 
                                             <td>
                                                 <div data-bind="if: $data.isExport($parent) && $parent.factory.overProduction() > ACCURACY">
@@ -845,8 +848,6 @@
                                 </table>
                                 <form class="form form-inline" data-bind="if: $data.unusedIslands().length && !$data.island.isAllIslands() " style="justify-content: space-between">
 
-
-
                                     <select name="islands" class="custom-select" id="islands" data-bind="value: $data.selectedIsland, options: $data.unusedIslands, optionsText: i => i.sessionExtendedName() /* + '\t' + i.assetsMap.get($data.factory.guid).overProduction() + ' t/min' */"></select>
                                     <div style="display: flex">
                                         <div class="mr-2">
@@ -876,11 +877,211 @@
                             <hr />
                         </div>
 
-                        <div data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked())">
+                        <div data-bind="if: $root.settings.contracts && $root.settings.contracts.checked() && $data instanceof Factory && $data.getProduct().exchangeWeight">
+                            <div data-bind="with: $data.contractList">
+
+                                <h6><span data-bind="text: $root.settings.contracts.name">Trade Contracts</span></h6>
+
+
+                                <div data-bind="if: $data.exports().length || $data.imports().length">
+                                    <table class="table table-striped table-sm">
+                                        <tbody>
+                                            <!-- export contracts -->
+                                            <!-- ko foreach: $data.exports -->
+                                            <tr>
+                                                <td>
+                                                    <div class="input-group spinner" style="max-width: 13rem">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+
+                                                                <a href="#" data-bind="click: () => {$root.selectedFactory($data.importFactory)}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
+                                                                    <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                        <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: importAmount, attr: {id: $data.importFactory.guid + '-export-contract-import-amount-input' } " />
+                                                        <div class="input-group-append">
+                                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.importAmount, id: $data.importFactory.guid + '-export-contract-import-amount-input' }}"></div>
+                                                            <span class="input-group-text">t/min</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span>&larr;</span></td>
+                                                <td>
+                                                    <div class="float-right" data-bind="if: $parent.factory.overProduction() > ACCURACY">
+                                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.exportOverproduction.name}">
+                                                            <span data-bind="text: formatNumber($parent.factory.overProduction())"></span>
+                                                            <button class="btn btn-light btn-sm" data-bind="click: () => $data.exportAmount($data.exportAmount() + $parent.factory.overProduction())">
+                                                                <span class="fa fa-sign-in"> </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+
+                                                    <div class="input-group spinner float-right" style="max-width: 13rem;">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}" style="margin: 0 0.25rem;">
+
+                                                            </span>
+                                                        </div>
+                                                        <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
+                                                            <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                        </span>
+                                                        <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: exportAmount, attr: {id: $data.importFactory.guid + '-export-contract-export-amount-input' } " />
+                                                        <div class="input-group-append">
+                                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.exportAmount, id: $data.importFactory.guid + '-export-contract-export-amount-input' }}"></div>
+                                                            <span class="input-group-text">t/min</span>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                                <td>
+
+                                                    <button class="btn btn-secondary btn-sm float-right" data-bind="click: () => $data.delete()">
+                                                        <span class="fa fa-trash"> </span>
+                                                    </button>
+
+                                                </td>
+                                            </tr>
+                                            <!-- /ko -->
+                                            <!-- import contracts -->
+                                            <!-- ko foreach: $data.imports -->
+                                            <tr>
+                                                <td>
+                                                    <div class="input-group spinner" style="max-width: 13rem">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                                <a href="#" data-bind="click: () => {$root.selectedFactory($data.exportFactory)}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
+                                                                    <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
+                                                                </a>
+                                                            </span>
+                                                            <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
+                                                                <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                            </span>
+                                                        </div>
+                                                        <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: exportAmount, attr: {id: $data.exportFactory.guid + '-import-contract-export-amount-input' } " />
+                                                        <div class="input-group-append">
+                                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.exportAmount, id: $data.exportFactory.guid + '-import-contract-export-amount-input' }}"></div>
+                                                            <span class="input-group-text">t/min</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td><span>&rarr;</span></td>
+                                                <td>
+                                                    <div class="float-right" data-bind="if: $parent.factory.overProduction() < -ACCURACY">
+                                                        <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.importDeficit.name}">
+                                                            <span data-bind="text: formatNumber($parent.factory.overProduction())"></span>
+                                                            <button class="btn btn-light btn-sm" data-bind="click: () => $data.importAmount($data.importAmount() - $parent.factory.overProduction())">
+                                                                <span class="fa fa-sign-in"> </span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+
+                                                    <div class="input-group spinner float-right" style="max-width: 13rem">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">
+                                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}" style="margin: 0 0.25rem;">
+                                                            </span>
+                                                        </div>
+                                                        <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: importAmount, attr: {id: $data.exportFactory.guid + '-import-contract-import-amount-input' } " />
+                                                        <div class="input-group-append">
+                                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.importAmount, id: $data.exportFactory.guid + '-import-contract-import-amount-input' }}"></div>
+                                                            <span class="input-group-text">t/min</span>
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                                <td>
+
+                                                    <button class="btn btn-secondary btn-sm float-right" data-bind="click: () => $data.delete()">
+                                                        <span class="fa fa-trash"> </span>
+                                                    </button>
+
+                                                </td>
+                                            </tr>
+                                            <!-- /ko -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- create new contracts -->
+                                <form class="form form-inline" style="justify-content: space-between" data-bind="with: $root.contractCreatorFactory, visible: $root.contractCreatorFactory.canImport() || $root.contractCreatorFactory.canExport()">
+
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" data-bind="visible: !$data.export()" />
+                                                <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" data-bind="visible: $data.export()" />
+                                            </span>
+                                        </div>
+                                        <select name="products" class="custom-select" id="contract-product" data-bind="value: $data.exchangeProduct, options: $data.exchangeProducts, optionsText: i => i.name()"></select>
+                                        <select name="factories" class="custom-select" id="contract-factory" data-bind="value: $data.exchangeFactory, options: $data.exchangeFactories, optionsText: i => i.getRegionExtendedName(), visible: $data.exchangeFactories().length > 1"></select>
+                                    </div>
+
+
+                                    <div>
+                                        <span data-bind="visible: $data.export()">&larr;</span>
+                                        <span data-bind="visible: !$data.export()">&rarr;</span>
+                                    </div>
+                                    <div style="display: flex">
+
+                                        <div class="mr-2" data-bind="visible: $data.canImport()">
+
+                                            <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                        </div>
+
+                                        <div class="custom-control custom-switch" data-bind="visible: $data.canImport() && $data.canExport()">
+                                            <input type="checkbox" class="custom-control-input" id="create-contract-export-checkbox" data-bind="checked: $data.export">
+                                            <label class="custom-control-label" for="create-contract-export-checkbox" data-bind="visible: $data.canExport()">
+
+                                                <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                            </label>
+                                        </div>
+
+                                        <div class="mr-2" data-bind="visible: !$data.canImport() && $data.canExport()">
+
+                                            <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                        </div>
+                                    </div>
+                                    <div class="input-group input-group-short spinner">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <img class="icon-sm" src="" data-bind="attr: { src: $root.selectedFactory().icon ? $root.selectedFactory().icon : null, alt:$root.selectedFactory().name}" style="margin: 0 0.25rem;">
+                                            </span>
+                                        </div>
+                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">t/min</span>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.create(), enable: $data.canCreate()">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
+                                </form>
+
+                                <hr />
+                            </div>
+                        </div>
+
+                        <div data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
                             <div class="inline-list-stretched" style="padding: .75rem;">
                                 <div data-bind="if: $root.settings.tradeRoutes.checked()">
                                     <span class="mr-3" data-bind="text: $root.settings.tradeRoutes.name"></span>
                                     <span data-bind="text: formatNumber(-$data.tradeList.amount())"></span>
+                                    <span class="mr-3"> t/min</span>
+                                </div>
+                                <div data-bind="if: $data.contractList && $root.settings.contracts.checked()">
+                                    <span class="mr-3" data-bind="text: $root.settings.contracts.name"></span>
+                                    <span data-bind="text: formatNumber(-$data.contractList.amount())"></span>
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div data-bind="if: $root.settings.additionalProduction.checked()">
@@ -894,7 +1095,7 @@
                                     <span class="mr-3"> t/min</span>
                                 </div>
                                 <div>
-                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() || $data.extraGoodProductionList.amount() || $data.tradeList.amount()">
+                                    <button class="btn btn-sm btn-light" data-bind="click: () => $data.updateExtraGoods(1), enable: $data.amount() || $data.extraGoodProductionList.amount() || $data.tradeList.amount() || $data.contractList && $data.contractList.amount()">
                                         <span data-bind="text: $root.texts.apply.name">Apply</span>
                                     </button>
                                 </div>
@@ -902,7 +1103,7 @@
                         </div>
                         <table class="table table-striped">
                             <tbody>
-                                <tr data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked())">
+                                <tr data-bind="if: $data instanceof Factory && ($root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $data.contractList && $root.settings.contracts.checked())">
                                     <!-- extra goods -->
                                     <td>
                                         <span data-bind="text: $root.texts.extraNeed.name"></span>
@@ -1136,6 +1337,159 @@
             </div>
         </div>
         <!-- #/good-consumption-upgrade-dialog -->
+        <!-- #contract-management-dialog -->
+        <div id="contract-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content" data-bind="if: $root.settings.contracts">
+                    <div class="modal-header">
+                        <h4 data-bind="text: $root.settings.contracts.name">Trade Contracts</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+                    </div>
+                    <div class="modal-body">
+                        <div data-bind="with: $root.contractUpgradeManager">
+                            <h5 data-bind="text: $root.texts.exportPyramid.name">Your Specialty Exports</h5>
+
+                            <table class="table table-striped table-sm">
+                                <tbody data-bind="foreach: $data.upgrades">
+                                    <tr>
+                                        <td>
+                                            <img src="" class="icon-sm" data-bind="attr: {src: $data.product.icon}" />
+                                            <span data-bind="text: $data.product.name()"></span>
+                                        </td>
+                                        <td>
+                                            <span data-bind="text: $data.factor"></span>
+                                            <span>x</span>
+                                        </td>
+                                        <td>
+                                            <div class="float-right">
+                                                <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
+                                                    <span class="fa fa-trash"> </span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <form class="form form-inline" data-bind="if: $data.factors().length" style="justify-content: space-between">
+
+                                <select name="products" class="custom-select" id="contract-upgrades-products" data-bind="value: $data.product, options: $data.products, optionsText: i => i.name()"></select>
+                                <select name="factors" class="custom-select" id="contract-upgrades-factors" data-bind="value: $data.factor, options: $data.factors, optionsText: i => i + 'x'"></select>
+
+                                <button class="btn btn-sm btn-light" data-bind="click: () => $data.create(), enable: $data.canCreate()">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </form>
+                        </div>
+                        <hr />
+                        <div data-bind="with: $root.island().contractManager">
+                            <div class="input-group spinner" style="max-width: 18rem;">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" data-bind="text: $root.texts.loadingSpeed.name()"></span>
+                                </div>
+                                <input step="0.1" min="1" class="form-control" type="number" value="100" data-bind="value: $data.traderLoadingSpeed, attr: { id: 'trader-loading-speed' }" />
+                                <div class="input-group-append">
+                                    <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.traderLoadingSpeed, id: 'trader-loading-speed' }}"></div>
+                                    <span class="input-group-text">t/s</span>
+
+                                </div>
+                            </div>
+                            <div class="inline-list-stretched mt-2" data-bind="visible: !view.island().isAllIslands()">
+
+                                <div>
+                                    <span data-bind="text: $root.texts.duration.name()"></span>
+                                    <span>: </span>
+                                    <span data-bind="text: formatNumber($data.traderLoadingDuration())"></span>
+                                    <span> min</span>
+                                </div>
+                                <div>
+                                    <span data-bind="text: $root.texts.total.name()"></span>
+                                    <span>: </span>
+                                    <span data-bind="text: formatNumber($data.totalAmount())"></span>
+                                    <span> t/min</span>
+                                </div>
+                                <div>
+                                    <span data-bind="text: $root.texts.totalCapacity.name()"></span>
+                                    <span>: </span>
+                                    <span data-bind="text: formatNumber($data.storageCapacity())"></span>
+                                    <span> t</span>
+                                </div>
+
+                            </div>
+
+                            <table class="table table-striped table-sm mt-3">
+                                <tbody data-bind="foreach: contracts">
+                                    <tr>
+                                        <td>
+                                            <div>
+                                                <div class="input-group spinner" style="max-width: 16rem;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
+                                                            <a href="#" data-dismiss="modal" data-bind="click: () => {$root.selectedFactory($data.exportFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.exportFactory.name()}" style="margin: 0 0.25rem;">
+                                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.exportFactory.icon ? $data.exportFactory.icon : null, alt: $data.exportFactory.name}">
+                                                            </a>
+                                                        </span>
+                                                        <span data-bind="if: $root.settings.missingBuildingsHighlight.checked() && $data.exportFactory.overProduction() < -ACCURACY">
+                                                            <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                                        </span>
+                                                    </div>
+                                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: exportAmount, attr: { id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-export-amount-input' }" />
+                                                    <div class="input-group-append">
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.exportAmount, id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-export-amount-input' }}"></div>
+                                                        <div class="input-group-text">
+                                                            <span data-bind="visible: view.island().isAllIslands()">t/min</span>
+                                                            <span data-bind="text: 't/min (' + formatNumber($data.exportCount()) + ' t)', visible: !view.island().isAllIslands()"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span>&rarr;</span></td>
+                                        <td>
+                                            <div>
+                                                <div class="input-group spinner" style="max-width: 16rem;">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">
+                                                            <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
+                                                            <a href="#" data-dismiss="modal" data-bind="click: () => {$root.selectedFactory($data.importFactory); setTimeout(() => {$('#factory-config-dialog').modal('show')}, 500);}, attr: {title: $data.importFactory.name()}" style="margin: 0 0.25rem;">
+                                                                <img class="icon-sm" src="" data-bind="attr: { src: $data.importFactory.icon ? $data.importFactory.icon : null, alt: $data.importFactory.name}">
+                                                            </a>
+                                                        </span>
+                                                    </div>
+                                                    <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: importAmount, attr: { id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-import-amount-input' }" />
+                                                    <div class="input-group-append">
+                                                        <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.importAmount, id: $data.exportFactory.guid + '-' + $data.importFactory.guid + '-import-amount-input' }}"></div>
+                                                        <div class="input-group-text">
+                                                            <span data-bind="visible: view.island().isAllIslands()">t/min</span>
+                                                            <span data-bind="text: 't/min (' + formatNumber($data.importCount()) + ' t)', visible: !view.island().isAllIslands()"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span data-bind="text:formatNumber(Math.max(1, $data.ratio())) "></span>
+                                            <span> : </span>
+                                            <span data-bind="text:formatNumber(Math.max(1, 1/$data.ratio())) "></span>
+                                        </td>
+                                        <td>
+                                            <div class="float-right">
+                                                <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
+                                                    <span class="fa fa-trash"> </span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- #/contract-management-dialog -->
         <div class="animate-bottom">
             <!-- population input field -->
             <fieldset class="ui-fieldset" id="residents-view">
@@ -1145,8 +1499,8 @@
 
                     <div class="ui-tier-input fleft">
                         <!-- <div class="ui-tier-icon">
-                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                        </div> -->
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
                         <div data-bind="foreach: $root.template.populationLevels">
                             <div class="ui-tier-unit" data-bind="visible: !$root.island().region || $root.island().region == $data.region">
                                 <div class="ui-tier-unit-icon mb-1">
@@ -1198,8 +1552,8 @@
 
                     <div class="ui-tier-input fleft">
                         <!-- <div class="ui-tier-icon">
-                            <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
-                        </div> -->
+                        <img src="/img/icons/gui_icon_map_0-17-10.png" alt="Old World" width="46" height="46">
+                    </div> -->
                         <div data-bind="foreach: $root.template.workforce">
                             <div class="ui-tier-unit">
                                 <div class="ui-tier-unit-icon"><img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }"></div>
@@ -1344,7 +1698,7 @@
                                                 <div style="flex: 100 1 auto;"></div>
                                             </div>
                                         </div>
-                                        <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked()">
+                                        <div class="ui-fchain-item-load" data-bind="visible: $root.settings.additionalProduction.checked() || $root.settings.tradeRoutes.checked() || $root.settings.contracts.checked()">
                                             <div class="ui-fchain-item-extra-input">
                                                 <div class="input-group input-group-sm spinner mb-3">
                                                     <div class="input-group-prepend">

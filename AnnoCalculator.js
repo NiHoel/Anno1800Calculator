@@ -1,4 +1,4 @@
-let versionCalculator = "v4.1";
+let versionCalculator = "v5.0";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -133,6 +133,7 @@ class Island {
         });
 
         this.populationLevels = [];
+        this.residenceBuildings = [];
         this.consumers = [];
         this.factories = [];
         this.categories = [];
@@ -170,7 +171,7 @@ class Island {
         }
 
         for (let consumer of (params.modules || [])) {
-            let f = new Module(consumer, assetsMap);
+            let f = new Module(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
         }
@@ -230,6 +231,7 @@ class Island {
                 }
             }
         }
+
         let products = [];
         for (let product of params.products) {
             if (product.producers && product.producers.length) {
@@ -318,11 +320,25 @@ class Island {
         }
 
 
+        for (var building of (params.residenceBuildings || [])) {
+            var b = new ResidenceBuilding(building, assetsMap);
+            assetsMap.set(b.guid, b);
+            this.residenceBuildings.push(b);
+        }
+
+        for (var b of this.residenceBuildings)
+            if (b.upgradedBuilding)
+                b.upgradedBuilding = assetsMap.get(parseInt(b.upgradedBuilding));
+
         for (let level of params.populationLevels) {
 
             let l = new PopulationLevel(level, assetsMap);
             assetsMap.set(l.guid, l);
             this.populationLevels.push(l);
+        }
+
+        for (let l of this.populationLevels) {
+            l.initBans(assetsMap);
 
             if (localStorage) {
                 {
@@ -394,6 +410,8 @@ class Island {
 
             }
         }
+
+
 
         for (var category of params.productFilter) {
             let c = new ProductCategory(category, assetsMap);
@@ -514,7 +532,6 @@ class Island {
         this.assetsMap = assetsMap;
         this.products = products;
 
-
         this.top2Population = ko.computed(() => {
             var useHouses = view.settings.existingBuildingsInput.checked();
             var comp = useHouses
@@ -532,6 +549,9 @@ class Island {
 
             return [...this.factories].sort(comp).slice(0, 5).filter(f => useBuildings ? f.existingBuildings() : f.buildings());
         });
+
+        if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
+            this.contractManager = new ContractManager(this, params.tradeContracts);
     }
 
     reset() {
@@ -611,6 +631,9 @@ class Consumer extends NamedElement {
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
         this.tradeList = new TradeList(island, this);
+
+        if (params.tradeContracts && (!this.island.region || this.island.region.guid == 5000000))
+            this.contractList = new ContractList(island, this);
     }
 
     getInputs() {
@@ -683,8 +706,8 @@ class Consumer extends NamedElement {
 }
 
 class Module extends Consumer {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
+    constructor(config, assetsMap, island) {
+        super(config, assetsMap, island);
         this.checked = ko.observable(false);
         this.visible = !!config;
     }
@@ -766,7 +789,9 @@ class Factory extends Consumer {
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
         this.computedExtraAmount = ko.computed(() => {
-            return (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) + this.tradeList.amount();
+            return (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) +
+                this.tradeList.amount() +
+                (this.contractList ? this.contractList.amount() : 0);
         });
 
         this.computedExtraAmount.subscribe(() => {
@@ -789,7 +814,12 @@ class Factory extends Consumer {
         });
 
         this.visible = ko.computed(() => {
-            if (Math.abs(this.amount()) > EPSILON || Math.abs(this.extraAmount()) > EPSILON || this.existingBuildings() > 0 || !this.island.isAllIslands() && Math.abs(this.extraGoodProductionList.amount()) > EPSILON || Math.abs(this.tradeList.amount()) > EPSILON)
+            if (Math.abs(this.amount()) > EPSILON ||
+                Math.abs(this.extraAmount()) > EPSILON ||
+                this.existingBuildings() > 0 ||
+                !this.island.isAllIslands() && Math.abs(this.extraGoodProductionList.amount()) > EPSILON ||
+                Math.abs(this.tradeList.amount()) > EPSILON ||
+                this.contractList && Math.abs(this.contractList.amount()) > EPSILON)
                 return true;
 
             if (this.region && this.island.region && this.region != this.island.region)
@@ -892,10 +922,21 @@ class Factory extends Consumer {
 
         this.extraAmount(val);
 
-        if (depth > 0)
+        if (depth > 0) {
             for (var route of this.tradeList.routes()) {
                 route.getOppositeFactory(this).updateExtraGoods(depth - 1);
             }
+
+            if (this.contractList) {
+                for (var contract of this.contractList.exports()) {
+                    contract.importFactory.updateExtraGoods(depth - 1);
+                }
+
+                for (var contract of this.contractList.imports()) {
+                    contract.exportFactory.updateExtraGoods(depth - 1);
+                }
+            }
+        }
     }
 
     applyConfigGlobally() {
@@ -923,10 +964,10 @@ class Product extends NamedElement {
 
         this.amount = ko.observable(0);
 
-        this.factories = this.producers.map(p => assetsMap.get(p));
+        this.factories = this.producers.map(p => assetsMap.get(p)).filter(p => !!p);
         this.fixedFactory = ko.observable(null);
 
-        if (this.producers) {
+        if (this.producers && this.factories.length) {
             this.amount = ko.computed(() => this.factories.map(f => f.amount()).reduce((a, b) => a + b));
         }
     }
@@ -988,7 +1029,8 @@ class Demand extends NamedElement {
 
             this.buildings = ko.computed(() => {
                 var factory = this.factory();
-                var buildings = Math.max(0, this.inputAmount()) / factory.tpmin / factory.boost();
+                var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
+                var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
 
                 return buildings;
             });
@@ -1143,17 +1185,57 @@ class PopulationNeed extends Need {
             val = parseFloat(val);
             if (val <= 0)
                 this.percentBoost(1);
-        })
+        });
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
         this.boost.subscribe(() => this.updateAmount(this.residents));
 
         this.checked = ko.observable(true);
+        this.optionalAmount = ko.observable(0);
+
+    }
+
+    initBans(level, assetsMap) {
+        if (this.unlockCondition) {
+            var config = this.unlockCondition;
+            this.locked = ko.computed(() => {
+                if (!config || !view.settings.needUnlockConditions.checked())
+                    return false;
+
+                var getAmount = l => view.settings.existingBuildingsInput.checked()
+                    ? parseInt(l.existingBuildings()) * l.fullHouse
+                    : parseInt(l.amount());
+
+                if (config.populationLevel != level.guid) {
+                    var l = assetsMap.get(config.populationLevel);
+                    var amount = getAmount(l);
+                    return amount < config.amount;
+                }
+
+                var amount = getAmount(level);
+                if (amount >= config.amount)
+                    return false;
+
+                var residence = level.residence.upgradedBuilding;
+                while (residence) {
+                    var l = residence.populationLevel;
+                    var amount = getAmount(l);
+                    if (amount > 0)
+                        return false;
+
+                    residence = residence.upgradedBuilding;
+                }
+
+                return true;
+            });
+        }
+
         this.banned = ko.computed(() => {
             var checked = this.checked();
             var noOptionalNeeds = view.settings.noOptionalNeeds.checked();
-            return !checked || this.happiness && noOptionalNeeds;
-        })
-        this.optionalAmount = ko.observable(0);
+            return !checked ||
+                this.happiness && noOptionalNeeds ||
+                this.locked && this.locked();
+        });
 
         this.banned.subscribe(banned => {
             if (banned)
@@ -1221,6 +1303,12 @@ class PowerPlantNeed extends Need {
     updateFixedProductFactory() { }
 }
 
+class ResidenceBuilding extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+    }
+}
+
 class PopulationLevel extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
@@ -1232,6 +1320,11 @@ class PopulationLevel extends NamedElement {
         this.needs = [];
         this.region = assetsMap.get(config.region);
 
+        this.propagatedAmount = ko.computed(() => {
+            var amount = view.settings.existingBuildingsInput.checked() ? parseInt(this.existingBuildings()) * config.fullHouse : parseInt(this.amount());
+            this.needs.forEach(n => n.updateAmount(amount));
+        });
+
         config.needs.forEach(n => {
             if (n.tpmin > 0 && assetsMap.get(n.guid))
                 this.needs.push(new PopulationNeed(n, assetsMap));
@@ -1240,20 +1333,24 @@ class PopulationLevel extends NamedElement {
         this.amount.subscribe(val => {
             if (val < 0)
                 this.amount(0);
-            else if (!view.settings.existingBuildingsInput.checked())
-                this.needs.forEach(n => n.updateAmount(parseInt(val)))
-        });
-        this.existingBuildings.subscribe(val => {
-            if (view.settings.existingBuildingsInput.checked())
-                this.needs.forEach(n => n.updateAmount(parseInt(val * config.fullHouse)))
         });
         view.settings.existingBuildingsInput.checked.subscribe(enabled => {
             if (enabled)
                 this.existingBuildings(Math.max(this.existingBuildings(),
                     Math.ceil(parseInt(this.amount()) / config.fullHouse)));
-            else
-                this.amount(Math.max(this.amount(), parseInt(this.existingBuildings()) / (config.fullHouse - 10)));
+            else if (!this.amount())
+                this.amount(parseInt(this.existingBuildings()) / config.fullHouse);
         });
+
+        if (this.residence) {
+            this.residence = assetsMap.get(this.residence);
+            this.residence.populationLevel = this;
+    }
+    }
+
+    initBans(assetsMap) {
+        for (var n of this.needs)
+            n.initBans(this, assetsMap);
     }
 
     incrementAmount() {
@@ -1906,6 +2003,440 @@ class TradeManager {
     }
 }
 
+class Pier extends NamedElement {
+    constructor(config) {
+        super(config);
+    }
+}
+
+class TradeContract {
+    constructor(config) {
+        $.extend(this, config);
+
+        this.exportProduct = this.exportFactory.product;
+        this.importProduct = this.importFactory.product;
+
+        this.importAmount = createFloatInput(0);
+
+        this.ratio = ko.computed(() => {
+            return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight / 
+                this.exportProduct.exchangeWeight /
+                (view.contractUpgradeManager.upgradesMap().get(this.exportProduct.guid) || 1);
+        });
+
+        this.exportAmount = ko.pureComputed({
+            read: () => this.ratio() * this.importAmount(),
+            write: val => this.importAmount(parseFloat(val) / this.ratio())
+        });
+
+        if (config.importAmount)
+            this.importAmount(config.importAmount);
+        else
+            this.exportAmount(config.exportAmount);
+
+        this.importCount = ko.observable(0);
+        this.exportCount = ko.observable(0);
+    }
+
+    delete() {
+        this.importFactory.island.contractManager.remove(this);
+    }
+}
+
+class ContractList {
+    constructor(island, factory) {
+        this.island = island;
+        this.factory = factory;
+
+        this.imports = ko.observableArray();
+        this.exports = ko.observableArray();
+
+
+        this.amount = ko.computed(() => {
+            var amount = 0;
+
+            for (var contract of this.imports()) {
+                amount -= contract.importAmount();
+            }
+
+            for (var contract of this.exports()) {
+                amount += contract.exportAmount();
+            }
+
+            return amount;
+        });
+
+    }
+}
+
+class ContractManager {
+    constructor(island) {
+        this.key = "tradingContracts";
+        this.paramKey = "tradingContractParams";
+        this.island = island;
+        this.contracts = ko.observableArray();
+
+        var localStorage = island.storage;
+        if (localStorage) {
+            // trade routes
+            var assetsMap = island.assetsMap;
+
+            var text = localStorage.getItem(this.key);
+            var json = text ? JSON.parse(text) : [];
+            for (var r of json) {
+                var config = {
+                    importFactory: assetsMap.get(r.importFactory),
+                    exportFactory: assetsMap.get(r.exportFactory),
+                    importAmount: parseFloat(r.importAmount)
+                };
+
+                if (!config.importFactory || !config.exportFactory || !config.importFactory.contractList || !config.exportFactory.contractList)
+                    continue;
+
+                var contract = new TradeContract(config);
+                this.contracts.push(contract);
+                config.importFactory.contractList.imports.push(contract);
+                config.exportFactory.contractList.exports.push(contract);
+            }
+
+
+            this.persistenceSubscription = ko.computed(() => {
+                var json = [];
+
+                for (var r of this.contracts()) {
+                    json.push({
+                        importFactory: r.importFactory.guid,
+                        exportFactory: r.exportFactory.guid,
+                        importAmount: r.importAmount()
+                    });
+                }
+
+                localStorage.setItem(this.key, JSON.stringify(json, null, 4));
+
+                return json;
+            });
+
+        }
+
+        this.traderLoadingSpeed = createFloatInput(2);
+
+        if (localStorage) {
+            let id = "traderLoadingSpeed.amount";
+            if (localStorage.getItem(id) != null)
+                this.traderLoadingSpeed(parseFloat(localStorage.getItem(id)));
+
+            this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
+        }
+
+        this.traderLoadingDuration = ko.computed(() => {
+            var totalAmount = 0;
+            for (var c of this.contracts())
+                totalAmount += c.importAmount() + c.exportAmount();
+
+            var transferTime = params.tradeContracts.traderTransferMinutes + 4;
+
+            if (totalAmount >= 60 * this.traderLoadingSpeed()) {
+                for (var c of this.contracts()) {
+                    c.importCount(Infinity);
+                    c.exportCount(Infinity);
+                }
+
+                return Infinity;
+            }
+
+            var x = totalAmount / (60 * this.traderLoadingSpeed() * params.tradeContracts.loadingSpeedFactor);
+            var loadingDuration = Math.max(params.tradeContracts.minimumLoadingTime / 60, - transferTime * x / (x - 1));
+            var totalDuration = transferTime + loadingDuration;
+
+            for (var c of this.contracts()) {
+                c.importCount(Math.ceil(c.importAmount() * totalDuration));
+                c.exportCount(Math.ceil(c.exportAmount() * totalDuration));
+            }
+
+            return loadingDuration;
+        });
+
+        this.totalAmount = ko.pureComputed(() => {
+            var sum = 0;
+
+            for (var c of this.contracts())
+                sum += c.importAmount() + c.exportAmount();
+
+            return sum;
+        });
+
+        this.storageCapacity = ko.pureComputed(() => {
+            var productToCount = new Map();
+
+            for (var c of this.contracts()) {
+                // import
+                var guid = c.importProduct.guid;
+                if (productToCount.has(guid))
+                    productToCount.set(guid, c.importCount() + productToCount.get(guid));
+                else
+                    productToCount.set(guid, c.importCount());
+
+                // export
+                guid = c.exportProduct.guid;
+                if (productToCount.has(guid))
+                    productToCount.set(guid, c.exportCount() + productToCount.get(guid));
+                else
+                    productToCount.set(guid, c.exportCount());
+
+            }
+
+            if (!productToCount.size)
+                return 0;
+
+            var m = 0;
+            for (var val of productToCount.values())
+                if (val > m)
+                    m = val;
+
+            return m;
+        });
+
+    }
+
+    add(contract) {
+        this.contracts.push(contract);
+    }
+
+    remove(contract) {
+        contract.importFactory.contractList.imports.remove(contract);
+        contract.exportFactory.contractList.exports.remove(contract);
+        this.contracts.remove(contract);
+    }
+
+    islandDeleted(island) {
+    }
+
+}
+
+class ContractUpgrade {
+    constructor(config) {
+        $.extend(this, config);
+    }
+
+    delete() {
+        view.contractUpgradeManager.upgrades.remove(this);
+    }
+}
+
+class ContractUpgradeManager {
+    constructor() {
+        this.key = "contractUpgrades";
+        this.upgrades = ko.observableArray();
+
+        this.productsMap = new Map();
+        var assetsMap = new Map();
+        for(var p of params.products)
+        if (p.exchangeWeight)
+            this.productsMap.set(p.guid, new Product(p, assetsMap));
+
+
+        if (localStorage) {
+
+            var text = localStorage.getItem(this.key);
+            var json = text ? JSON.parse(text) : {};
+            for (var p in json) {
+                var config = {
+                    product: this.productsMap.get(parseInt(p)),
+                    factor: json[p],
+                };
+
+                this.upgrades.push(new ContractUpgrade(config));
+            }
+
+
+            this.persistenceSubscription = ko.computed(() => {
+                var json = {};
+
+                for (var u of this.upgrades()) {
+                    json[u.product.guid] = u.factor;
+                }
+
+                localStorage.setItem(this.key, JSON.stringify(json));
+
+                return json;
+            });
+
+        }
+
+        this.sortUpgrades();
+
+        this.upgradesMap = ko.pureComputed(() => {
+            var map = new Map();
+            for (var u of this.upgrades())
+                map.set(u.product.guid, u.factor);
+
+            return map;
+        });
+
+        this.products = ko.computed(() => {
+            return [...this.productsMap.values()]
+                .filter(p => !this.upgradesMap().has(p.guid))
+                .sort((a, b) => a.name() > b.name());
+        });
+        this.product = ko.observable(null);
+        this.factors = ko.computed(() => {
+            var factorToAmount = new Map();
+
+            for (var u of params.tradeContracts.upgrades)
+                factorToAmount.set(u.factor, 0);
+
+            for (var u of this.upgrades())
+                factorToAmount.set(u.factor, factorToAmount.get(u.factor) + 1);
+
+            return params.tradeContracts.upgrades.filter(u => factorToAmount.get(u.factor) < u.maximumAllowedGoods).map(u => u.factor);
+        });
+        this.factor = ko.observable(this.factors[0]);
+
+        this.canCreate = ko.pureComputed(() => this.product() && this.factor());
+    }
+
+    create() {
+        this.upgrades.push(new ContractUpgrade({
+            product: this.product(),
+            factor: this.factor()
+        }));
+
+        this.sortUpgrades();
+    }
+
+    sortUpgrades() {
+        this.upgrades.sort((a, b) => {
+            if (a.factor != b.factor)
+                return a.factor < b.factor;
+
+            return a.product.name() > b.product.name();
+        });
+    }
+}
+
+class ContractCreatorFactory {
+    constructor() {
+        // interface elements to create a new contract in factory config dialog
+        this.export = ko.observable(false);
+
+        this.exchangeProducts = ko.computed(() => {
+            if (!view.selectedFactory() || !view.selectedFactory().contractList)
+                return [];
+
+            var f = view.selectedFactory();
+            var i = f.contractList.island;
+            var contractList = i.isAllIslands()
+                ? f.contractList.imports().concat(f.contractList.exports())
+                : i.contractManager.contracts();
+            var usedProducts = new Set(contractList.map(c => c.product));
+            usedProducts.add(f.product);
+
+            var list;
+            if (this.export())
+                list = i.products
+                    .filter(p => p.guid != 1010566 && p.guid != 270042 && p.canImport && !usedProducts.has(p));
+            else
+                list = i.products
+                    .filter(p => p.guid != 1010566 && p.guid != 270042 && !usedProducts.has(p));
+
+            return list.sort((a, b) => a.name() > b.name());
+        });
+        this.exchangeProduct = ko.observable(null);
+
+        this.exchangeFactories = ko.computed(() => {
+            var list;
+            if (this.exchangeProduct())
+                list = this.exchangeProduct().factories;
+            else
+                list = this.exchangeProducts().flatMap(p => p.factories);
+
+
+            return list.sort((a, b) => a.getRegionExtendedName() > b.getRegionExtendedName());
+        });
+        this.exchangeFactory = ko.observable();
+        this.exchangeFactory.subscribe(f => this.exchangeProduct(f ? f.product : null));
+        
+        this.newAmount = createFloatInput(0);
+
+        this.contractList = ko.pureComputed(() => {
+            return view.selectedFactory().contractList;
+        });
+
+        this.canImport = ko.pureComputed(() => {
+            var f = view.selectedFactory();
+
+            return !!(f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length));
+        });
+
+        this.canExport = ko.pureComputed(() => {
+            var f = view.selectedFactory();
+
+            return !!(f.contractList.island.isAllIslands() || !f.contractList.imports().length);
+        });
+
+        view.selectedFactory.subscribe(f => {
+            if (!(f instanceof Factory) || !f.contractList)
+                return;
+
+            var overProduction = f.overProduction();
+            if (overProduction == 0)
+                overProduction = -f.computedExtraAmount();
+
+            if (!f.contractList.island.isAllIslands() && f.contractList.exports().length) {
+                this.export(true);
+                this.newAmount(Math.max(0, overProduction));
+            } else if (f.contractList.imports().length) {
+                this.export(false);
+                this.newAmount(Math.abs(Math.min(0, overProduction)));
+            } else {
+                if (overProduction < 0 && this.canImport()) {
+                    this.export(false);
+                    this.newAmount(Math.abs(overProduction));
+                } else {
+                    this.export(true);
+                    this.newAmount(Math.max(0, overProduction));
+                }
+            }
+        });
+    }
+
+    canCreate() {
+        return this.exchangeFactory() && this.newAmount() && (this.export() || this.canImport()) && this.exchangeFactory().getProduct().exchangeWeight && view.selectedFactory().getProduct().exchangeWeight;
+    }
+
+    create() {
+        if (!this.canCreate())
+            return;
+
+        var f = view.selectedFactory();
+        var l = f.contractList;
+        if (!l)
+            return;
+
+        if (this.export()) {
+            var contract = new TradeContract({
+                exportFactory: f,
+                importFactory: this.exchangeFactory(),
+                exportAmount: this.newAmount()
+            });
+
+            l.exports.push(contract);
+            this.exchangeFactory().contractList.imports.push(contract);
+        } else {
+            var contract = new TradeContract({
+                exportFactory: this.exchangeFactory(),
+                importFactory: f,
+                importAmount: this.newAmount()
+            });
+
+            l.imports.push(contract);
+            this.exchangeFactory().contractList.exports.push(contract);
+        }
+
+        l.island.contractManager.add(contract);
+    }
+}
+
 class ProductionChainView {
     constructor() {
         this.factoryToDemands = new Map();
@@ -2478,8 +3009,6 @@ function init() {
         view.sessions.push(s);
     }
 
-
-
     // set up newspaper
     view.newspaperConsumption = new NewspaperNeedConsumption();
     if (localStorage) {
@@ -2517,6 +3046,10 @@ function init() {
         }
     }
 
+    if (params.tradeContracts) {
+        view.contractUpgradeManager = new ContractUpgradeManager();
+    }
+
     // set up island management
     view.islandManager = new IslandManager(params);
 
@@ -2535,6 +3068,10 @@ function init() {
     view.productionChain = new ProductionChainView();
 
     view.tradeManager = new TradeManager();
+
+    if (params.tradeContracts) {
+        view.contractCreatorFactory = new ContractCreatorFactory();
+    }
 
     var allIslands = view.islandManager.allIslands;
     var selectedIsland = view.island();
@@ -2617,8 +3154,8 @@ function removeSpaces(string) {
 var formater = new Intl.NumberFormat(navigator.language || "en").format;
 function formatNumber(num) {
     var rounded = Math.ceil(100 * parseFloat(num)) / 100;
-	if(Math.abs(rounded) < EPSILON)
-		rounded = 0;
+    if (Math.abs(rounded) < EPSILON)
+        rounded = 0;
     return formater(rounded);
 }
 
@@ -2669,7 +3206,7 @@ function createFloatInput(init) {
     obs.subscribe(val => {
         var num = parseFloat(val);
 
-        if (typeof num == "number" && isFinite(num) && val != num)
+        if (typeof num == "number" && isFinite(num) && val !== num)
             obs(num);
         else if (typeof num != "number" || !isFinite(num))
             obs(init);
