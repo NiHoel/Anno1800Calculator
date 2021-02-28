@@ -1470,9 +1470,9 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span data-bind="text:formatNumber(Math.max(1, $data.ratio())) "></span>
+                                            <span data-bind="text: Math.round(1000 * Math.max(1, $data.ratio()))/1000 "></span>
                                             <span> : </span>
-                                            <span data-bind="text:formatNumber(Math.max(1, 1/$data.ratio())) "></span>
+                                            <span data-bind="text: Math.round(1000 * Math.max(1, 1/$data.ratio()))/1000 "></span>
                                         </td>
                                         <td>
                                             <div class="float-right">

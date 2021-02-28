@@ -32,6 +32,8 @@ params=
 }
 ],
 "module": 269839,
+"modulesLimit": 144,
+"modulesSize": 1,
 "name": "Grain Farm",
 "outputs": [
 {
@@ -74,6 +76,8 @@ params=
 }
 ],
 "module": 269957,
+"modulesLimit": 4,
+"modulesSize": 12,
 "name": "Cattle Farm",
 "outputs": [
 {
@@ -116,6 +120,8 @@ params=
 }
 ],
 "module": 269837,
+"modulesLimit": 96,
+"modulesSize": 1,
 "name": "Hop Farm",
 "outputs": [
 {
@@ -158,6 +164,8 @@ params=
 }
 ],
 "module": 269837,
+"modulesLimit": 72,
+"modulesSize": 1,
 "name": "Potato Farm",
 "outputs": [
 {
@@ -171,6 +179,7 @@ params=
 "tpmin": 2
 },
 {
+"freeArea": 240,
 "guid": 1010266,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_wood_log.png",
 "locaText": {
@@ -241,6 +250,8 @@ params=
 }
 ],
 "module": 269957,
+"modulesLimit": 3,
+"modulesSize": 9,
 "name": "Sheep Farm",
 "outputs": [
 {
@@ -283,6 +294,8 @@ params=
 }
 ],
 "module": 269957,
+"modulesLimit": 5,
+"modulesSize": 6,
 "name": "Pig Farm",
 "outputs": [
 {
@@ -296,6 +309,7 @@ params=
 "tpmin": 1
 },
 {
+"freeArea": 352,
 "guid": 1010558,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fur.png",
 "locaText": {
@@ -366,6 +380,8 @@ params=
 }
 ],
 "module": 269837,
+"modulesLimit": 108,
+"modulesSize": 1,
 "name": "Red Pepper Farm",
 "outputs": [
 {
@@ -408,6 +424,8 @@ params=
 }
 ],
 "module": 269837,
+"modulesLimit": 128,
+"modulesSize": 1,
 "name": "Vineyard",
 "outputs": [
 {
@@ -1479,6 +1497,7 @@ params=
 "tpmin": 2
 },
 {
+"freeArea": 352,
 "guid": 1010298,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_coal_burn.png",
 "locaText": {
@@ -2796,6 +2815,8 @@ params=
 }
 ],
 "module": 269849,
+"modulesLimit": 128,
+"modulesSize": 1,
 "name": "Sugar Cane Plantation",
 "outputs": [
 {
@@ -2837,6 +2858,8 @@ params=
 }
 ],
 "module": 269848,
+"modulesLimit": 192,
+"modulesSize": 1,
 "name": "Tobacco Plantation",
 "outputs": [
 {
@@ -2878,6 +2901,8 @@ params=
 }
 ],
 "module": 269848,
+"modulesLimit": 144,
+"modulesSize": 1,
 "name": "Cotton Plantation",
 "outputs": [
 {
@@ -2919,6 +2944,8 @@ params=
 }
 ],
 "module": 269848,
+"modulesLimit": 128,
+"modulesSize": 1,
 "name": "Cocoa Plantation",
 "outputs": [
 {
@@ -2960,6 +2987,8 @@ params=
 }
 ],
 "module": 269848,
+"modulesLimit": 144,
+"modulesSize": 1,
 "name": "Caoutchouc Plantation",
 "outputs": [
 {
@@ -3045,6 +3074,8 @@ params=
 }
 ],
 "module": 269848,
+"modulesLimit": 168,
+"modulesSize": 1,
 "name": "Coffee Plantation",
 "outputs": [
 {
@@ -3102,6 +3133,8 @@ params=
 }
 ],
 "module": 269848,
+"modulesLimit": 128,
+"modulesSize": 1,
 "name": "Plantain Plantation",
 "outputs": [
 {
@@ -3146,6 +3179,8 @@ params=
 }
 ],
 "module": 269958,
+"modulesLimit": 6,
+"modulesSize": 1,
 "name": "agriculture_colony01_09 (Cattle Farm)",
 "outputs": [
 {
@@ -3188,6 +3223,8 @@ params=
 }
 ],
 "module": 269849,
+"modulesLimit": 168,
+"modulesSize": 1,
 "name": "Corn Farm",
 "outputs": [
 {
@@ -3229,6 +3266,8 @@ params=
 }
 ],
 "module": 269958,
+"modulesLimit": 4,
+"modulesSize": 9,
 "name": "Alpaca Farm",
 "outputs": [
 {
@@ -4249,6 +4288,7 @@ params=
 "tpmin": 2
 },
 {
+"freeArea": 240,
 "guid": 114703,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_wood_log.png",
 "locaText": {
@@ -4288,6 +4328,7 @@ params=
 "tpmin": 4
 },
 {
+"freeArea": 352,
 "guid": 112667,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_reindeer_meat.png",
 "locaText": {
@@ -4354,6 +4395,8 @@ params=
 "ShutdownThreshold": 0.2
 }
 ],
+"modulesLimit": 5,
+"modulesSize": 6,
 "name": "Goose Farm",
 "outputs": [
 {
@@ -4366,6 +4409,7 @@ params=
 "tpmin": 0.5
 },
 {
+"freeArea": 504,
 "guid": 112673,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bear_fur.png",
 "locaText": {
@@ -4432,6 +4476,8 @@ params=
 "ShutdownThreshold": 0.2
 }
 ],
+"modulesLimit": 4,
+"modulesSize": 12,
 "name": "Husky Farm",
 "outputs": [
 {
@@ -4444,6 +4490,7 @@ params=
 "tpmin": 0.5
 },
 {
+"freeArea": 352,
 "guid": 116034,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fur.png",
 "locaText": {
@@ -4483,6 +4530,7 @@ params=
 "tpmin": 4
 },
 {
+"freeArea": 352,
 "guid": 114705,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_coal_burn.png",
 "locaText": {
@@ -5168,6 +5216,7 @@ params=
 "tpmin": 4
 },
 {
+"freeArea": 240,
 "guid": 122963,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_wansa_wood.png",
 "locaText": {
@@ -5234,6 +5283,8 @@ params=
 }
 ],
 "module": 119026,
+"modulesLimit": 96,
+"modulesSize": 1,
 "name": "Linseed Farm",
 "outputs": [
 {
@@ -5273,6 +5324,8 @@ params=
 }
 ],
 "module": 119026,
+"modulesLimit": 144,
+"modulesSize": 1,
 "name": "Hibiscus Farm",
 "outputs": [
 {
@@ -5312,6 +5365,8 @@ params=
 }
 ],
 "module": 119026,
+"modulesLimit": 168,
+"modulesSize": 1,
 "name": "Teff Farm",
 "outputs": [
 {
@@ -5351,6 +5406,8 @@ params=
 }
 ],
 "module": 119026,
+"modulesLimit": 144,
+"modulesSize": 1,
 "name": "Indigo Farm",
 "outputs": [
 {
@@ -5390,6 +5447,8 @@ params=
 }
 ],
 "module": 119026,
+"modulesLimit": 128,
+"modulesSize": 1,
 "name": "Spice Farm",
 "outputs": [
 {
@@ -5429,6 +5488,8 @@ params=
 }
 ],
 "module": 119026,
+"modulesLimit": 192,
+"modulesSize": 1,
 "name": "Apiary",
 "outputs": [
 {
@@ -5468,6 +5529,8 @@ params=
 }
 ],
 "module": 119025,
+"modulesLimit": 4,
+"modulesSize": 12,
 "name": "Goat Farm",
 "outputs": [
 {
@@ -5507,6 +5570,8 @@ params=
 }
 ],
 "module": 119025,
+"modulesLimit": 5,
+"modulesSize": 16,
 "name": "Sanga Farm",
 "outputs": [
 {
@@ -13905,6 +13970,7 @@ params=
 "name": "Coins"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010190,
 "iconPath": "data/ui/2kimages/main/icons/icon_influence.png",
 "locaText": {
@@ -13925,6 +13991,7 @@ params=
 "name": "Influence"
 },
 {
+"exchangeWeight": 0,
 "guid": 120021,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_coal.png",
 "locaText": {
@@ -13945,6 +14012,7 @@ params=
 "name": "Coal"
 },
 {
+"exchangeWeight": 133.3409,
 "guid": 1010566,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_oil.png",
 "locaText": {
@@ -13962,6 +14030,7 @@ params=
 "spanish": "Petróleo",
 "taiwanese": "原油"
 },
+"mainFactory": 101331,
 "name": "Oil",
 "producers": [
 101331,
@@ -13969,6 +14038,7 @@ params=
 ]
 },
 {
+"exchangeWeight": 0,
 "guid": 120022,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_electricity.png",
 "locaText": {
@@ -13989,6 +14059,7 @@ params=
 "name": "Electricity"
 },
 {
+"exchangeWeight": 0,
 "guid": 119392,
 "iconPath": "data/ui/2kimages/main/icons/icon_research_resource.png",
 "locaText": {
@@ -14007,6 +14078,7 @@ params=
 "name": "Research Points"
 },
 {
+"exchangeWeight": 0,
 "guid": 120020,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_marketplace.png",
 "locaText": {
@@ -14027,6 +14099,7 @@ params=
 "name": "Market"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010349,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pub.png",
 "locaText": {
@@ -14047,6 +14120,7 @@ params=
 "name": "Pub"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010350,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_church.png",
 "locaText": {
@@ -14067,6 +14141,7 @@ params=
 "name": "Church"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010351,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_school.png",
 "locaText": {
@@ -14087,6 +14162,7 @@ params=
 "name": "School"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010352,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cabaret.png",
 "locaText": {
@@ -14107,6 +14183,7 @@ params=
 "name": "Variety Theatre"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010353,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_university.png",
 "locaText": {
@@ -14127,6 +14204,7 @@ params=
 "name": "University"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010354,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_electric_works_oil.png",
 "locaText": {
@@ -14147,6 +14225,7 @@ params=
 "name": "Electricity"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010355,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_club_house.png",
 "locaText": {
@@ -14167,6 +14246,7 @@ params=
 "name": "Members Club"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010356,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bank.png",
 "locaText": {
@@ -14187,6 +14267,7 @@ params=
 "name": "Bank"
 },
 {
+"exchangeWeight": 0,
 "guid": 120050,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_church.png",
 "locaText": {
@@ -14206,6 +14287,7 @@ params=
 "name": "Chapel"
 },
 {
+"exchangeWeight": 0,
 "guid": 1010348,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_box_arena.png",
 "locaText": {
@@ -14226,6 +14308,7 @@ params=
 "name": "Boxing Arena"
 },
 {
+"exchangeWeight": 0,
 "guid": 112708,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_heating_center.png",
 "locaText": {
@@ -14244,6 +14327,7 @@ params=
 "name": "Heat"
 },
 {
+"exchangeWeight": 0,
 "guid": 112693,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_post_office.png",
 "locaText": {
@@ -14262,6 +14346,7 @@ params=
 "name": "Post Office"
 },
 {
+"exchangeWeight": 0,
 "guid": 114890,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_canteen.png",
 "locaText": {
@@ -14280,6 +14365,7 @@ params=
 "name": "Canteen"
 },
 {
+"exchangeWeight": 0,
 "guid": 269751,
 "iconPath": "data/ui/2kimages/main/icons/icon_gasoline_3d_outline.png",
 "locaText": {
@@ -14298,6 +14384,7 @@ params=
 "name": "Fuel"
 },
 {
+"exchangeWeight": 234.90907500000003,
 "guid": 270042,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_gasoline.png",
 "locaText": {
@@ -14313,6 +14400,7 @@ params=
 "spanish": "Combustible",
 "taiwanese": "燃料"
 },
+"mainFactory": 118571,
 "name": "Fuel",
 "producers": [
 118571,
@@ -14323,7 +14411,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 6.185,
+"exchangeWeight": 177.34376,
 "guid": 1010192,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cereals_2.png",
 "locaText": {
@@ -14341,6 +14429,7 @@ params=
 "spanish": "Trigo",
 "taiwanese": "穀物"
 },
+"mainFactory": 1010262,
 "name": "Grain",
 "producers": [
 1010262
@@ -14349,7 +14438,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 5.488,
+"exchangeWeight": 157.34376,
 "guid": 1010193,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_meat_raw.png",
 "locaText": {
@@ -14367,6 +14456,7 @@ params=
 "spanish": "Ternera",
 "taiwanese": "牛肉"
 },
+"mainFactory": 1010263,
 "name": "Beef",
 "producers": [
 1010263,
@@ -14376,7 +14466,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 6.395,
+"exchangeWeight": 183.34375999999997,
 "guid": 1010194,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_hops.png",
 "locaText": {
@@ -14394,6 +14484,7 @@ params=
 "spanish": "Lúpulo",
 "taiwanese": "啤酒花"
 },
+"mainFactory": 1010264,
 "name": "Hops",
 "producers": [
 1010264
@@ -14402,7 +14493,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 2.157,
+"exchangeWeight": 61.84376,
 "guid": 1010195,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_potatoes.png",
 "locaText": {
@@ -14420,6 +14511,7 @@ params=
 "spanish": "Patatas",
 "taiwanese": "馬鈴薯"
 },
+"mainFactory": 1010265,
 "name": "Potatoes",
 "producers": [
 1010265
@@ -14428,7 +14520,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 2.418,
+"exchangeWeight": 69.33594,
 "guid": 120008,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_wood_log.png",
 "locaText": {
@@ -14446,6 +14538,7 @@ params=
 "spanish": "Madera",
 "taiwanese": "原木"
 },
+"mainFactory": 1010266,
 "name": "Wood",
 "producers": [
 1010266,
@@ -14456,7 +14549,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 1,
+"exchangeWeight": 28.67188,
 "guid": 1010197,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_wool.png",
 "locaText": {
@@ -14474,6 +14567,7 @@ params=
 "spanish": "Lana",
 "taiwanese": "羊毛"
 },
+"mainFactory": 1010267,
 "name": "Wool",
 "producers": [
 1010267
@@ -14482,7 +14576,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 2.581,
+"exchangeWeight": 74.01563999999999,
 "guid": 1010199,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pigs.png",
 "locaText": {
@@ -14500,6 +14594,7 @@ params=
 "spanish": "Cerdos",
 "taiwanese": "豬隻"
 },
+"mainFactory": 1010269,
 "name": "Pigs",
 "producers": [
 1010269
@@ -14508,7 +14603,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 13.521,
+"exchangeWeight": 387.67188,
 "guid": 1010209,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fur.png",
 "locaText": {
@@ -14526,6 +14621,7 @@ params=
 "spanish": "Pieles",
 "taiwanese": "毛皮"
 },
+"mainFactory": 1010558,
 "name": "Furs",
 "producers": [
 1010558,
@@ -14533,7 +14629,7 @@ params=
 ]
 },
 {
-"exchangeWeight": 10.138,
+"exchangeWeight": 290.67188,
 "guid": 120014,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_grapes.png",
 "locaText": {
@@ -14551,6 +14647,7 @@ params=
 "spanish": "Uvas",
 "taiwanese": "葡萄"
 },
+"mainFactory": 100655,
 "name": "Grapes",
 "producers": [
 100655
@@ -14559,7 +14656,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 8.534,
+"exchangeWeight": 244.67188,
 "guid": 1010198,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pepper.png",
 "locaText": {
@@ -14577,6 +14674,7 @@ params=
 "spanish": "Pimientos rojos",
 "taiwanese": "紅椒"
 },
+"mainFactory": 100654,
 "name": "Red Peppers",
 "producers": [
 100654
@@ -14585,7 +14683,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 2.457,
+"exchangeWeight": 70.43361,
 "guid": 1010200,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fish.png",
 "locaText": {
@@ -14603,6 +14701,7 @@ params=
 "spanish": "Pescado",
 "taiwanese": "魚"
 },
+"mainFactory": 1010278,
 "name": "Fish",
 "producers": [
 1010278
@@ -14611,7 +14710,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 6.881,
+"exchangeWeight": 197.30454250000003,
 "guid": 1010232,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_niter.png",
 "locaText": {
@@ -14629,6 +14728,7 @@ params=
 "spanish": "Salitre",
 "taiwanese": "硝石"
 },
+"mainFactory": 1010310,
 "name": "Saltpeter",
 "producers": [
 1010310,
@@ -14638,7 +14738,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 2.801,
+"exchangeWeight": 80.30454250000001,
 "guid": 1010228,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_quartz_sand.png",
 "locaText": {
@@ -14656,13 +14756,14 @@ params=
 "spanish": "Arena de cuarzo",
 "taiwanese": "石英沙"
 },
+"mainFactory": 1010560,
 "name": "Quartz Sand",
 "producers": [
 1010560
 ]
 },
 {
-"exchangeWeight": 26.673,
+"exchangeWeight": 764.7695249999999,
 "guid": 1010202,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_reinforced_concrete.png",
 "locaText": {
@@ -14680,6 +14781,7 @@ params=
 "spanish": "Hormigón armado",
 "taiwanese": "鋼筋混凝土"
 },
+"mainFactory": 1010280,
 "name": "Reinforced Concrete",
 "producers": [
 1010280
@@ -14688,7 +14790,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 7.164,
+"exchangeWeight": 205.39745,
 "guid": 1010203,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_soap_2.png",
 "locaText": {
@@ -14706,6 +14808,7 @@ params=
 "spanish": "Jabón",
 "taiwanese": "肥皂"
 },
+"mainFactory": 1010281,
 "name": "Soap",
 "producers": [
 1010281
@@ -14714,7 +14817,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 2.895,
+"exchangeWeight": 83.00782,
 "guid": 1010196,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_wooden_planks.png",
 "locaText": {
@@ -14732,6 +14835,7 @@ params=
 "spanish": "Tablones",
 "taiwanese": "木材"
 },
+"mainFactory": 100451,
 "name": "Timber",
 "producers": [
 100451,
@@ -14740,7 +14844,7 @@ params=
 ]
 },
 {
-"exchangeWeight": 5.693,
+"exchangeWeight": 163.236355,
 "guid": 1010205,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bricks.png",
 "locaText": {
@@ -14758,6 +14862,7 @@ params=
 "spanish": "Ladrillos",
 "taiwanese": "磚塊"
 },
+"mainFactory": 1010283,
 "name": "Bricks",
 "producers": [
 1010283,
@@ -14767,7 +14872,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 40.553,
+"exchangeWeight": 1162.7446759999998,
 "guid": 1010247,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fur_coats.png",
 "locaText": {
@@ -14785,13 +14890,14 @@ params=
 "spanish": "Abrigos de piel",
 "taiwanese": "皮草大衣"
 },
+"mainFactory": 1010325,
 "name": "Fur Coats",
 "producers": [
 1010325
 ]
 },
 {
-"exchangeWeight": 23.687,
+"exchangeWeight": 679.1532824999999,
 "guid": 1010207,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_glass_window_3.png",
 "locaText": {
@@ -14809,6 +14915,7 @@ params=
 "spanish": "Ventanas",
 "taiwanese": "窗戶"
 },
+"mainFactory": 1010285,
 "name": "Windows",
 "producers": [
 1010285
@@ -14817,7 +14924,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 62.103,
+"exchangeWeight": 1780.6027725,
 "guid": 1010208,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_light_bulb.png",
 "locaText": {
@@ -14835,6 +14942,7 @@ params=
 "spanish": "Bombillas",
 "taiwanese": "燈泡"
 },
+"mainFactory": 1010286,
 "name": "Light Bulbs",
 "producers": [
 1010286
@@ -14842,7 +14950,7 @@ params=
 },
 {
 "differentFactoryInputs": true,
-"exchangeWeight": 3.652,
+"exchangeWeight": 104.71733,
 "guid": 1010210,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_sail.png",
 "locaText": {
@@ -14860,6 +14968,7 @@ params=
 "spanish": "Velas",
 "taiwanese": "船帆"
 },
+"mainFactory": 1010288,
 "name": "Sails",
 "producers": [
 1010288,
@@ -14867,7 +14976,7 @@ params=
 ]
 },
 {
-"exchangeWeight": 36.264,
+"exchangeWeight": 1039.7550379999998,
 "guid": 1010211,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_chassis.png",
 "locaText": {
@@ -14885,6 +14994,7 @@ params=
 "spanish": "Chasis",
 "taiwanese": "底盤"
 },
+"mainFactory": 1010289,
 "name": "Chassis",
 "producers": [
 1010289
@@ -14893,7 +15003,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 3.713,
+"exchangeWeight": 106.46363,
 "guid": 1010201,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_clay.png",
 "locaText": {
@@ -14911,6 +15021,7 @@ params=
 "spanish": "Arcilla",
 "taiwanese": "陶土"
 },
+"mainFactory": 100416,
 "name": "Clay",
 "producers": [
 100416,
@@ -14921,7 +15032,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 28.346,
+"exchangeWeight": 812.7386999999999,
 "guid": 1010206,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_sewing_machine.png",
 "locaText": {
@@ -14939,6 +15050,7 @@ params=
 "spanish": "Máquinas de costura",
 "taiwanese": "縫紉機"
 },
+"mainFactory": 1010284,
 "name": "Sewing Machines",
 "producers": [
 1010284
@@ -14947,7 +15059,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 9.402,
+"exchangeWeight": 269.56109000000004,
 "guid": 1010213,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bread.png",
 "locaText": {
@@ -14965,6 +15077,7 @@ params=
 "spanish": "Pan",
 "taiwanese": "麵包"
 },
+"mainFactory": 1010291,
 "name": "Bread",
 "producers": [
 1010291
@@ -14973,7 +15086,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 18.059,
+"exchangeWeight": 517.77842,
 "guid": 1010214,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_beer.png",
 "locaText": {
@@ -14991,6 +15104,7 @@ params=
 "spanish": "Cerveza",
 "taiwanese": "啤酒"
 },
+"mainFactory": 1010292,
 "name": "Beer",
 "producers": [
 1010292
@@ -14999,7 +15113,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 22.207,
+"exchangeWeight": 636.70794,
 "guid": 1010215,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_goulash_01.png",
 "locaText": {
@@ -15017,6 +15131,7 @@ params=
 "spanish": "Goulash",
 "taiwanese": "紅椒燉肉"
 },
+"mainFactory": 1010293,
 "name": "Goulash",
 "producers": [
 1010293
@@ -15025,7 +15140,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 34.437,
+"exchangeWeight": 987.3638699999999,
 "guid": 1010217,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_canned_goulash.png",
 "locaText": {
@@ -15043,6 +15158,7 @@ params=
 "spanish": "Comida en conserva",
 "taiwanese": "罐頭食物"
 },
+"mainFactory": 1010295,
 "name": "Canned Food",
 "producers": [
 1010295
@@ -15051,7 +15167,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 4.227,
+"exchangeWeight": 121.20316,
 "guid": 1010216,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_schnapps_4.png",
 "locaText": {
@@ -15069,6 +15185,7 @@ params=
 "spanish": "Licor",
 "taiwanese": "烈酒"
 },
+"mainFactory": 1010294,
 "name": "Schnapps",
 "producers": [
 1010294
@@ -15077,7 +15194,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 5.216,
+"exchangeWeight": 149.56108999999998,
 "guid": 1010238,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_meat_sausage.png",
 "locaText": {
@@ -15095,6 +15212,7 @@ params=
 "spanish": "Salchichas",
 "taiwanese": "香腸"
 },
+"mainFactory": 1010316,
 "name": "Sausages",
 "producers": [
 1010316
@@ -15103,7 +15221,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 35.352,
+"exchangeWeight": 1013.6174225,
 "guid": 120016,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_champagne.png",
 "locaText": {
@@ -15121,13 +15239,14 @@ params=
 "spanish": "Champán",
 "taiwanese": "香檳"
 },
+"mainFactory": 100659,
 "name": "Champagne",
 "producers": [
 100659
 ]
 },
 {
-"exchangeWeight": 22.276,
+"exchangeWeight": 638.6999599999999,
 "guid": 1010218,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_beams.png",
 "locaText": {
@@ -15145,6 +15264,7 @@ params=
 "spanish": "Vigas de acero",
 "taiwanese": "鋼梁"
 },
+"mainFactory": 1010296,
 "name": "Steel Beams",
 "producers": [
 1010296
@@ -15153,7 +15273,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 12.103,
+"exchangeWeight": 347.01815999999997,
 "guid": 1010219,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_steel.png",
 "locaText": {
@@ -15171,13 +15291,14 @@ params=
 "spanish": "Acero",
 "taiwanese": "鋼鐵"
 },
+"mainFactory": 1010297,
 "name": "Steel",
 "producers": [
 1010297
 ]
 },
 {
-"exchangeWeight": 16.15,
+"exchangeWeight": 463.0636099999999,
 "guid": 1010221,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_weapons.png",
 "locaText": {
@@ -15195,6 +15316,7 @@ params=
 "spanish": "Armas",
 "taiwanese": "武器"
 },
+"mainFactory": 1010299,
 "name": "Weapons",
 "producers": [
 1010299
@@ -15203,7 +15325,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 49.249,
+"exchangeWeight": 1412.0550425000001,
 "guid": 1010222,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_dynamite.png",
 "locaText": {
@@ -15221,13 +15343,14 @@ params=
 "spanish": "Dinamita",
 "taiwanese": "炸藥"
 },
+"mainFactory": 1010300,
 "name": "Dynamite",
 "producers": [
 1010300
 ]
 },
 {
-"exchangeWeight": 142.92,
+"exchangeWeight": 4097.7803525,
 "guid": 1010223,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_advanced_weaponry.png",
 "locaText": {
@@ -15245,13 +15368,14 @@ params=
 "spanish": "Armas avanzadas",
 "taiwanese": "先進武器"
 },
+"mainFactory": 1010301,
 "name": "Advanced Weapons",
 "producers": [
 1010301
 ]
 },
 {
-"exchangeWeight": 94.147,
+"exchangeWeight": 2699.361665,
 "guid": 1010224,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_steam_machine.png",
 "locaText": {
@@ -15269,6 +15393,7 @@ params=
 "spanish": "Motores de vapor",
 "taiwanese": "蒸汽機"
 },
+"mainFactory": 1010302,
 "name": "Steam Motors",
 "producers": [
 1010302
@@ -15277,7 +15402,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 276.052,
+"exchangeWeight": 7914.931003,
 "guid": 1010225,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_steam_carriage.png",
 "locaText": {
@@ -15295,6 +15420,7 @@ params=
 "spanish": "Carruajes de vapor",
 "taiwanese": "蒸汽車"
 },
+"mainFactory": 1010303,
 "name": "Steam Carriages",
 "producers": [
 1010303
@@ -15303,7 +15429,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 7.036,
+"exchangeWeight": 201.736355,
 "guid": 1010204,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_brass.png",
 "locaText": {
@@ -15321,6 +15447,7 @@ params=
 "spanish": "Latón",
 "taiwanese": "黃銅"
 },
+"mainFactory": 1010282,
 "name": "Brass",
 "producers": [
 1010282
@@ -15329,7 +15456,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 3.591,
+"exchangeWeight": 102.96363,
 "guid": 1010226,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_coal.png",
 "locaText": {
@@ -15347,6 +15474,7 @@ params=
 "spanish": "Carbón",
 "taiwanese": "煤"
 },
+"mainFactory": 1010304,
 "name": "Coal",
 "producers": [
 1010298,
@@ -15357,7 +15485,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 3.591,
+"exchangeWeight": 102.96363,
 "guid": 1010227,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_iron.png",
 "locaText": {
@@ -15375,6 +15503,7 @@ params=
 "spanish": "Hierro",
 "taiwanese": "鐵"
 },
+"mainFactory": 1010305,
 "name": "Iron",
 "producers": [
 1010305
@@ -15383,7 +15512,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 2.528,
+"exchangeWeight": 72.481815,
 "guid": 1010229,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_tin_ore.png",
 "locaText": {
@@ -15401,6 +15530,7 @@ params=
 "spanish": "Zinc",
 "taiwanese": "鋅"
 },
+"mainFactory": 1010307,
 "name": "Zinc",
 "producers": [
 1010307
@@ -15409,7 +15539,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 2.528,
+"exchangeWeight": 72.481815,
 "guid": 1010230,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_copper.png",
 "locaText": {
@@ -15427,6 +15557,7 @@ params=
 "spanish": "Cobre",
 "taiwanese": "銅"
 },
+"mainFactory": 1010308,
 "name": "Copper",
 "producers": [
 1010308
@@ -15435,7 +15566,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 2.528,
+"exchangeWeight": 72.481815,
 "guid": 1010231,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cement.png",
 "locaText": {
@@ -15453,6 +15584,7 @@ params=
 "spanish": "Cemento",
 "taiwanese": "水泥"
 },
+"mainFactory": 1010309,
 "name": "Cement",
 "producers": [
 1010309
@@ -15461,7 +15593,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 5.214,
+"exchangeWeight": 149.4817065,
 "guid": 1010233,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_gold_ore.png",
 "locaText": {
@@ -15479,6 +15611,7 @@ params=
 "spanish": "Mineral de oro",
 "taiwanese": "金礦石"
 },
+"mainFactory": 101311,
 "name": "Gold Ore",
 "producers": [
 101311,
@@ -15488,7 +15621,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 4.668,
+"exchangeWeight": 133.85199999999998,
 "guid": 1010234,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_tallow.png",
 "locaText": {
@@ -15506,13 +15639,14 @@ params=
 "spanish": "Sebo",
 "taiwanese": "動物性油脂"
 },
+"mainFactory": 1010312,
 "name": "Tallow",
 "producers": [
 1010312
 ]
 },
 {
-"exchangeWeight": 6.767,
+"exchangeWeight": 194.01564000000002,
 "guid": 1010235,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_flour.png",
 "locaText": {
@@ -15530,6 +15664,7 @@ params=
 "spanish": "Harina",
 "taiwanese": "小麥粉"
 },
+"mainFactory": 1010313,
 "name": "Flour",
 "producers": [
 1010313
@@ -15538,7 +15673,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 7.642,
+"exchangeWeight": 219.116485,
 "guid": 1010236,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_malt.png",
 "locaText": {
@@ -15556,6 +15691,7 @@ params=
 "spanish": "Malta",
 "taiwanese": "麥芽"
 },
+"mainFactory": 1010314,
 "name": "Malt",
 "producers": [
 1010314
@@ -15564,7 +15700,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 3.14,
+"exchangeWeight": 90.03128000000001,
 "guid": 1010237,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_working_cloth.png",
 "locaText": {
@@ -15582,6 +15718,7 @@ params=
 "spanish": "Ropas de trabajo",
 "taiwanese": "工作服"
 },
+"mainFactory": 1010315,
 "name": "Work Clothes",
 "producers": [
 1010315
@@ -15590,7 +15727,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 11.808,
+"exchangeWeight": 338.5609425,
 "guid": 1010241,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_glass.png",
 "locaText": {
@@ -15608,6 +15745,7 @@ params=
 "spanish": "Cristal",
 "taiwanese": "玻璃"
 },
+"mainFactory": 1010319,
 "name": "Glass",
 "producers": [
 1010319
@@ -15616,7 +15754,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 25.282,
+"exchangeWeight": 724.8750399999999,
 "guid": 1010242,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_inlay.png",
 "locaText": {
@@ -15634,6 +15772,7 @@ params=
 "spanish": "Revestimientos de madera",
 "taiwanese": "薄木片"
 },
+"mainFactory": 1010320,
 "name": "Wood Veneers",
 "producers": [
 1010320,
@@ -15643,7 +15782,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 27.048,
+"exchangeWeight": 775.5027299999999,
 "guid": 1010243,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_carbon_filament.png",
 "locaText": {
@@ -15661,6 +15800,7 @@ params=
 "spanish": "Filamentos",
 "taiwanese": "燈絲"
 },
+"mainFactory": 1010321,
 "name": "Filaments",
 "producers": [
 1010321
@@ -15669,7 +15809,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 63.167,
+"exchangeWeight": 1811.1224479999998,
 "guid": 1010245,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_high_wheeler.png",
 "locaText": {
@@ -15687,6 +15827,7 @@ params=
 "spanish": "Cuartos de penique",
 "taiwanese": "大小輪自行車"
 },
+"mainFactory": 1010323,
 "name": "Penny Farthings",
 "producers": [
 1010323
@@ -15695,7 +15836,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 84.9,
+"exchangeWeight": 2434.229819,
 "guid": 1010246,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pocket_watch.png",
 "locaText": {
@@ -15713,6 +15854,7 @@ params=
 "spanish": "Relojes de bolsillo",
 "taiwanese": "懷錶"
 },
+"mainFactory": 1010324,
 "name": "Pocket Watches",
 "producers": [
 1010324
@@ -15721,7 +15863,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 34.761,
+"exchangeWeight": 996.6566975000001,
 "guid": 120030,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_glasses.png",
 "locaText": {
@@ -15739,6 +15881,7 @@ params=
 "spanish": "Gafas",
 "taiwanese": "眼鏡"
 },
+"mainFactory": 101250,
 "name": "Spectacles",
 "producers": [
 101250
@@ -15747,7 +15890,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 80.596,
+"exchangeWeight": 2310.835685,
 "guid": 1010248,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_phonographs.png",
 "locaText": {
@@ -15765,6 +15908,7 @@ params=
 "spanish": "Gramófonos",
 "taiwanese": "留聲機"
 },
+"mainFactory": 1010326,
 "name": "Gramophones",
 "producers": [
 1010326
@@ -15773,7 +15917,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 27.828,
+"exchangeWeight": 797.8945865000001,
 "guid": 1010249,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_gold.png",
 "locaText": {
@@ -15791,6 +15935,7 @@ params=
 "spanish": "Oro",
 "taiwanese": "金"
 },
+"mainFactory": 1010327,
 "name": "Gold",
 "producers": [
 1010327
@@ -15799,7 +15944,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 53.154,
+"exchangeWeight": 1524.0191734999999,
 "guid": 1010250,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_jewelry.png",
 "locaText": {
@@ -15817,13 +15962,14 @@ params=
 "spanish": "Joyería",
 "taiwanese": "珠寶"
 },
+"mainFactory": 1010328,
 "name": "Jewelry",
 "producers": [
 1010328
 ]
 },
 {
-"exchangeWeight": 4.035,
+"exchangeWeight": 115.67999799999998,
 "guid": 1010251,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cane_sugar_1.png",
 "locaText": {
@@ -15841,6 +15987,7 @@ params=
 "spanish": "Caña de azúcar",
 "taiwanese": "甘蔗"
 },
+"mainFactory": 1010329,
 "name": "Sugar Cane",
 "producers": [
 1010329
@@ -15849,7 +15996,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 20.539,
+"exchangeWeight": 588.879998,
 "guid": 1010252,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_tobacco.png",
 "locaText": {
@@ -15867,13 +16014,14 @@ params=
 "spanish": "Tabaco",
 "taiwanese": "菸草"
 },
+"mainFactory": 1010330,
 "name": "Tobacco",
 "producers": [
 1010330
 ]
 },
 {
-"exchangeWeight": 8.429,
+"exchangeWeight": 241.67999799999998,
 "guid": 1010253,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cotton.png",
 "locaText": {
@@ -15891,13 +16039,14 @@ params=
 "spanish": "Algodón",
 "taiwanese": "棉花"
 },
+"mainFactory": 1010331,
 "name": "Cotton",
 "producers": [
 1010331
 ]
 },
 {
-"exchangeWeight": 7.843,
+"exchangeWeight": 224.87999799999997,
 "guid": 1010254,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cocoa.png",
 "locaText": {
@@ -15915,6 +16064,7 @@ params=
 "spanish": "Cacao",
 "taiwanese": "可可"
 },
+"mainFactory": 1010332,
 "name": "Cocoa",
 "producers": [
 1010332
@@ -15923,7 +16073,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 8.087,
+"exchangeWeight": 231.87999799999997,
 "guid": 1010255,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_caoutchouc.png",
 "locaText": {
@@ -15941,13 +16091,14 @@ params=
 "spanish": "Caucho",
 "taiwanese": "橡膠"
 },
+"mainFactory": 1010333,
 "name": "Caoutchouc",
 "producers": [
 1010333
 ]
 },
 {
-"exchangeWeight": 9.406,
+"exchangeWeight": 269.67999799999996,
 "guid": 120031,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_coffee_beans.png",
 "locaText": {
@@ -15965,13 +16116,14 @@ params=
 "spanish": "Granos de café",
 "taiwanese": "咖啡豆"
 },
+"mainFactory": 101251,
 "name": "Coffee Beans",
 "producers": [
 101251
 ]
 },
 {
-"exchangeWeight": 9.259,
+"exchangeWeight": 265.47999799999997,
 "guid": 120034,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_corn.png",
 "locaText": {
@@ -15989,13 +16141,14 @@ params=
 "spanish": "Maíz",
 "taiwanese": "玉米"
 },
+"mainFactory": 101270,
 "name": "Corn",
 "producers": [
 101270
 ]
 },
 {
-"exchangeWeight": 1.715,
+"exchangeWeight": 49.17999799999999,
 "guid": 120036,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_alpaca_wool.png",
 "locaText": {
@@ -16013,6 +16166,7 @@ params=
 "spanish": "Lana de alpaca",
 "taiwanese": "羊駝毛"
 },
+"mainFactory": 101272,
 "name": "Alpaca Wool",
 "producers": [
 101272
@@ -16021,7 +16175,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 3.961,
+"exchangeWeight": 113.57999799999999,
 "guid": 120041,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_banana.png",
 "locaText": {
@@ -16039,6 +16193,7 @@ params=
 "spanish": "Plátanos",
 "taiwanese": "大蕉"
 },
+"mainFactory": 101263,
 "name": "Plantains",
 "producers": [
 101263
@@ -16047,7 +16202,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 12.006,
+"exchangeWeight": 344.2399869999999,
 "guid": 1010256,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pearls.png",
 "locaText": {
@@ -16065,13 +16220,14 @@ params=
 "spanish": "Perlas",
 "taiwanese": "珍珠"
 },
+"mainFactory": 1010339,
 "name": "Pearls",
 "producers": [
 1010339
 ]
 },
 {
-"exchangeWeight": 2.948,
+"exchangeWeight": 84.52599609999999,
 "guid": 120042,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fishoil.png",
 "locaText": {
@@ -16089,13 +16245,14 @@ params=
 "spanish": "Aceite de pescado",
 "taiwanese": "魚油"
 },
+"mainFactory": 101262,
 "name": "Fish Oil",
 "producers": [
 101262
 ]
 },
 {
-"exchangeWeight": 4.053,
+"exchangeWeight": 116.21999199999999,
 "guid": 120043,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_poncho.png",
 "locaText": {
@@ -16113,6 +16270,7 @@ params=
 "spanish": "Ponchos",
 "taiwanese": "斗篷"
 },
+"mainFactory": 101266,
 "name": "Ponchos",
 "producers": [
 101266
@@ -16121,7 +16279,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 2.723,
+"exchangeWeight": 78.05999599999998,
 "guid": 120044,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_felt.png",
 "locaText": {
@@ -16139,6 +16297,7 @@ params=
 "spanish": "Fieltro",
 "taiwanese": "毛氈"
 },
+"mainFactory": 101415,
 "name": "Felt",
 "producers": [
 101415
@@ -16147,7 +16306,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 15.676,
+"exchangeWeight": 449.4541519999999,
 "guid": 120037,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bowler_hat.png",
 "locaText": {
@@ -16165,6 +16324,7 @@ params=
 "spanish": "Bombines",
 "taiwanese": "圓頂硬禮帽"
 },
+"mainFactory": 101273,
 "name": "Bombins",
 "producers": [
 101273
@@ -16174,7 +16334,7 @@ params=
 "agio": 1.4,
 "canImport": true,
 "differentFactoryInputs": true,
-"exchangeWeight": 9.328,
+"exchangeWeight": 267.45593199999996,
 "guid": 1010257,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_rum_barrel.png",
 "locaText": {
@@ -16192,6 +16352,7 @@ params=
 "spanish": "Ron",
 "taiwanese": "蘭姆酒"
 },
+"mainFactory": 1010340,
 "name": "Rum",
 "producers": [
 1010340,
@@ -16201,7 +16362,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 35.3,
+"exchangeWeight": 1012.116196,
 "guid": 1010258,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_chocolate.png",
 "locaText": {
@@ -16219,6 +16380,7 @@ params=
 "spanish": "Chocolate",
 "taiwanese": "巧克力"
 },
+"mainFactory": 1010341,
 "name": "Chocolate",
 "producers": [
 1010341
@@ -16228,7 +16390,7 @@ params=
 "agio": 1.4,
 "canImport": true,
 "differentFactoryInputs": true,
-"exchangeWeight": 32.12,
+"exchangeWeight": 920.9361979999999,
 "guid": 120032,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_coffe_cup.png",
 "locaText": {
@@ -16246,6 +16408,7 @@ params=
 "spanish": "Café",
 "taiwanese": "咖啡"
 },
+"mainFactory": 101252,
 "name": "Coffee",
 "producers": [
 101252,
@@ -16255,7 +16418,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 8.744,
+"exchangeWeight": 250.70598909999995,
 "guid": 120033,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fried_bananas.png",
 "locaText": {
@@ -16273,6 +16436,7 @@ params=
 "spanish": "Plátanos fritos",
 "taiwanese": "炸大蕉餅"
 },
+"mainFactory": 101264,
 "name": "Fried Plantains",
 "producers": [
 101264
@@ -16281,7 +16445,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 29.768,
+"exchangeWeight": 853.494558,
 "guid": 120035,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_burrito.png",
 "locaText": {
@@ -16299,13 +16463,14 @@ params=
 "spanish": "Tortillas de maíz",
 "taiwanese": "玉米餅"
 },
+"mainFactory": 101271,
 "name": "Tortillas",
 "producers": [
 101271
 ]
 },
 {
-"exchangeWeight": 11.948,
+"exchangeWeight": 342.56539799999996,
 "guid": 1010239,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_salt.png",
 "locaText": {
@@ -16323,6 +16488,7 @@ params=
 "spanish": "Azúcar",
 "taiwanese": "糖"
 },
+"mainFactory": 1010317,
 "name": "Sugar",
 "producers": [
 1010317
@@ -16332,7 +16498,7 @@ params=
 "agio": 1.4,
 "canImport": true,
 "differentFactoryInputs": true,
-"exchangeWeight": 9.426,
+"exchangeWeight": 270.55999599999996,
 "guid": 1010240,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cotton_fur.png",
 "locaText": {
@@ -16350,6 +16516,7 @@ params=
 "spanish": "Tela de algodón",
 "taiwanese": "棉織物"
 },
+"mainFactory": 1010318,
 "name": "Cotton Fabric",
 "producers": [
 1010318,
@@ -16359,7 +16526,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 72.662,
+"exchangeWeight": 2083.3539379999997,
 "guid": 1010259,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_cigars.png",
 "locaText": {
@@ -16377,6 +16544,7 @@ params=
 "spanish": "Puros",
 "taiwanese": "雪茄"
 },
+"mainFactory": 1010342,
 "name": "Cigars",
 "producers": [
 1010342
@@ -16385,7 +16553,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 22.521,
+"exchangeWeight": 645.70604,
 "guid": 112694,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_reindeer_meat.png",
 "locaText": {
@@ -16401,6 +16569,7 @@ params=
 "spanish": "Carne de caribú",
 "taiwanese": "馴鹿肉"
 },
+"mainFactory": 112667,
 "name": "Caribou Meat",
 "producers": [
 112667
@@ -16409,7 +16578,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 6.428,
+"exchangeWeight": 184.308456,
 "guid": 112697,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_goose_feathers.png",
 "locaText": {
@@ -16425,13 +16594,14 @@ params=
 "spanish": "Plumas de ganso",
 "taiwanese": "鵝羽毛"
 },
+"mainFactory": 112676,
 "name": "Goose Feathers",
 "producers": [
 112676
 ]
 },
 {
-"exchangeWeight": 46.652,
+"exchangeWeight": 1337.6096639999998,
 "guid": 112695,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bear_fur.png",
 "locaText": {
@@ -16447,13 +16617,14 @@ params=
 "spanish": "Pelaje de oso",
 "taiwanese": "熊毛皮"
 },
+"mainFactory": 112673,
 "name": "Bear Fur",
 "producers": [
 112673
 ]
 },
 {
-"exchangeWeight": 6.696,
+"exchangeWeight": 192,
 "guid": 112698,
 "iconPath": "data/ui/2kimages/main/3dicons/animals/icon_husky.png",
 "locaText": {
@@ -16469,13 +16640,14 @@ params=
 "spanish": "Huskies",
 "taiwanese": "哈士奇"
 },
+"mainFactory": 112682,
 "name": "Huskies",
 "producers": [
 112682
 ]
 },
 {
-"exchangeWeight": 9.712,
+"exchangeWeight": 278.4694224,
 "guid": 112699,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_whale_oil_2.png",
 "locaText": {
@@ -16491,13 +16663,14 @@ params=
 "spanish": "Aceite de ballena",
 "taiwanese": "鯨油"
 },
+"mainFactory": 112666,
 "name": "Whale Oil",
 "producers": [
 112666
 ]
 },
 {
-"exchangeWeight": 2.811,
+"exchangeWeight": 80.6062816,
 "guid": 112696,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_seal_skin.png",
 "locaText": {
@@ -16513,13 +16686,14 @@ params=
 "spanish": "Piel de foca",
 "taiwanese": "海豹皮"
 },
+"mainFactory": 112674,
 "name": "Seal Skin",
 "producers": [
 112674
 ]
 },
 {
-"exchangeWeight": 35.128,
+"exchangeWeight": 1007.1827104,
 "guid": 112705,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pemmican.png",
 "locaText": {
@@ -16535,13 +16709,14 @@ params=
 "spanish": "Pemmican",
 "taiwanese": "乾肉餅"
 },
+"mainFactory": 112668,
 "name": "Pemmican",
 "producers": [
 112668
 ]
 },
 {
-"exchangeWeight": 21.792,
+"exchangeWeight": 624.8226894,
 "guid": 112702,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_oil_lamps.png",
 "locaText": {
@@ -16557,13 +16732,14 @@ params=
 "spanish": "Faroles de aceite",
 "taiwanese": "油燈"
 },
+"mainFactory": 112679,
 "name": "Oil Lamps",
 "producers": [
 112679
 ]
 },
 {
-"exchangeWeight": 13.097,
+"exchangeWeight": 375.5268176000001,
 "guid": 112701,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_sleeping_bags.png",
 "locaText": {
@@ -16579,13 +16755,14 @@ params=
 "spanish": "Sacos de dormir",
 "taiwanese": "睡袋"
 },
+"mainFactory": 112675,
 "name": "Sleeping Bags",
 "producers": [
 112675
 ]
 },
 {
-"exchangeWeight": 50.803,
+"exchangeWeight": 1456.6159456,
 "guid": 112700,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fur_parka.png",
 "locaText": {
@@ -16601,13 +16778,14 @@ params=
 "spanish": "Parkas",
 "taiwanese": "連帽大衣"
 },
+"mainFactory": 112672,
 "name": "Parkas",
 "producers": [
 112672
 ]
 },
 {
-"exchangeWeight": 5.899,
+"exchangeWeight": 169.14222159999997,
 "guid": 112704,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_sled_frame.png",
 "locaText": {
@@ -16623,13 +16801,14 @@ params=
 "spanish": "Trineos",
 "taiwanese": "雪橇"
 },
+"mainFactory": 112681,
 "name": "Sleds",
 "producers": [
 112681
 ]
 },
 {
-"exchangeWeight": 13.935,
+"exchangeWeight": 399.54222159999995,
 "guid": 112703,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_sled.png",
 "locaText": {
@@ -16645,13 +16824,14 @@ params=
 "spanish": "Trineos de huskies",
 "taiwanese": "哈士奇雪橇"
 },
+"mainFactory": 112680,
 "name": "Husky Sleds",
 "producers": [
 112680
 ]
 },
 {
-"exchangeWeight": 4.018,
+"exchangeWeight": 115.2,
 "guid": 112706,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_gas_red.png",
 "locaText": {
@@ -16667,12 +16847,14 @@ params=
 "spanish": "Gas",
 "taiwanese": "天然氣"
 },
+"mainFactory": 112690,
 "name": "Gas",
 "producers": [
 112690
 ]
 },
 {
+"exchangeWeight": 0,
 "guid": 115980,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_passage_junk.png",
 "locaText": {
@@ -16691,6 +16873,7 @@ params=
 "name": "Lost Expedition Scrap"
 },
 {
+"exchangeWeight": 0,
 "guid": 114355,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bazaar.png",
 "locaText": {
@@ -16709,6 +16892,7 @@ params=
 "name": "Marketplace"
 },
 {
+"exchangeWeight": 0,
 "guid": 114361,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_music_plaza.png",
 "locaText": {
@@ -16727,6 +16911,7 @@ params=
 "name": "Musicians' Court"
 },
 {
+"exchangeWeight": 0,
 "guid": 114362,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_monastery.png",
 "locaText": {
@@ -16745,6 +16930,7 @@ params=
 "name": "Monastery"
 },
 {
+"exchangeWeight": 0,
 "guid": 114425,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_radio_station.png",
 "locaText": {
@@ -16763,7 +16949,7 @@ params=
 "name": "Radio Tower"
 },
 {
-"exchangeWeight": 3.455,
+"exchangeWeight": 99.0659098,
 "guid": 114356,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_wansa_wood.png",
 "locaText": {
@@ -16779,13 +16965,14 @@ params=
 "spanish": "Madera de wanza",
 "taiwanese": "萬扎木材"
 },
+"mainFactory": 122963,
 "name": "Wanza Timber",
 "producers": [
 122963
 ]
 },
 {
-"exchangeWeight": 7.626,
+"exchangeWeight": 218.6659098,
 "guid": 114364,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_hibiscus_farm.png",
 "locaText": {
@@ -16801,13 +16988,14 @@ params=
 "spanish": "Pétalos de hibisco",
 "taiwanese": "木槿花瓣"
 },
+"mainFactory": 114447,
 "name": "Hibiscus Petals",
 "producers": [
 114447
 ]
 },
 {
-"exchangeWeight": 4.945,
+"exchangeWeight": 141.78863660000002,
 "guid": 114365,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_linen_farm.png",
 "locaText": {
@@ -16823,13 +17011,14 @@ params=
 "spanish": "Linazas",
 "taiwanese": "亞麻"
 },
+"mainFactory": 114448,
 "name": "Linseed",
 "producers": [
 114448
 ]
 },
 {
-"exchangeWeight": 8.899,
+"exchangeWeight": 255.15454640000002,
 "guid": 114367,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_teff_grass.png",
 "locaText": {
@@ -16845,13 +17034,14 @@ params=
 "spanish": "Teff",
 "taiwanese": "苔麩"
 },
+"mainFactory": 114450,
 "name": "Teff",
 "producers": [
 114450
 ]
 },
 {
-"exchangeWeight": 7.992,
+"exchangeWeight": 229.15454640000002,
 "guid": 114368,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_indigo.png",
 "locaText": {
@@ -16867,6 +17057,7 @@ params=
 "spanish": "Tintes índigo",
 "taiwanese": "木藍染料"
 },
+"mainFactory": 114451,
 "name": "Indigo Dye",
 "producers": [
 114451
@@ -16875,7 +17066,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 7.082,
+"exchangeWeight": 203.0659098,
 "guid": 114369,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_spices.png",
 "locaText": {
@@ -16891,6 +17082,7 @@ params=
 "spanish": "Especias",
 "taiwanese": "香料"
 },
+"mainFactory": 114452,
 "name": "Spices",
 "producers": [
 114452
@@ -16899,7 +17091,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 5.663,
+"exchangeWeight": 162.3818196,
 "guid": 114370,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_beeswax.png",
 "locaText": {
@@ -16915,6 +17107,7 @@ params=
 "spanish": "Cera de abejas",
 "taiwanese": "蜂蠟"
 },
+"mainFactory": 114453,
 "name": "Beeswax",
 "producers": [
 114453
@@ -16923,7 +17116,7 @@ params=
 {
 "agio": 1,
 "canImport": true,
-"exchangeWeight": 4.773,
+"exchangeWeight": 136.8545464,
 "guid": 114357,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_watusi.png",
 "locaText": {
@@ -16939,13 +17132,14 @@ params=
 "spanish": "Vacas de sanga",
 "taiwanese": "桑加牛"
 },
+"mainFactory": 114439,
 "name": "Sanga Cow",
 "producers": [
 114439
 ]
 },
 {
-"exchangeWeight": 3.827,
+"exchangeWeight": 109.73181960000001,
 "guid": 114371,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_goat_milk.png",
 "locaText": {
@@ -16961,13 +17155,14 @@ params=
 "spanish": "Leche de cabra",
 "taiwanese": "山羊奶"
 },
+"mainFactory": 114456,
 "name": "Goat Milk",
 "producers": [
 114456
 ]
 },
 {
-"exchangeWeight": 3.018,
+"exchangeWeight": 86.53568274000001,
 "guid": 114358,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_salt.png",
 "locaText": {
@@ -16983,13 +17178,14 @@ params=
 "spanish": "Sal",
 "taiwanese": "鹽"
 },
+"mainFactory": 114440,
 "name": "Salt",
 "producers": [
 114440
 ]
 },
 {
-"exchangeWeight": 25.488,
+"exchangeWeight": 730.7985690999999,
 "guid": 117702,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_paper.png",
 "locaText": {
@@ -17005,13 +17201,14 @@ params=
 "spanish": "Papel",
 "taiwanese": "紙"
 },
+"mainFactory": 117744,
 "name": "Paper",
 "producers": [
 117744
 ]
 },
 {
-"exchangeWeight": 6.394,
+"exchangeWeight": 183.32659306000002,
 "guid": 118728,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_seafood.png",
 "locaText": {
@@ -17027,6 +17224,7 @@ params=
 "spanish": "Langosta",
 "taiwanese": "龍蝦"
 },
+"mainFactory": 118729,
 "name": "Lobster",
 "producers": [
 118729
@@ -17035,7 +17233,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 6.23,
+"exchangeWeight": 178.63181960000003,
 "guid": 114391,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_linen_fabric.png",
 "locaText": {
@@ -17051,13 +17249,14 @@ params=
 "spanish": "Linos",
 "taiwanese": "亞麻布"
 },
+"mainFactory": 114441,
 "name": "Linen",
 "producers": [
 114441
 ]
 },
 {
-"exchangeWeight": 25.814,
+"exchangeWeight": 740.1224012,
 "guid": 114408,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_teff_flour.png",
 "locaText": {
@@ -17073,13 +17272,14 @@ params=
 "spanish": "Harinas especiadas",
 "taiwanese": "香料粉"
 },
+"mainFactory": 114459,
 "name": "Spiced Flour",
 "producers": [
 114459
 ]
 },
 {
-"exchangeWeight": 20.282,
+"exchangeWeight": 581.5229846,
 "guid": 117701,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_candles.png",
 "locaText": {
@@ -17095,12 +17295,14 @@ params=
 "spanish": "Velas adornadas",
 "taiwanese": "華麗蠟燭"
 },
+"mainFactory": 114461,
 "name": "Ornate Candles",
 "producers": [
 114461
 ]
 },
 {
+"exchangeWeight": 0,
 "guid": 114429,
 "locaText": {
 "chinese": "Ammunition",
@@ -17118,6 +17320,7 @@ params=
 "name": "Ammunition"
 },
 {
+"exchangeWeight": 0,
 "guid": 114433,
 "locaText": {
 "chinese": "精油",
@@ -17135,6 +17338,7 @@ params=
 "name": "Essential Oil"
 },
 {
+"exchangeWeight": 0,
 "guid": 114427,
 "locaText": {
 "chinese": "装饰布料",
@@ -17152,7 +17356,7 @@ params=
 "name": "Decorative Cloth"
 },
 {
-"exchangeWeight": 9.999,
+"exchangeWeight": 286.67659514,
 "guid": 114359,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_dried_meat.png",
 "locaText": {
@@ -17168,13 +17372,14 @@ params=
 "spanish": "Carnes secas",
 "taiwanese": "肉乾"
 },
+"mainFactory": 114444,
 "name": "Dried Meat",
 "producers": [
 114444
 ]
 },
 {
-"exchangeWeight": 9.066,
+"exchangeWeight": 259.9409124,
 "guid": 114401,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_traditional_clothing.png",
 "locaText": {
@@ -17190,6 +17395,7 @@ params=
 "spanish": "Galas",
 "taiwanese": "華麗服飾"
 },
+"mainFactory": 114466,
 "name": "Finery",
 "producers": [
 114466
@@ -17198,7 +17404,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 9.734,
+"exchangeWeight": 279.086366,
 "guid": 114390,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_hibiscus_tea.png",
 "locaText": {
@@ -17214,13 +17420,14 @@ params=
 "spanish": "Tés de hibisco",
 "taiwanese": "木槿茶"
 },
+"mainFactory": 114468,
 "name": "Hibiscus Tea",
 "producers": [
 114468
 ]
 },
 {
-"exchangeWeight": 32.866,
+"exchangeWeight": 942.3220664000002,
 "guid": 114402,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_mud_bricks.png",
 "locaText": {
@@ -17236,13 +17443,14 @@ params=
 "spanish": "Ladrillos de barro",
 "taiwanese": "泥磚"
 },
+"mainFactory": 114467,
 "name": "Mud Bricks",
 "producers": [
 114467
 ]
 },
 {
-"exchangeWeight": 31.392,
+"exchangeWeight": 900.0720664000002,
 "guid": 118724,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_ceramics.png",
 "locaText": {
@@ -17258,6 +17466,7 @@ params=
 "spanish": "Cerámicas",
 "taiwanese": "陶瓷"
 },
+"mainFactory": 118725,
 "name": "Ceramics",
 "producers": [
 118725
@@ -17266,7 +17475,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 31.884,
+"exchangeWeight": 914.1698670000001,
 "guid": 114404,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_tapestries.png",
 "locaText": {
@@ -17282,6 +17491,7 @@ params=
 "spanish": "Tapices",
 "taiwanese": "壁毯"
 },
+"mainFactory": 114469,
 "name": "Tapestries",
 "producers": [
 114469
@@ -17290,7 +17500,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 47.224,
+"exchangeWeight": 1353.99171726,
 "guid": 114410,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_wat_stew.png",
 "locaText": {
@@ -17306,6 +17516,7 @@ params=
 "spanish": "Estofados de marisco",
 "taiwanese": "海鮮燉湯"
 },
+"mainFactory": 114471,
 "name": "Seafood Stew",
 "producers": [
 114471
@@ -17314,7 +17525,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 40.496,
+"exchangeWeight": 1161.0965455,
 "guid": 114414,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_tobacco_pipes.png",
 "locaText": {
@@ -17330,13 +17541,14 @@ params=
 "spanish": "Pipas de arcilla",
 "taiwanese": "陶製煙管"
 },
+"mainFactory": 114472,
 "name": "Clay Pipe",
 "producers": [
 114472
 ]
 },
 {
-"exchangeWeight": 53.961,
+"exchangeWeight": 1547.1570055000002,
 "guid": 117698,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_scriptures.png",
 "locaText": {
@@ -17352,13 +17564,14 @@ params=
 "spanish": "Escrituras iluminadas",
 "taiwanese": "泥金裝飾手抄本"
 },
+"mainFactory": 114470,
 "name": "Illuminated Script",
 "producers": [
 114470
 ]
 },
 {
-"exchangeWeight": 47.79,
+"exchangeWeight": 1370.2368446,
 "guid": 117699,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_lanterns.png",
 "locaText": {
@@ -17374,6 +17587,7 @@ params=
 "spanish": "Faroles",
 "taiwanese": "提燈"
 },
+"mainFactory": 114464,
 "name": "Lanterns",
 "producers": [
 114464
@@ -17382,7 +17596,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 19.33,
+"exchangeWeight": 554.2391464,
 "guid": 114428,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_leather_shoes.png",
 "locaText": {
@@ -17398,6 +17612,7 @@ params=
 "spanish": "Botas de cuero",
 "taiwanese": "皮靴"
 },
+"mainFactory": 118733,
 "name": "Leather Boots",
 "producers": [
 118733
@@ -17406,7 +17621,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 34.309,
+"exchangeWeight": 983.7046155999999,
 "guid": 114430,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_suits.png",
 "locaText": {
@@ -17422,6 +17637,7 @@ params=
 "spanish": "Trajes a medida",
 "taiwanese": "訂製套裝"
 },
+"mainFactory": 118734,
 "name": "Tailored Suits",
 "producers": [
 118734
@@ -17430,7 +17646,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 102.065,
+"exchangeWeight": 2926.4020599999994,
 "guid": 114431,
 "iconPath": "data/ui/2kimages/main/3dicons/goods_africa/icon_telephones.png",
 "locaText": {
@@ -17446,6 +17662,7 @@ params=
 "spanish": "Teléfonos",
 "taiwanese": "電話"
 },
+"mainFactory": 118735,
 "name": "Telephones",
 "producers": [
 118735
