@@ -671,7 +671,8 @@ class Consumer extends NamedElement {
         this.demands.forEach(d => {
             var a = d.amount();
             //            if (a <= -ACCURACY || a > 0)
-            sum += a;
+            if (!(d instanceof BuildingMaterialsNeed))
+                sum += a;
         });
 
         if (this.extraDemand && sum + this.extraDemand.amount() < -ACCURACY) {
@@ -2444,7 +2445,10 @@ class ProductionChainView {
             var chain = [];
             let traverse = d => {
                 if (d.factory && d.amount) {
-                    var a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
+                    var a = 0
+                    if(!(d instanceof BuildingMaterialsNeed))
+                        a = ko.isObservable(d.amount) ? parseFloat(d.amount()) : parseFloat(d.amount);
+
                     var f = ko.isObservable(d.factory) ? d.factory() : d.factory;
                     if (Math.abs(a) < ACCURACY)
                         return;
