@@ -1886,61 +1886,6 @@
                 </div>
             </div>
             <!-- /production chains by population level -->
-            <!-- production chains for building materials -->
-            <fieldset class="ui-fieldset" id="construction-material-view">
-                <legend class="collapser" data-toggle="collapse" data-target="#building-materials-chains">
-                    <span class="fa fa-chevron-right"></span>
-                    <span class="fa fa-chevron-down"></span>
-                    <span data-bind="text: $root.island().categories[1].name"></span>
-                </legend>
-                <div class="collapse show" data-bind="foreach: $root.template.buildingMaterialsNeeds" id="building-materials-chains">
-                    <div class="ui-fchain" data-bind="visible: $data.instance().amount">
-                        <div data-bind="visible:  $data.instance().amount">
-                            <div class="ui-fchain-item">
-                                <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
-                                <div class="ui-fchain-item-icon"><img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
-                                <div class="ui-fchain-item-count">
-                                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
-                                        <span>x</span>
-                                    </span>
-                                </div>
-                                <div class="ui-fchain-item-load">
-                                    <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                        <span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span>
-                                    </span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div data-bind="foreach: $data.allDemands">
-                            <div class="ui-fchain-spacer" data-bind="visible: !($data instanceof Need) &&  $data.instance().amount">
-                                ←
-                            </div>
-                            <div data-bind="visible:  $data.instance().amount">
-                                <div class="ui-fchain-item">
-                                    <div class="ui-fchain-item-name" data-bind="text: product.name, visible: !$root.settings.hideNames.checked()"></div>
-                                    <div class="ui-fchain-item-icon"><img class="icon-tile" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name }"></div>
-                                    <div class="ui-fchain-item-count">
-                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                                            <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
-                                            <span>x</span>
-                                        </span>
-                                    </div>
-                                    <div class="ui-fchain-item-load">
-                                        <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.tonsPerMinute.name}">
-                                            <span data-bind="text: formatNumber($data.instance().amount())"></span><span> t/min</span>
-                                        </span>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-                </div>
-            </fieldset>
-            <!-- /production chains for building materials -->
         </div>
     </div>
 </body>

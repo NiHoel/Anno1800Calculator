@@ -1,4 +1,4 @@
-let versionCalculator = "v5.1";
+let versionCalculator = "v5.2";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -807,7 +807,11 @@ class Factory extends Consumer {
         this.overProduction = ko.computed(() => {
             var val = 0;
 
-            if (view.settings.missingBuildingsHighlight.checked())
+            if (this.buildingMaterialsNeed && this.buildingMaterialsNeed.amount() > 0) {
+                return this.buildingMaterialsNeed.amount();
+            }
+
+            if (view.settings.missingBuildingsHighlight.checked() || this.editable())
                 var val = this.existingBuildings() * this.boost() * this.tpmin * this.extraGoodFactor();
 
             return val - this.amount() - this.extraAmount();
@@ -1269,17 +1273,24 @@ class BuildingMaterialsNeed extends Need {
         this.factory(config.factory);
 
         this.factory().add(this);
+        this.factory().buildingMaterialsNeed = this;
     }
 
     updateAmount() {
         var otherDemand = 0;
         this.factory().demands.forEach(d => otherDemand += d == this ? 0 : d.amount());
 
-        var existingBuildingsOutput =
-            this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost();
+        if (this.factory().tradeList)
+            otherDemand += this.factory().tradeList.amount();
 
-        if (this.factory().palaceBuff && this.factory().palaceBuffChecked())
-            existingBuildingsOutput *= 1 + 1 / this.factory().palaceBuff.additionalOutputCycle;
+        if (this.factory().contractList)
+            otherDemand += this.factory().contractList.amount();
+
+        if (this.factory().extraGoodProductionList && this.factory().extraGoodProductionList.checked())
+            otherDemand -= this.factory().extraGoodProductionList.amount();
+
+        var existingBuildingsOutput =
+            this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() * this.factory().extraGoodFactor();
 
         var overProduction = existingBuildingsOutput - otherDemand;
         this.amount(Math.max(0, overProduction - EPSILON));

@@ -14466,7 +14466,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 183.34375999999997,
+"exchangeWeight": 183.34376,
 "guid": 1010194,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_hops.png",
 "locaText": {
@@ -15298,7 +15298,7 @@ params=
 ]
 },
 {
-"exchangeWeight": 463.0636099999999,
+"exchangeWeight": 463.06361,
 "guid": 1010221,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_weapons.png",
 "locaText": {
@@ -15593,7 +15593,7 @@ params=
 {
 "agio": 1.2,
 "canImport": true,
-"exchangeWeight": 149.4817065,
+"exchangeWeight": 149.481815,
 "guid": 1010233,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_gold_ore.png",
 "locaText": {
@@ -15611,7 +15611,7 @@ params=
 "spanish": "Mineral de oro",
 "taiwanese": "金礦石"
 },
-"mainFactory": 101311,
+"mainFactory": 1010311,
 "name": "Gold Ore",
 "producers": [
 101311,
@@ -15836,7 +15836,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 2434.229819,
+"exchangeWeight": 2434.2299274999996,
 "guid": 1010246,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pocket_watch.png",
 "locaText": {
@@ -15917,7 +15917,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 797.8945865000001,
+"exchangeWeight": 797.894695,
 "guid": 1010249,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_gold.png",
 "locaText": {
@@ -15944,7 +15944,7 @@ params=
 {
 "agio": 1.6,
 "canImport": true,
-"exchangeWeight": 1524.0191734999999,
+"exchangeWeight": 1524.0192819999997,
 "guid": 1010250,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_jewelry.png",
 "locaText": {
@@ -16202,7 +16202,7 @@ params=
 {
 "agio": 1.4,
 "canImport": true,
-"exchangeWeight": 344.2399869999999,
+"exchangeWeight": 344.239987,
 "guid": 1010256,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_pearls.png",
 "locaText": {
@@ -16601,7 +16601,7 @@ params=
 ]
 },
 {
-"exchangeWeight": 1337.6096639999998,
+"exchangeWeight": 1337.609664,
 "guid": 112695,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_bear_fur.png",
 "locaText": {
@@ -16762,7 +16762,7 @@ params=
 ]
 },
 {
-"exchangeWeight": 1456.6159456,
+"exchangeWeight": 1456.6159456000003,
 "guid": 112700,
 "iconPath": "data/ui/2kimages/main/3dicons/icon_fur_parka.png",
 "locaText": {
