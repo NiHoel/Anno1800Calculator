@@ -39,6 +39,20 @@ texts = {
         "korean": "주민",
         "russian": "Жители"
     },
+    buildings: {
+        "english": "Buildings",
+        //"guid": 22659,
+        "polish": "Budynki",
+        "spanish": "Edificios",
+        "taiwanese": "建築",
+        "german": "Gebäude",
+        "chinese": "建筑",
+        "italian": "Edifici",
+        "korean": "건물",
+        "french": "Bâtiments",
+        "japanese": "建物",
+        "russian": "Сооружения"
+    },
     workforce: {
         english: "Required Workforce",
         german: "Benötigte Arbeitskraft",
@@ -191,6 +205,34 @@ texts = {
         "japanese": "新聞の効力",
         "russian": "Эффективность газеты"
     },
+    "basicNeed": {
+        "english": "Basic Need",
+        //"guid": 11708,
+        "polish": "Potrzeba podstawowa",
+        "spanish": "Necesidad básica",
+        "taiwanese": "基本需求",
+        "german": "Grundbedürfnis",
+        "chinese": "基本需求",
+        "italian": "Bisogno di base",
+        "korean": "생필품",
+        "french": "Besoin fondamental",
+        "japanese": "基本的な需要",
+        "russian": "Базовая потребность"
+    },
+    "luxuryNeed": {
+        "english": "Luxury Need",
+        //"guid": 11706,
+        "polish": "Potrzeba luksusowa",
+        "spanish": "Necesidad de lujo",
+        "taiwanese": "奢侈品",
+        "german": "Luxusbedürfnis",
+        "chinese": "奢侈品",
+        "italian": "Bisogno di lusso",
+        "korean": "사치품",
+        "french": "Besoin de luxe",
+        "japanese": "高級品の需要",
+        "russian": "Потребность в роскоши"
+    },
     "reducedNeeds": {
         "english": "Reduced Needs",
         "guid": 21387,
@@ -230,6 +272,20 @@ texts = {
         "korean": "적용",
         "japanese": "適用",
         "russian": "Применить"
+    },
+    "confirm": {
+        "english": "Confirm",
+        //"guid": 118171,
+        "chinese": "确认",
+        "taiwanese": "確認",
+        "italian": "Conferma",
+        "spanish": "Confirmar",
+        "german": "Bestätigen",
+        "polish": "Potwierdź",
+        "french": "Confirmer",
+        "korean": "확인",
+        "japanese": "認める",
+        "russian": "Подтвердить"
     },
     "world": {
         "english": "The World",
@@ -283,6 +339,20 @@ texts = {
         "japanese": "総収容能力",
         "russian": "Общая вместимость"
     },
+    "supplyEffects": {
+        "english": "Supply Effects",
+        // "guid": 11938,
+        "polish": "Efekty zaopatrzenia",
+        "spanish": "Efectos de suministro",
+        "taiwanese": "供給效果",
+        "german": "Versorgungseffekte",
+        "chinese": "供给效果",
+        "italian": "Effetti offerta",
+        "korean": "공급 효과",
+        "french": "Effets de l'approvisionnement",
+        "japanese": "供給効果",
+        "russian": "Влияние снабжения"
+    },
     requiredNumberOfBuildings: {
         english: "Required Number of Buildings",
         german: "Benötigte Anzahl an Gebäuden",
@@ -321,6 +391,19 @@ texts = {
         "japanese": "トン毎分 (トン/分)",
         "russian": "Тонн в минуту (т./мин.)"
     },
+    publicBuildings: {
+        "english": "Public Buildings",
+        "polish": "Budynki użyteczności publicznej",
+        "spanish": "Edificios públicos",
+        "taiwanese": "公共建築",
+        "german": "Öffentliche Gebäude",
+        "chinese": "公共建筑",
+        "italian": "Edifici pubblici",
+        "korean": "공공건물",
+        "french": "Bâtiments publics",
+        "japanese": "公共施設",
+        "russian": "Общественные здания"
+    },
     outputAmount: {
         english: "Plain building output without extra goods",
         german: "Reiner Gebäudeoutput ohne Zusatzwaren",
@@ -348,6 +431,23 @@ texts = {
     exportOverproduction: {
         english: "Export overproduction",
         german: "Überproduktion exportieren"
+    },
+    setTotalCapacity: {
+        "english": "Set Total Capacity",
+        "chinese": "Set 总容量",
+        "taiwanese": "Set 總容量",
+        "italian": "Set Capienza totale",
+        "spanish": "Set Capacidad total",
+        "german": "Setze Gesamtkapazität",
+        "polish": "Set Pojemność całkowita",
+        "french": "Set Capacité totale",
+        "korean": "Set 총 수용량",
+        "japanese": "Set 総収容能力",
+        "russian": "Set Общая вместимость"
+    },
+    setTotalCapacityTooltip: {
+        "english": "Multiply all contracts by such a factor that the total capacity equals this value.",
+        "german": "Multipliziere all Verträge mit solch einem Faktor, dass die Gesamtkapazität diesem Wert entspricht.",
     },
     loadingSpeed: {
         "english": "Loading Speed",
@@ -387,6 +487,34 @@ texts = {
         "french": "Vos exportations ",
         "japanese": "あなたの名産輸出品",
         "russian": "Специализация экспорта"
+    },
+    maxResidents: {
+        "english": "Max. Residents",
+        //"guid": 2322,
+        "polish": "Maks. liczba mieszkańców",
+        "spanish": "Residentes máx.",
+        "taiwanese": "最大居民數量",
+        "german": "Einwohner (max.)",
+        "chinese": "最大居民数量",
+        "italian": "Max. residenti",
+        "korean": "최대 주민 수",
+        "french": "Habitants max.",
+        "japanese": "最大住民数",
+        "russian": "Макс. кол-во жителей"
+    },
+    perHouse: {
+        "english": "Per house",
+        //"guid": 17435,
+        "polish": "na dom",
+        "spanish": "Por cada casa",
+        "taiwanese": "每棟房屋",
+        "german": "Pro Wohnhaus",
+        "chinese": "每栋房屋",
+        "italian": "Per dimora",
+        "korean": "세대 당",
+        "french": "Par maison",
+        "japanese": "1件当たり",
+        "russian": "За дом"
     },
     language: {
         "english": "Text Language",
@@ -436,6 +564,40 @@ texts = {
         german: "Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe",
         korean: "이 계층 및 제품의 사용량(백분율)을 수정하십시요"
     },
+    useInput: {
+        english: "Use as input on main page",
+        german: "Verwende als Eingabe auf der Hauptseite"
+    },
+    // view mode
+    viewMode: {
+        english: "View Mode",
+        german: "Ansichtsmodus"
+    },
+    viewSimple: {
+        english: "Simple",
+        german: "Einfach",
+    },
+    viewComplex: {
+        english: "Complex",
+        german: "Komplex"
+    },
+    viewComplete: {
+        english: "Complete",
+        german: "Vollständig"
+    },
+    viewSimpleDescription: {
+        english: "Default settings tailored to beginners, complex mechanics hidden. Uses houses as input.",
+        german: "Standardeinstellungen auf Einsteiger zugeschnitten, komplexe Mechaniken verborgen. Verwendet Häuser als Eingabe."
+    },
+    viewComplexDescription: {
+        english: "Alle settings and mechanics available (as before).",
+        german: "Alle Einstellungen und Mechaniken verfügbar (wie bisher)."
+    },
+    viewCompleteDescription: {
+        english: "Identical to 'complex', but all extensions activated by default.",
+        german: "Identisch zu 'komplex', aber alle Erweiterungen standardmäßig aktiviert."
+    },
+    // calculator and server managment
     download: {
         english: "Downloads",
         german: "Downloads",
@@ -484,8 +646,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 10: Docklands with trade contracts.",
-        german: "Game Update 10: Speicherstadt mit Handelsverträgen.",
+        english: "Game Update 11: Tourist Season. Configuration menu for population tiers.",
+        german: "Game Update 11: Reisezeit. Konfigurationsmenü für Bevölkerungslevel.",
     },
     helpContent: {
         german:
@@ -497,8 +659,14 @@ Siehe folgenden Link für weitere Informationen: `,
 <p><span>In jeder Kachel wird der Name der Fabrik, das Icon der hergestellten Ware, der Boost für den Gebäudetyp, die Anzahl der benötigten Gebäude und die Produktionsrate in Tonnen pro Minute angezeigt. Die Anzahl der Gebäude wird, wenn aktiviert, mit zwei Nachkommastellen angezeigt, um die Höhe der Überkapazitäten direkt ablesen zu können. Daneben befinden sich zwei Buttons </span><span class="btn-group" role="group">
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-</span><span>. Diese versuchen den Boost so einzustellen, dass alle Gebäude des Typs bestmöglich ausgelastet sind und dabei ein Gebäude mehr (+) bzw. eines weniger (-) benötigt wird.</span></p><br/>
+</span><span>. Diese versuchen den Boost so einzustellen, dass alle Gebäude des Typs bestmöglich ausgelastet sind und dabei ein Gebäude mehr (+) bzw. eines weniger (-) benötigt wird.</span></p>
+<p>Der Abschnitt öffentliche Gebäude enthält nur diejenigen Gebäude, welche Waren verbrauchen. Die Rezepte aus dem Reisezeit-DLC sind dabei wie folgt umgesetzt. Jedes Rezept ist durch ein eigenes Gebäude repräsentiert. Um ein Rezept zum ersten Mal zu verwenden, muss es in der Liste ausgewählt und anschließend der Plus-Button geklickt werden. Es erscheint eine neue Kachel, die sich wie ein normales Produktionsgebäude verhält. Der einzige Unterschied besteht, wenn man die Gebäudezahl auf Null setzt. Dann verschwindet die Kachel und das Rezept wird wieder der Liste hinzugefügt.</p><br/>
 <p>Da <b>Baumaterialien</b> sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im Gegensatz zu Warenrechnern früherer Annos) mit aufgeführt, um so den Verbrauch von Minen besser planen zu können. Es muss die Anzahl der Endbetriebe per Hand eingegeben werden.</p><br/>
+
+<h5>Bevölkerungskonfiguration</h5>
+<img class="img-thumbnail img-responsive" src="ResidentHelp.png" />
+<p>Der Button links oben bei den Bevölkerungsstufen öffnet ein separates Menü. Obige Grafik veranschaulicht, welche Werte aus dem Warenrechner welchen im Spiel entsprechen. Die "Pro Wohnhaus"-Einträge geben einen Durchschnittswert an und können folglich Nachkommastellen haben. Entsperrt man die Eingabe, dann wird der Wert aktualisiert, sobald ein neuer Gebäude- oder Bevölkerungswert eingegeben wird. Bei gesperrter Eingabe werden dagegen die anderen Einträge in der rechten Spalte so angepasst, dass Alles konsistent ist. Wird das Statistik-Auslese-Tool verwendet oder ist die Einstellungen aktiviert, dass die Einwohner pro Haus basierend auf erfüllten Bedürfnissen berechnet werden, dann muss die Eingabe gesperrt sein, sie wird aber trotzdem aktualisiert.</p>
+<p>Die Radio-Buttons in der linken Spalte legen fest, welcher Wert auf der Hauptseite angezeigt wird. Die Buttons neben den Waren (ent-)sperren das Bedürfnis. Der Button <b>Global Anwenden</b> übernimmt beide pro-Haus-Einträge, gesperrte Bedürfnisse sowie die ausgewählten Verbrauchseffekte für alle Inseln.</p><br/>
 
 <h5>Globale Einstellungen</h5>
 <span class="btn-group bg-dark mr-2 float-left">
@@ -518,7 +686,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>Die Buttons hierfür befinden sich links in der Navigationsleiste. Zeitung und Zusatzwaren müssen allerdings erst in den Einstellungen aktiviert werden, da damit weitere Eingabefelder auf den Verbrauchs- bzw. Fabrikkacheln angezeigt werden.</p><br/>
 
 <span class="btn-group bg-dark mr-2 float-left"><button type="button" class="btn"><img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icon_newspaper.png" /></button></span>
-<p>Neben der <b>Zeitung</b> können auch weitere Effekte eingestellt werden, welche den <b>Warenverbrauch verändern</b>, z. B. Zoo-Sets, Palasteffekte und Items. Nach dem Auswählen der Effekte, muss auf <b>Anwenden</b> geklickt werden, um den jeweils berechneten Wert bei allen Bedürfnissen einzutragen. Während Effekt und Items pro Insel aktiviert werden, hat die Zeitung globale Auswirkung. Um das Einstellen zu erleichtern, gibt es deshalb den <b>Global Anwenden</b>-Button, der sich verhält als würde man den <b>Anwenden</b>-Button auf jeder Insel betätigen.</p><br/>
+<p>Neben der <b>Zeitung</b> können auch weitere Effekte eingestellt werden, welche den <b>Warenverbrauch verändern</b>, z. B. Zoo-Sets, Palasteffekte, Items und Effekte der öffentlichen Gebäude des Reisezeit-DLC. Nach dem Auswählen der Effekte, muss auf <b>Anwenden</b> geklickt werden, um den jeweils berechneten Wert bei allen Bedürfnissen einzutragen. Während Effekt und Items pro Insel aktiviert werden, hat die Zeitung globale Auswirkung. Um das Einstellen zu erleichtern, gibt es deshalb den <b>Global Anwenden</b>-Button, der sich verhält als würde man den <b>Anwenden</b>-Button auf jeder Insel betätigen. Wählt man in den Einstellungen <b>Verbrauch der Bedürfnisse basierend auf Effekten und Zeitung automatisch anpassen</b>, dann werden alle Änderungen sofort angewendet.</p><br/>
 
 <div style="display:flex">
     <div class="card bg-light mr-2" style="min-width: 110px;"><div style="display: flex; justify-content: space-between; vertical-align: bottom;"><div><img class="icon-sm icon-light" src="icon_marketplace_2d_light.png"></div><div><button class="btn btn-light btn-sm"><span class="fa fa-sliders"></span></button></div></div><div class="input-group spinner" href="#" title="Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe"><input class="form-control" type="number" value="100" step="0.1" min="1"><div class="input-group-append"><div class="input-group-btn-vertical"><button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button><button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button></div><span class="input-group-text">%</span></div></div></div>
@@ -564,6 +732,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>Die Speicherstadt bietet enormes Potential, Waren einzutauschen und sich auf effiziente Produktionen zu beschränken. Jedoch bietet das Spiel nur eingeschränkte Möglichkeiten, um die für den Export notwendigen Produktionskapazitäten zu berechnen. Im Warenrechner werden die Handelsverträge deshalb in t/min angegeben. Der Rechner ermittelt dann, wie viele Tonnen gehandelt werden müssen, um den gewünschten Warenfluss zu erreichen. Um das Feature verwenden zu können, muss es zunächst in den Einstellungen aktiviert werden. Anschließend erscheint - wie bei Handelsrouten und Zusatzwaren - das Eingabefeld für Zusatzbedarf, über den die Werte intern verrechnet werden. Das <b>Anlegen eines Vertrags</b> ähnelt dem einer Handelsroute. Im <b>Konfigurationsdialog einer Fabrik</b> werden die Warenmenge und das Tauschprodukt eingestellt. Mittels des Schiebereglers in der Mitte kann eingestellt werden, ob die Ware der ausgewählten Fabrik exportiert oder importiert werden. Wird kein Regler angezeigt, dann kann die Ware nicht importiert werden. <b>Beim Einstellen des Tauschprodukts taucht bei manchen Produkten ein zusätzliches Auswahlfeld auf.</b> Dort muss die Fabrik eingestellt werden, dem die Ware abgezogen bzw. zugeschrieben wird. Bei sämtlichen Auswahlfeldern kann durch Eingeben der Anfangsbuchstaben direkt zum Begriff gesprungen werden. Der Plus-Button erstellt die Route. Anschließend wird die Route in der Export-Fabrik und der Import-Fabrik angezeigt. Außerdem werden alle Verträge im Speicherstadt-Menü angezeigt. Mit einem Klick auf die Produkt-Icons kann zwischen den Menüs gewechselt werden.</p>
 <p>Im oberen Bereich des Menüs wird die <b>Export-Pyramide</b> angezeigt und bearbeitet. Hierfür müssen ein Produkt und der Multiplikator ausgewählt und hinzugefügt werden. Zum Umsortieren müssen erst die alten Produkte gelöscht und mit anderen Multiplikatoren neu erstellt werden. Bereits eingestellte Verträge werden dann so angepasst, dass die importierten Tonnen pro Minute gleich bleiben.</p>
 <p>Im unteren Bereich befindet sich die Übersicht über alle Verträge und zusammenfassende Informationen zum Handel. Hierfür muss als erstes die <b>Ladegeschwindigkeit des Piers</b> eingestellt werden, an dem Morris handelt. Die Information hierzu kann dem unteren Bereich des Anlegestellen-Infomenüs entnommen werden. Der Rechner ermittelt dann die Umschlagsdauer des Händlers, den Gesamtwarenumschlag in t/min, die benötigte Insellagerkapazität und die einzustellenden Tonnen pro Vertrag. Bei der Berechnung der Werte ist der Ladegeschwindigkeitsbonus des Händlers und die Dauer zum Betreten und Verlassen der Session bereits mit eingerechnet. Sollte dort ∞ stehen, dann übersteigt der eingestellte Warenumschlag den maximal möglichen des Händlers. Dann müssen die Verträge auf mehrere Inseln verteilt, die Ladegeschwindigkeit erhöht oder das Handelsvolumen reduziert werden</p>
+<p>Es gibt noch einen weiteren Anwendungsfall, bei dem man pro Handel möglichst viele Waren tauschen möchte. Zuerst müssen dafür die Verträge eingerichtet und die Ladegeschwindigkeit angegeben werden. Die absolute Warenmenge ist dabei unerheblich, es kommt nur auf die relativen Unterschiede zwischen den Verträgen an. Anschließend muss die Insellagerkapazität eingetragen und daneben der Button <b>Setze Gesamtkapazität</b> geklickt werden. Der bestimmt die Ware, welche die meiste Lagerkapazität c benötigt. Der Vertrag wird um einen Faktor f skaliert, sodass c der Insellagerkapazität entspricht. Schließlich werden alle anderen Verträge ebenfalls mit f multipliziert.</p>
 <p>Eine Besonderheit ergibt sich bei <b>Allen Inseln</b> (standardmäßig ausgewählt, wenn Inselverwaltung deaktiviert). Dort ist es erlaubt dieselbe Ware <b>zu importieren und exportieren</b>, um so Verträge für mehrere Speicherstädte zusammenfassen zu können. Allerdings werden keine zusammenfassenden Informationen zum Handel angezeigt.</p>
 <br/>
 
@@ -590,8 +759,14 @@ Siehe folgenden Link für weitere Informationen: `,
 <p><span>Each card displays the name of the factory, the icon of the produced good, the boost for the given type of building, the number of required buildings, and the production rate in tons per minute. The number of buildings has two decimal places to directly show the amount of overcapacities. There are two buttons next to it.</span><span class="btn-group" role="group">
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
-</span><span> Those try to adjust the boost such that all buildings operate at full capacity and one more (+) or one building less (-) is required.</span></p><br/>
+</span><span> Those try to adjust the boost such that all buildings operate at full capacity and one more (+) or one building less (-) is required.</span></p>
+<p> The public buildings section lists all public services that consume goods. The recipe mechanic from the tourist season DLC is implemented as follows. Each recipe is a dedicated building. To add a recipe for the first time, select it from the dropdown and click the plus button. A new tile appears that behaves like a normal production building. The only difference is that by setting it to zero, the tile disappears and the recipe is re-added to the list.</p><br/>
 <p>Since <b>construction materials</b> share intermediate products with consumables they are explicitly listed (unlike in calculators for previous Annos) to better plan the production of mines. The number of factories must be entered manually.</p><br/>
+
+<h5>Population Configuration</h5>
+<img class="img-thumbnail img-responsive" src="ResidentHelp.png" />
+<p>The button top left of the population levels opens a dedicated menu. The above graphic illustrates which values from the calculator correspond to which values in the game. The "Per House" entries are an average value and can have decimals. After unlocking the field, its value gets updated whenever the value for buildings or residents is changed. If the field is locked, the other values in the right column are updated to be consistent. If the statistic extraction is used or the setting that residents per house are calculated based on fulfilled needs, then the field must be locked but gets updated.</p>
+<p>The radio buttons in the left column determine which value is displayed on the main page. The buttons next to the goods lock/unlock the need. The button <b>Apply Globally</b> applies both per house entries, the locked needs, and all selected consumption effects to all islands.</p><br/>
 
 <h5>Global Settings</h5>
 <span class="btn-group bg-dark mr-2 float-left">
@@ -611,7 +786,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>The buttons are found in the left of the navigation bar. Newspaper and extra goods need to be activated in the settings menu. The reason is that additional input fields will be displayed on the factory and consumption tiles.</p><br/>
 
 <span class="btn-group bg-dark mr-2 float-left"><button type="button" class="btn"><img data-toggle="modal" data-target="#good-consumption-island-upgrade-dialog" class="icon-navbar" src="icon_newspaper.png" /></button></span>
-<p>Apart from the <b>newspaper</b> other effects can be applied that <b>change the need consumption</b>, e.g. zoo sets, palace effects, and items. Having selected the effects, one must click <b>Apply</b> to enter the computed value into the consumption reduction input field. While effects and items are activated per island, the newspaper is global. The button <b>Apply globally</b> acts as if apply was clicked on every island.</p><br/>
+<p>Apart from the <b>newspaper</b> other effects can be applied that <b>change the need consumption</b>, e.g. zoo sets, palace effects, items, and public building effects from the <b>tourist season DLC</b>. Having selected the effects, one must click <b>Apply</b> to enter the computed value into the consumption reduction input field. While effects and items are activated per island, the newspaper is global. The button <b>Apply globally</b> acts as if apply was clicked on every island. If you select <b>Automatically update need consumption based on effects and newspaper</b> in the settings, all changes are instantly applied.</p><br/>
 
 <div style="display:flex">
     <div class="card bg-light mr-2" style="min-width: 110px;"><div style="display: flex; justify-content: space-between; vertical-align: bottom;"><div><img class="icon-sm icon-light" src="icon_marketplace_2d_light.png"></div><div><button class="btn btn-light btn-sm"><span class="fa fa-sliders"></span></button></div></div><div class="input-group spinner" href="#" title="Verändere die prozentuale Verbrauchsmenge für diese Ware und Bevölkerungsstufe"><input class="form-control" type="number" value="100" step="0.1" min="1"><div class="input-group-append"><div class="input-group-btn-vertical"><button class="btn btn-default" type="button"><i class="fa fa-caret-up"></i></button><button class="btn btn-default" type="button"><i class="fa fa-caret-down"></i></button></div><span class="input-group-text">%</span></div></div></div>
@@ -657,7 +832,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>Docklands offers an enormous potential to trade goods and to focus on efficient production chains. But the game provides limited information to compute the required production capacities required for the export. Therefore, trade contracts in the calculator are based on t/min. The calculator computes the amount in tons that must be entered into the in-game contract to achieve the desired flow of goods. There is a checkbox in the settings to activate the docklands feature. After activation, an input box for extra demand appears - as it does when activating extra goods or trade routes. The calculator uses extra demand internally to account for the effects of trade routes etc. <b>Creating a contract</b> is like creating a trade route. One configures the number of goods and the exchange product in the <b>factory configuration dialog</b>. The switch in the middle toggles between exporting and importing the product of the selected factory. If no switch is shown, the good cannot be imported. <b>When selecting particular exchange products, an additional selection box appears.</b> There, one has to choose the factory where the good is added or subtracted. In every selection box, one can directly jump to the term by typing the first letters. The plus button creates a route. Afterwards, the route is shown at the import and export factory. The docklands dialog shows an overview of all contracts for one island. One can switch between the dialogs by clicking on the product icons.</p>
 <p>The upper part of the dialog shows the <b>export pyramid</b>. New entries are added by selecting a product and a multiplier. Rearranging the pyramid is achieved by deleting and recreating the entries. Existing contracts are updated such that the imported tons per minute remain the same.</p>
 <p>The lower part of the dialog shows an overview of all contracts and summary information about the trade. First of all, one has to enter the <b>loading speed of the pier</b> where Tobias trades. The loading speed is displayed in the lower part of the pier's information panel in the game. The calculator computes the trading duration, the total stock turnover in t/min, the island's required storage capacity, and the tons one must enter for each contract. The calculation of these values includes the loading speed bonus for Tobias and the duration to enter and leave the session. In case ∞ is displayed, the entered stock turnover exceeds the maximum. Then, one must distribute the contracts over more islands, increase the loading speed or reduce the traded volume.</p>
-<p><b>All Islands</b> (selected by default, if no island management is active) behaves a bit different. It allows to <b>import and export</b> the same good so that one can aggregate the contracts of several docklands. But it does not show the summary information about the trade.</p>
+<p>There is a second use case, where one wants to trade as many goods as possible per trade. First of all, one has to specify all the trade contracts and the loading speed. Here, the absolute amount per contract does not matter, only the relative difference between different contracts. Then, enter the total island storage capacity and click the button <b>Set total capacity</b> next to it. It determines the good that requires the maximal storage capacity c. It scales the contract by a factor f such that c matches the island storage capacity. Finally, f is applied to all other contracts.</p><p><b>All Islands</b> (selected by default, if no island management is active) behaves a bit different. It allows to <b>import and export</b> the same good so that one can aggregate the contracts of several docklands. But it does not show the summary information about the trade.</p>
 <br/>
 
 <h5>Disclaimer</h5>
@@ -676,29 +851,68 @@ Siehe folgenden Link für weitere Informationen: `,
 }
 
 options = {
-    "existingBuildingsInput": {
-        "name": "Input number of houses instead of residents",
+    "simpleView": {
+        "name": "Simple View",
         "locaText": {
-            "english": "Input number of houses instead of residents",
-            "german": "Gib Anzahl an Häusern anstelle der Einwohner ein",
-            "korean": "주민 수 대신 주택 수를 입력"
+            "english": "Simple view",
+            "german": "Einfache Ansicht"
         }
     },
-    "tradeRoutes": {
-        "name": "Trade Routes",
-        "dialog": "trade-routes-management-dialog",
+    "decimalsForBuildings": {
+        "name": "Show number of buildings with decimals",
         "locaText": {
-            "english": "Trade Routes",
-            "chinese": "贸易航线",
-            "taiwanese": "貿易航線",
-            "italian": "Rotte commerciali",
-            "spanish": "Rutas de comercio",
-            "german": "Handelsrouten",
-            "polish": "Szlaki handlowe",
-            "french": "Routes commerciales",
-            "korean": "무역로",
-            "japanese": "取引ルート",
-            "russian": "Торговые маршруты"
+            "english": "Show number of buildings with decimals",
+            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
+            "korean": "건물 수를 소수점 단위로 표시"
+        }
+    },
+    "hideNames": {
+        "name": "Hide the names of products, factories, and population levels",
+        "locaText": {
+            "english": "Hide the names of products, factories, and population levels",
+            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen",
+            "korean": "제품, 건물명 및 인구 이름 숨기기"
+        }
+    },
+    "hideProductionBoost": {
+        "name": "Hide the input fields for production boost",
+        "locaText": {
+            "english": "Hide the input fields for production boost",
+            "german": "Verberge das Eingabefelder für Produktionsboosts",
+            "korean": "생산성 입력 필드 숨기기"
+        }
+    },
+    "showAllConstructableFactories": {
+        "name": "Show all factories constructable in the region",
+        "locaText": {
+            "english": "Show all factories constructable in the region",
+            "german": "Zeige alle Fabriken, die in der Region errichtet werden können"
+        }
+    },
+    "missingBuildingsHighlight": {
+        "name": "Highlight missing buildings",
+        "locaText": {
+            "english": "Highlight missing buildings",
+            "german": "Fehlende Gebäude hervorheben",
+            "korean": "부족한 건물 강조"
+        }
+    },
+    "consumptionModifier": {
+        "name": "Need Consumption",
+        "dialog": "good-consumption-island-upgrade-dialog",
+        "locaText": {
+            "english": "Newspaper",
+            //"guid": 14496,
+            "polish": "Gazeta",
+            "spanish": "Periódico",
+            "taiwanese": "報紙",
+            "german": "Zeitung",
+            "chinese": "报纸",
+            "italian": "Giornale",
+            "korean": "신문",
+            "french": "Journal",
+            "japanese": "新聞",
+            "russian": "Газета"
         }
     },
     "additionalProduction": {
@@ -737,6 +951,23 @@ options = {
             "russian": "Доки"
         }
     },
+    "tradeRoutes": {
+        "name": "Trade Routes",
+        "dialog": "trade-routes-management-dialog",
+        "locaText": {
+            "english": "Trade Routes",
+            "chinese": "贸易航线",
+            "taiwanese": "貿易航線",
+            "italian": "Rotte commerciali",
+            "spanish": "Rutas de comercio",
+            "german": "Handelsrouten",
+            "polish": "Szlaki handlowe",
+            "french": "Routes commerciales",
+            "korean": "무역로",
+            "japanese": "取引ルート",
+            "russian": "Торговые маршруты"
+        }
+    },
     "autoApplyExtraNeed": {
         "name": "Automatically update extra need when trade routes or extra goods change",
         "locaText": {
@@ -744,21 +975,11 @@ options = {
             "german": "Zusatzbedarf automatisch anpassen, wenn sich Handelsrouten oder Zusatzwaren ändern"
         }
     },
-    "consumptionModifier": {
-        "name": "Show input field for percental consumption modification",
-        "dialog": "good-consumption-island-upgrade-dialog",
+    "autoApplyConsumptionUpgrades": {
+        "name": "Automatically update need consumption based on effects and newspaper",
         "locaText": {
-            "english": "Show input field for percental consumption modification",
-            "german": "Zeige Eingabefeld für prozentuale Änderung des Warenverbrauchs",
-            "korean": "소비 수정(백분율)을 위한 입력 필드 표시"
-        }
-    },
-    "missingBuildingsHighlight": {
-        "name": "Highlight missing buildings",
-        "locaText": {
-            "english": "Highlight missing buildings",
-            "german": "Fehlende Gebäude hervorheben",
-            "korean": "부족한 건물 강조"
+            "english": "Automatically update need consumption based on effects and newspaper",
+            "german": "Verbrauch der Bedürfnisse basierend auf Effekten und Zeitung automatisch anpassen"
         }
     },
     "needUnlockConditions": {
@@ -776,35 +997,11 @@ options = {
             "korean": "사치품을 생산하지 않습니다."
         }
     },
-    "decimalsForBuildings": {
-        "name": "Show number of buildings with decimals",
+    "deriveResidentsPerHouse": {
+        "name": "",
         "locaText": {
-            "english": "Show number of buildings with decimals",
-            "german": "Zeige Nachkommastellen bei der Gebäudeanzahl",
-            "korean": "건물 수를 소수점 단위로 표시"
-        }
-    },
-    "hideNames": {
-        "name": "Hide the names of products, factories, and population levels",
-        "locaText": {
-            "english": "Hide the names of products, factories, and population levels",
-            "german": "Verberge die Namen von Produkten, Fabriken und Bevölkerungsstufen",
-            "korean": "제품, 건물명 및 인구 이름 숨기기"
-        }
-    },
-    "hideProductionBoost": {
-        "name": "Hide the input fields for production boost",
-        "locaText": {
-            "english": "Hide the input fields for production boost",
-            "german": "Verberge das Eingabefelder für Produktionsboosts",
-            "korean": "생산성 입력 필드 숨기기"
-        }
-    },
-    "showAllConstructableFactories": {
-        "name": "Show all factories constructable in the region",
-        "locaText": {
-            "english": "Show all factories constructable in the region",
-            "german": "Zeige alle Fabriken, die in der Region errichtet werden können"
+            "english": "Calculate residents per house based on the resident supply",
+            "german": "Berechne die Einwohner pro Haus basierend auf der Versorgung der Einwohner"
         }
     }
 }
@@ -816,6 +1013,13 @@ serverOptions = {
             "english": "Update residents count",
             "german": "Aktualisiere Einwohneranzahl",
             "korean": "주민 수 가져오기"
+        }
+    },
+    "populationLevelLimit": {
+        "name": "PopulationLevel Limit",
+        "locaText": {
+            "english": "Update max. residents",
+            "german": "Aktualisiere maximale Einwohnerzahl"
         }
     },
     "populationLevelExistingBuildings": {
@@ -842,14 +1046,13 @@ serverOptions = {
             "korean": "생산성 가져오기"
         }
     },
-    /*    "optimalProductivity": {
-            "name": "Optimal Productivity",
-            "locaText": {
-                "english": "Read maximum possible productivity instead of current average",
-                "german": "Lies best mögliche Produktivität anstelle des gegenwärtigen Durchschnitts aus",
-                "korean": "평균 대신 최대 생산성을 가져오기"
-            }
-        }, */
+    "optimalProductivity": {
+        "name": "Optimal Productivity",
+        "locaText": {
+            "english": "Use the production limit to calculate optimal productivity",
+            "german": "Verwende das Produktionslimit, um die optimale Produktivität zu berechnen"
+        }
+    },
     "updateSelectedIslandOnly": {
         "name": "Update selected islands only",
         "locaText": {

@@ -1,4 +1,4 @@
-let versionCalculator = "v5.2";
+let versionCalculator = "v6.0";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -56,6 +56,12 @@ class Storage {
         return null;
     }
 
+    updateKey(key) {
+        localStorage.removeItem(this.key);
+        this.key = key;
+        this.save();
+    }
+
     clear() {
         this.json = {}
         this.save();
@@ -99,7 +105,7 @@ class Option extends NamedElement {
     constructor(config) {
         super(config);
         this.checked = ko.observable(false);
-        this.visible = !!config;
+        this.visible = ko.observable(!!config);
     }
 }
 
@@ -107,6 +113,7 @@ class Island {
     constructor(params, localStorage, session) {
         if (localStorage instanceof Storage) {
             this.name = ko.observable(localStorage.key);
+            this.name.subscribe(name => this.storage.updateKey(name));
             this.isAllIslands = function () { return false; };
         } else {
             this.name = ko.computed(() => view.texts.allIslands.name());
@@ -132,8 +139,69 @@ class Island {
             return `${this.session.name()} - ${this.name()}`;
         });
 
+        // procedures to persist inputs
+        var persistBool, persistInt, persistFloat;
+
+        if (localStorage) {
+            persistBool = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(parseInt(localStorage.getItem(id)));
+
+                    attr.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+                }
+            }
+
+            persistInt = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(parseInt(localStorage.getItem(id)));
+
+                    attr.subscribe(val => {
+                        val = parseInt(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val))
+                            return;
+
+                        localStorage.setItem(id, val);
+                    });
+                }
+            }
+
+            persistFloat = (obj, attributeName, storageName) => {
+
+                var attr = obj[attributeName];
+                if (attr) {
+                    let id = storageName ? storageName : (obj.guid + "." + attributeName);
+                    if (localStorage.getItem(id) != null)
+                        attr(parseFloat(localStorage.getItem(id)));
+
+                    attr.subscribe(val => {
+                        val = parseFloat(val);
+
+                        if (val == null || !isFinite(val) || isNaN(val))
+                            return;
+
+                        localStorage.setItem(id, val);
+                    });
+                }
+            }
+        } else {
+            persistBool = persistFloat = persistInt = () => { };
+        }
+
+        // objects
+
         this.populationLevels = [];
         this.residenceBuildings = [];
+        this.powerPlants = [];
+        this.publicRecipeBuildings = [];
         this.consumers = [];
         this.factories = [];
         this.categories = [];
@@ -144,6 +212,7 @@ class Island {
         this.replaceInputItems = [];
         this.extraGoodItems = [];
         this.allGoodConsumptionUpgrades = new GoodConsumptionUpgradeIslandList();
+        this.recipeLists = [];
 
         for (let workforce of params.workforce) {
             let w = new Workforce(workforce, assetsMap);
@@ -152,22 +221,28 @@ class Island {
         }
 
         for (let consumer of (params.powerPlants || [])) {
-            //if (this.region && this.region.guid != consumer.region)
-            //    continue;
 
-            let f = new Consumer(consumer, assetsMap, this);
+            let f = new PublicConsumerBuilding(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
+            this.powerPlants.push(f);
 
-            if (localStorage) {
-                {
-                    let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        f.existingBuildings(parseInt(localStorage.getItem(id)));
+            // values for existingBuildings are read from localstorage later, after products are referenced
+        }
 
-                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                }
-            }
+        for (let consumer of (params.publicRecipeBuildings || [])) {
+
+            let f = new PublicConsumerBuilding(consumer, assetsMap, this);
+            assetsMap.set(f.guid, f);
+            this.consumers.push(f);
+            this.publicRecipeBuildings.push(f);
+
+            // values for existingBuildings are read from localstorage later, after products are referenced
+        }
+
+        for (let list of (params.recipeLists || [])) {
+            if (!list.region || !this.region || list.region === this.region.guid)
+                this.recipeLists.push(new RecipeList(list, assetsMap, this));
         }
 
         for (let consumer of (params.modules || [])) {
@@ -189,47 +264,10 @@ class Island {
             this.consumers.push(f);
             this.factories.push(f);
 
-            if (localStorage) {
-                if (f.moduleChecked) { // set moduleChecked before boost, otherwise boost would be increased
-                    let id = f.guid + ".module.checked";
-                    if (localStorage.getItem(id) != null)
-                        f.moduleChecked(parseInt(localStorage.getItem(id)));
-
-                    f.moduleChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-                }
-
-                if (f.palaceBuff) {
-                    let id = f.guid + ".palaceBuff.checked";
-                    if (localStorage.getItem(id) != null)
-                        f.palaceBuffChecked(parseInt(localStorage.getItem(id)));
-
-                    f.palaceBuffChecked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-                }
-
-                {
-                    let id = f.guid + ".percentBoost";
-                    if (localStorage.getItem(id) != null)
-                        f.percentBoost(parseInt(localStorage.getItem(id)));
-
-                    f.percentBoost.subscribe(val => {
-                        val = parseInt(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            f.percentBoost(parseInt(localStorage.getItem(id)) || 100);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-
-                {
-                    let id = f.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        f.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    f.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                }
-            }
+            // set moduleChecked before boost, otherwise boost would be increased
+            persistBool(f, "moduleChecked", `${f.guid}.module.checked`);
+            persistBool(f, "palaceBuffChecked", `${f.guid}.palaceBuff.checked`);
+            persistInt(f, "percentBoost");
         }
 
         let products = [];
@@ -244,29 +282,22 @@ class Island {
                     this.multiFactoryProducts.push(p);
 
                 if (localStorage) {
-                    {
-                        let id = p.guid + ".percentBoost";
-                        if (localStorage.getItem(id) != null) {
-                            let b = parseInt(localStorage.getItem(id))
-                            p.factories.forEach(f => f.percentBoost(b));
-                            localStorage.removeItem(id);
-                        }
-                    }
+                    let id = p.guid + ".fixedFactory";
+                    if (localStorage.getItem(id) != null)
+                        p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
+                    p.fixedFactory.subscribe(
+                        f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
 
-
-                    {
-                        let id = p.guid + ".fixedFactory";
-                        if (localStorage.getItem(id) != null)
-                            p.fixedFactory(assetsMap.get(parseInt(localStorage.getItem(id))));
-                        p.fixedFactory.subscribe(
-                            f => f ? localStorage.setItem(id, f.guid) : localStorage.removeItem(id));
-                    }
                 }
+            } else {
+                let p = new MetaProduct(product, assetsMap);
 
-                if (isNew && p.guid == 1010240)
-                    p.fixedFactory(assetsMap.get(1010318));
+                assetsMap.set(p.guid, p);
             }
         }
+
+        if (isNew)
+            setDefaultFixedFactories(assetsMap);
 
         for (let item of (params.items || [])) {
             let i = new Item(item, assetsMap, this.region);
@@ -332,7 +363,7 @@ class Island {
 
         for (let level of params.populationLevels) {
 
-            let l = new PopulationLevel(level, assetsMap);
+            let l = new PopulationLevel(level, assetsMap, this);
             assetsMap.set(l.guid, l);
             this.populationLevels.push(l);
         }
@@ -340,77 +371,25 @@ class Island {
         for (let l of this.populationLevels) {
             l.initBans(assetsMap);
 
-            if (localStorage) {
-                {
-                    let id = l.guid + ".amount";
-                    if (localStorage.getItem(id) != null)
-                        l.amount(parseInt(localStorage.getItem(id)));
-
-                    l.amount.subscribe(val => {
-                        val = parseInt(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            l.amount(parseInt(localStorage.getItem(id)) || 0);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-                {
-                    let id = l.guid + ".existingBuildings";
-                    if (localStorage.getItem(id) != null)
-                        l.existingBuildings(parseInt(localStorage.getItem(id)));
-
-                    l.existingBuildings.subscribe(val => localStorage.setItem(id, val))
-                }
-            } else {
-                l.amount.subscribe(val => {
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        l.amount(0);
-                        return;
-                    }
-                });
-            }
+            persistInt(l, "existingBuildings");
+            persistFloat(l, "limitPerHouse");
+            persistFloat(l, "amountPerHouse");
+            persistInt(l, "limit");
+            persistInt(l, "amount");
+            persistBool(l, "fixLimitPerHouse");
+            persistBool(l, "fixAmountPerHouse");
 
             for (let n of l.needs) {
-                if (localStorage) {
-                    {
-                        let id = `${l.guid}[${n.guid}].checked`;
-                        if (localStorage.getItem(id) != null)
-                            n.checked(parseInt(localStorage.getItem(id)))
-
-                        n.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-
-                    }
-
-                    {
-                        let id = `${l.guid}[${n.guid}].percentBoost`;
-                        if (localStorage.getItem(id) != null)
-                            n.percentBoost(parseFloat(localStorage.getItem(id)));
-
-                        n.percentBoost.subscribe(val => {
-                            val = parseFloat(val);
-
-                            if (val == null || !isFinite(val) || isNaN(val)) {
-                                n.percentBoost(parseFloat(localStorage.getItem(id)) || 100);
-                                return;
-                            }
-                            localStorage.setItem(id, val);
-                        });
-                    }
-
-                } else {
-                    n.percentBoost.subscribe(val => {
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            n.percentBoost(100);
-                            return;
-                        }
-                    });
-                }
+                persistBool(n, "checked", `${l.guid}[${n.guid}].checked`);
+                persistFloat(n, "percentBoost", `${l.guid}[${n.guid}].percentBoost`);
 
             }
-        }
 
+            for (let n of l.buildingNeeds) {
+                persistBool(n, "checked", `${l.guid}[${n.guid}].checked`);
+            }
+
+        }
 
 
         for (var category of params.productFilter) {
@@ -419,18 +398,6 @@ class Island {
             this.categories.push(c);
         }
 
-        for (let powerPlant of (params.powerPlants || [])) {
-            var pl = assetsMap.get(powerPlant.guid);
-            if (!pl)
-                continue; // power plant not constructable in this region
-
-            this.categories[1].consumers.push(pl);
-            pl.editable(true);
-            var pr = pl.getInputs()[0].product;
-            let n = new PowerPlantNeed({ guid: pr.guid, factory: pl, product: pr }, assetsMap);
-            pl.existingBuildings.subscribe(() => n.updateAmount());
-            n.updateAmount();
-        }
 
         for (let p of this.categories[1].products) {
             if (p)
@@ -446,14 +413,7 @@ class Island {
                             b.palaceBuffChecked.subscribe(() => n.updateAmount());
                         this.buildingMaterialsNeeds.push(n);
 
-                        if (localStorage) {
-                            let oldId = b.guid + ".buildings";
-                            let id = b.guid + ".existingBuildings"
-                            if (localStorage.getItem(id) != null || localStorage.getItem(oldId))
-                                b.existingBuildings(parseInt(localStorage.getItem(id) || localStorage.getItem(oldId)));
-
-                            b.existingBuildings.subscribe(val => localStorage.setItem(id, val));
-                        }
+                        persistInt(b, "existingBuildings");
 
                         n.updateAmount();
                     }
@@ -468,13 +428,7 @@ class Island {
             assetsMap.set(u.guid, u);
             this.allGoodConsumptionUpgrades.upgrades.push(u);
 
-            if (localStorage) {
-                let id = u.guid + ".checked";
-                if (localStorage.getItem(id) != null)
-                    u.checked(parseInt(localStorage.getItem(id)));
-
-                u.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
-            }
+            persistBool(u, "checked");
         }
 
         for (let level of this.populationLevels)
@@ -482,46 +436,35 @@ class Island {
                 this.allGoodConsumptionUpgrades.lists.push(need.goodConsumptionUpgradeList);
             }
 
+        for (let b of this.publicRecipeBuildings) {
+            if (b.goodConsumptionUpgrade)
+                b.goodConsumptionUpgrade = assetsMap.get(b.goodConsumptionUpgrade);
+
+            if (b.goodConsumptionUpgrade) {
+                b.goodConsumptionUpgrade.checked.subscribe(checked => {
+                    if (checked)
+                        b.existingBuildings(Math.max(1, b.existingBuildings()));
+                });
+
+                b.existingBuildings.subscribe(val => {
+                    if (!val)
+                        b.goodConsumptionUpgrade.checked(false);
+                });
+            }
+        }
+
 
         // negative extra amount must be set after the demands of the population are generated
         // otherwise it would be set to zero
         for (let f of this.factories) {
+            persistFloat(f, "extraAmount");
+            persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
+        }
 
-            if (localStorage) {
-                {
-                    let id = f.guid + ".extraAmount";
-                    if (localStorage.getItem(id) != null) {
-                        f.extraAmount(parseFloat(localStorage.getItem(id)));
-                    }
-
-                    f.extraAmount.subscribe(val => {
-                        val = parseFloat(val);
-
-                        if (val == null || !isFinite(val) || isNaN(val)) {
-                            f.extraAmount(parseFloat(localStorage.getItem(id)) || 0);
-                            return;
-                        }
-                        localStorage.setItem(id, val);
-                    });
-                }
-
-                {
-                    let id = f.guid + ".extraGoodProductionList.checked";
-                    if (localStorage.getItem(id) != null) {
-                        f.extraGoodProductionList.checked(parseInt(localStorage.getItem(id)));
-                    }
-
-                    f.extraGoodProductionList.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0))
-                }
-
-
-            } else {
-                f.extraAmount.subscribe(val => {
-                    if (val == null || !isFinite(val) || isNaN(val)) {
-                        f.extraAmount(0);
-                    }
-                });
-            }
+        for (let f of this.consumers) {
+            persistInt(f, "existingBuildings");
+            if (f.workforceDemand)
+                persistInt(f.workforceDemand, "percentBoost", `${f.guid}.workforce.percentBoost`);
         }
 
         // force update once all pending notifications are processed
@@ -533,7 +476,7 @@ class Island {
         this.products = products;
 
         this.top2Population = ko.computed(() => {
-            var useHouses = view.settings.existingBuildingsInput.checked();
+            var useHouses = view.settings.populationInput() == "0";
             var comp = useHouses
                 ? (a, b) => b.existingBuildings() - a.existingBuildings()
                 : (a, b) => b.amount() - a.amount();
@@ -570,8 +513,11 @@ class Island {
                 a.checked(false);
             if (a instanceof Product)
                 a.fixedFactory(null);
-            if (a instanceof Consumer)
+            if (a instanceof Consumer) {
                 a.existingBuildings(0);
+                if (a.workforceDemand && a.workforceDemand.percentBoost)
+                    a.workforceDemand.percentBoost(100);
+            }
             if (a instanceof Factory) {
                 if (a.moduleChecked)
                     a.moduleChecked(false);
@@ -584,7 +530,12 @@ class Island {
 
             if (a instanceof PopulationLevel) {
                 a.existingBuildings(0);
+                a.amountPerHouse(a.fullHouse);
+                a.limitPerHouse(a.fullHouse);
                 a.amount(0);
+                a.limit(0);
+                a.fixAmountPerHouse(true);
+                a.fixLimitPerHouse(true);
             }
             if (a instanceof Item) {
                 a.checked(false);
@@ -592,15 +543,20 @@ class Island {
                     i.checked(false);
             }
 
-            if (a.guid == 1010240)
-                a.fixedFactory(this.assetsMap.get(1010318));
         });
+
+        setDefaultFixedFactories(this.assetsMap);
 
         this.populationLevels.forEach(l => l.needs.forEach(n => {
             if (n.checked)
                 n.checked(true);
             if (n.percentBoost)
                 n.percentBoost(100);
+        }));
+
+        this.populationLevels.forEach(l => l.buildingNeeds.forEach(n => {
+            if (n.checked)
+                n.checked(true);
         }));
     }
 }
@@ -713,6 +669,36 @@ class Module extends Consumer {
     }
 }
 
+class PublicConsumerBuilding extends Consumer {
+    constructor(config, assetsMap, island) {
+        super(config, assetsMap, island);
+
+        this.needs = [];
+
+        this.existingBuildings.subscribe(b => {
+            this.amount(b * this.tpmin);
+
+            for (var d of this.needs)
+                d.updateAmount(this.amount());
+        });
+
+        this.visible = ko.computed(() => {
+            if (this.region && this.island.region && this.region != this.island.region)
+                return false;
+
+            return true;
+        });
+    }
+
+    referenceProducts(assetsMap) {
+        super.referenceProducts(assetsMap);
+
+        this.needs = this.getInputs().map(input =>
+            new Demand({ guid: input.Product, consumer: { factory: ko.observable(this) } }, assetsMap)
+        );
+    }
+}
+
 class PalaceBuff extends NamedElement {
     constructor(config, assetsMap) {
         super(config, assetsMap);
@@ -788,10 +774,29 @@ class Factory extends Consumer {
 
         this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
+        // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
+        // that cycles between two values by adding a damper
+        this.computedExtraAmountHistory = [];
         this.computedExtraAmount = ko.computed(() => {
-            return (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) +
+            var val = (this.extraGoodProductionList.checked() ? - this.extraGoodProductionList.amount() : 0) +
                 this.tradeList.amount() +
                 (this.contractList ? this.contractList.amount() : 0);
+
+
+            if (this.computedExtraAmountHistory.length && Math.abs(val - this.computedExtraAmountHistory[0]) < ACCURACY)
+                return this.computedExtraAmountHistory[0];
+
+            if (this.computedExtraAmountHistory.length >= 2) {
+                // after initialization, we have this.computedExtraAmountHistory = [val, 0]
+                // when the user manually sets it to 0, the wrong value is propagated
+                if (Math.abs(this.computedExtraAmountHistory[1] - val) < ACCURACY && this.computedExtraAmountHistory[1] !== 0)
+                    val = (val + this.computedExtraAmountHistory[0]) / 2;
+            }
+
+            this.computedExtraAmountHistory.unshift(val);
+            if (this.computedExtraAmountHistory.length > 2)
+                this.computedExtraAmountHistory.pop();
+            return val;
         });
 
         this.computedExtraAmount.subscribe(() => {
@@ -945,6 +950,9 @@ class Factory extends Consumer {
 
     applyConfigGlobally() {
         for (var isl of view.islands()) {
+            if (this.region && isl.region && this.region != isl.region)
+                continue;
+
             var other = isl.assetsMap.get(this.guid);
 
             for (var i = 0; i < this.items.length; i++)
@@ -957,6 +965,9 @@ class Factory extends Consumer {
 
             if (this.palaceBuffChecked)
                 other.palaceBuffChecked(this.palaceBuffChecked());
+
+            if (this.workforceDemand && this.workforceDemand.percentBoost)
+                other.workforceDemand.percentBoost(this.workforceDemand.percentBoost());
         }
     }
 }
@@ -977,6 +988,23 @@ class Product extends NamedElement {
     }
 }
 
+class MetaProduct extends NamedElement {
+    constructor(config, assetsMap) {
+        super(config);
+    }
+}
+
+class PublicBuildingNeed extends Option {
+    constructor(config, assetsMap) {
+        super(config);
+
+        this.checked(true);
+
+        this.product = assetsMap.get(this.guid);
+        this.initBans = PopulationNeed.prototype.initBans;
+    }
+}
+
 class Demand extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
@@ -992,53 +1020,54 @@ class Demand extends NamedElement {
         if (this.product) {
             this.updateFixedProductFactory(this.product.fixedFactory());
             this.product.fixedFactory.subscribe(f => this.updateFixedProductFactory(f));
-
-            this.inputAmount = ko.computed(() => {
-                var amount = parseFloat(this.amount());
-
-                var factor = 1;
-
-                if (this.factory() && this.factory().extraGoodFactor)
-                    factor = this.factory().extraGoodFactor();
-
-                return amount / factor;
-
-            });
-
-            if (this.consumer)
-                this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
-
-            if (this.product.differentFactoryInputs) {
-                this.demands = [new FactoryDemandSwitch(this, assetsMap)];
-                this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
-            }
-            else
-                this.demands = this.factory().getInputs().map(input => {
-                    var d;
-                    let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
-                    if (items.length)
-                        d = new ItemDemandSwitch(this, input, items, assetsMap);
-                    else
-                        d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
-
-                    this.inputAmount.subscribe(val => d.updateAmount(val * input.Amount));
-
-                    return d;
-                });
-
-
-            this.amount.subscribe(val => {
-                this.factory().updateAmount();
-            });
-
-            this.buildings = ko.computed(() => {
-                var factory = this.factory();
-                var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
-                var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
-
-                return buildings;
-            });
         }
+
+        this.inputAmount = ko.computed(() => {
+            var amount = parseFloat(this.amount());
+
+            var factor = 1;
+
+            if (this.factory() && this.factory().extraGoodFactor)
+                factor = this.factory().extraGoodFactor();
+
+            return amount / factor;
+
+        });
+
+        if (this.consumer)
+            this.consumer.factory.subscribe(() => this.updateFixedProductFactory(this.product.fixedFactory()));
+
+        if (this.product && this.product.differentFactoryInputs) {
+            this.demands = [new FactoryDemandSwitch(this, assetsMap)];
+            this.inputAmount.subscribe(val => this.demands[0].updateAmount(val));
+        }
+        else
+            this.demands = this.factory().getInputs().map(input => {
+                var d;
+                let items = this.factory().items.filter(item => item.replacements && item.replacements.has(input.Product));
+                if (items.length)
+                    d = new ItemDemandSwitch(this, input, items, assetsMap);
+                else
+                    d = new Demand({ guid: input.Product, consumer: this }, assetsMap);
+
+                this.inputAmount.subscribe(val => d.updateAmount(val * input.Amount));
+
+                return d;
+            });
+
+
+        this.amount.subscribe(val => {
+            this.factory().updateAmount();
+        });
+
+        this.buildings = ko.computed(() => {
+            var factory = this.factory();
+            var factor = factory.extraGoodFactor ? factory.extraGoodFactor() : 1;
+            var buildings = Math.max(0, this.inputAmount()) / factor / factory.tpmin / factory.boost();
+
+            return buildings;
+        });
+
     }
 
     updateFixedProductFactory(f) {
@@ -1069,7 +1098,8 @@ class Demand extends NamedElement {
     }
 
     updateAmount(amount) {
-        this.amount(amount);
+        if (Math.abs(this.amount() - amount) >= EPSILON)
+            this.amount(amount);
     }
 }
 
@@ -1125,7 +1155,7 @@ class FactoryDemandSwitch {
 
         this.amount = 0;
 
-        consumer.factory.subscribe(factory => this.updateAmount(this.amount));
+        this.consumer.factory.subscribe(factory => this.updateAmount(this.amount));
     }
 
     updateAmount(amount) {
@@ -1181,17 +1211,17 @@ class PopulationNeed extends Need {
     constructor(config, assetsMap) {
         super(config, assetsMap);
 
-        this.residents = 0;
+        this.population = 0;
         this.goodConsumptionUpgradeList = new GoodConsumptionUpgradeList(this);
 
         this.percentBoost = createFloatInput(100);
         this.percentBoost.subscribe(val => {
             val = parseFloat(val);
-            if (val <= 0)
-                this.percentBoost(1);
+            if (val < 0)
+                this.percentBoost(0);
         });
         this.boost = ko.computed(() => parseInt(this.percentBoost()) / 100);
-        this.boost.subscribe(() => this.updateAmount(this.residents));
+        this.boost.subscribe(() => this.updateAmount(this.population));
 
         this.checked = ko.observable(true);
         this.optionalAmount = ko.observable(0);
@@ -1205,24 +1235,18 @@ class PopulationNeed extends Need {
                 if (!config || !view.settings.needUnlockConditions.checked())
                     return false;
 
-                var getAmount = l => view.settings.existingBuildingsInput.checked()
-                    ? parseInt(l.existingBuildings()) * l.fullHouse
-                    : parseInt(l.amount());
-
                 if (config.populationLevel != level.guid) {
                     var l = assetsMap.get(config.populationLevel);
-                    var amount = getAmount(l);
-                    return amount < config.amount;
+                    return l.amount() < config.amount;
                 }
 
-                var amount = getAmount(level);
-                if (amount >= config.amount)
+                if (level.amount() >= config.amount)
                     return false;
 
                 var residence = level.residence.upgradedBuilding;
                 while (residence) {
                     var l = residence.populationLevel;
-                    var amount = getAmount(l);
+                    var amount = l.amount();
                     if (amount > 0)
                         return false;
 
@@ -1241,17 +1265,28 @@ class PopulationNeed extends Need {
                 this.locked && this.locked();
         });
 
-        this.banned.subscribe(banned => {
-            if (banned)
-                this.amount(0);
-            else
-                this.amount(this.optionalAmount());
-        });
+        if (this.amount) {
+            this.banned.subscribe(banned => {
+                if (banned)
+                    this.amount(0);
+                else
+                    this.amount(this.optionalAmount());
+            });
+
+            this.isInactive = ko.computed(() => {
+                return this.locked && this.locked() || this.happiness && view.settings.noOptionalNeeds.checked();
+            });
+        } else {
+            // for PublicBuildingNeed
+            this.isInactive = ko.computed(() => {
+                return this.locked && this.locked();
+            });
+        }
     }
 
-    updateAmount(residents) {
-        this.residents = residents;
-        this.optionalAmount(this.tpmin * residents * this.boost());
+    updateAmount(population) {
+        this.population = population;
+        this.optionalAmount(this.tpmin * population * this.boost());
         if (!this.banned())
             this.amount(this.optionalAmount());
     }
@@ -1292,23 +1327,10 @@ class BuildingMaterialsNeed extends Need {
         var existingBuildingsOutput =
             this.factory().existingBuildings() * this.factory().tpmin * this.factory().boost() * this.factory().extraGoodFactor();
 
-        var overProduction = existingBuildingsOutput - otherDemand;
-        this.amount(Math.max(0, overProduction - EPSILON));
-    }
+        var amount = Math.max(0, existingBuildingsOutput - otherDemand - EPSILON);
 
-    updateFixedProductFactory() { }
-}
-
-class PowerPlantNeed extends Need {
-    constructor(config, assetsMap) {
-        super(config, assetsMap);
-
-        this.factory(config.factory);
-        this.factory().add(this);
-    }
-
-    updateAmount() {
-        this.amount(this.factory().existingBuildings() * this.factory().tpmin);
+        if (Math.abs(amount - this.amount()) >= EPSILON)
+            this.amount(amount);
     }
 
     updateFixedProductFactory() { }
@@ -1321,47 +1343,198 @@ class ResidenceBuilding extends NamedElement {
 }
 
 class PopulationLevel extends NamedElement {
-    constructor(config, assetsMap) {
+    constructor(config, assetsMap, island) {
         super(config);
+        this.island = island
 
         this.hotkey = ko.observable(null);
-        this.amount = createIntInput(0);
-        this.existingBuildings = createIntInput(0);
-        this.noOptionalNeeds = ko.observable(false);
+
         this.needs = [];
+        this.buildingNeeds = [];
+        this.basicNeeds = [];
+        this.luxuryNeeds = [];
         this.region = assetsMap.get(config.region);
 
+        this.amount = createIntInput(0);
+        this.existingBuildings = createIntInput(0);
+        this.limit = createIntInput(0);
+        this.amountPerHouse = createFloatInput(config.fullHouse);
+        this.limitPerHouse = createFloatInput(config.fullHouse);
+
+        this.fixAmountPerHouse = ko.observable(true);
+        this.fixLimitPerHouse = ko.observable(true);
+
+        var inRange = function (buildings, perHouse, val) {
+            return val <= buildings * perHouse && val > (buildings - 1) * perHouse;
+        }
+
+        this.amount.subscribe(val => {
+            if (val < 0) {
+                this.amount(0);
+                return;
+            }
+
+            if (this.limit() < val)
+                this.limit(val);
+
+            if (this.fixAmountPerHouse())
+                this.existingBuildings(Math.ceil(val / this.amountPerHouse() - EPSILON));
+            else {
+                var perHouse = val / (this.existingBuildings() || 1);
+
+                if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
+                    if (this.fixLimitPerHouse() && perHouse > ACCURACY + this.limitPerHouse()) {
+                        this.existingBuildings(Math.ceil(val / this.limitPerHouse() - EPSILON));
+                        this.amount(val);
+                        return;
+                    } else
+                        this.amountPerHouse(perHouse);
+            }
+
+
+        });
+
+        this.existingBuildings.subscribe(val => {
+            if (val < 0) {
+                this.existingBuildings(0);
+                return;
+            }
+
+
+            if (this.fixLimitPerHouse()) {
+                if (!inRange(val, this.limitPerHouse(), this.limit()))
+                    this.limit(Math.floor(val * this.limitPerHouse()));
+            } else {
+                var perHouse = this.limit() / val;
+                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                    this.limitPerHouse(perHouse);
+            }
+
+            if (this.fixAmountPerHouse()) {
+                if (!inRange(val, this.amountPerHouse(), this.amount()))
+                    this.amount(Math.floor(val * this.amountPerHouse()));
+            } else {
+                var perHouse = this.amount() / val;
+                if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
+                    this.amountPerHouse(perHouse);
+            }
+        });
+
+        this.limit.subscribe(val => {
+            if (val < 0) {
+                this.limit(0);
+                return;
+            }
+
+            if (this.amount() > val)
+                this.amount(val);
+
+            if (this.fixLimitPerHouse())
+                this.existingBuildings(Math.ceil(val / this.limitPerHouse()));
+            else {
+                var perHouse = val / (this.existingBuildings() || 1);
+                var perHouseCapped = Math.max(this.fullHouse, perHouse);
+
+                if (Math.abs(this.limitPerHouse() - perHouse) > ACCURACY)
+                    if (this.fixAmountPerHouse() && perHouseCapped + ACCURACY < this.amountPerHouse()) {
+                        this.existingBuildings(Math.ceil(val / this.amountPerHouse()));
+                        this.limit(val);
+                        return;
+                    } else if (perHouse < this.fullHouse)
+                        this.existingBuildings(Math.floor(val / this.fullHouse));
+                    else
+                        this.limitPerHouse(perHouse);
+            }
+
+
+        });
+
+        this.amountPerHouse.subscribe(val => {
+            if (val < 1) {
+                this.amountPerHouse(1);
+                return;
+            }
+
+            if (val > this.limitPerHouse() + ACCURACY) {
+                if (this.fixLimitPerHouse()) {
+                    this.amountPerHouse(this.limitPerHouse());
+                    return;
+                } else {
+                    this.limitPerHouse(val);
+                }
+            }
+
+            if (!inRange(this.existingBuildings(), val, this.amount()))
+                this.amount(val * this.existingBuildings());
+        });
+
+        this.limitPerHouse.subscribe(val => {
+            if (val < this.fullHouse) {
+                this.limitPerHouse(this.fullHouse);
+                return;
+            }
+
+            if (val + ACCURACY < this.amountPerHouse()) {
+                if (this.fixAmountPerHouse()) {
+                    this.limitPerHouse(this.amountPerHouse());
+                    return;
+                } else {
+                    this.amountPerHouse(val);
+                }
+            }
+
+            if (!inRange(this.existingBuildings(), val, this.limit()))
+                this.limit(val * this.existingBuildings());
+        });
+
         this.propagatedAmount = ko.computed(() => {
-            var amount = view.settings.existingBuildingsInput.checked() ? parseInt(this.existingBuildings()) * config.fullHouse : parseInt(this.amount());
+            var amount = this.limit();
             this.needs.forEach(n => n.updateAmount(amount));
+
+            return amount;
         });
 
         config.needs.forEach(n => {
-            if (n.tpmin > 0 && assetsMap.get(n.guid))
-                this.needs.push(new PopulationNeed(n, assetsMap));
-        });
+            var need;
+            if (n.tpmin > 0 && assetsMap.get(n.guid)) {
+                need = new PopulationNeed(n, assetsMap);
+                this.needs.push(need);
+            } else {
+                need = new PublicBuildingNeed(n, assetsMap);
+                this.buildingNeeds.push(need);
+            }
 
-        this.amount.subscribe(val => {
-            if (val < 0)
-                this.amount(0);
-        });
-        view.settings.existingBuildingsInput.checked.subscribe(enabled => {
-            if (enabled)
-                this.existingBuildings(Math.max(this.existingBuildings(),
-                    Math.ceil(parseInt(this.amount()) / config.fullHouse)));
-            else if (!this.amount())
-                this.amount(parseInt(this.existingBuildings()) / config.fullHouse);
+            if (n.residents)
+                this.basicNeeds.push(need);
+            else
+                this.luxuryNeeds.push(need);
+
         });
 
         if (this.residence) {
             this.residence = assetsMap.get(this.residence);
             this.residence.populationLevel = this;
-    }
+        }
     }
 
     initBans(assetsMap) {
-        for (var n of this.needs)
+        for (var n of this.needs.concat(this.buildingNeeds))
             n.initBans(this, assetsMap);
+        this.deriveResidentsPerHouse = ko.computed(() => {
+            if (!view.settings.deriveResidentsPerHouse.checked())
+                return;
+
+            if (!this.fixAmountPerHouse())
+                this.fixAmountPerHouse(true);
+
+            var perHouse = 0;
+            for (var need of this.basicNeeds)
+                if (!need.banned || !need.banned())
+                    perHouse += need.residents;
+
+            this.amountPerHouse(perHouse);
+        });
+
     }
 
     incrementAmount() {
@@ -1371,13 +1544,43 @@ class PopulationLevel extends NamedElement {
     decrementAmount() {
         this.amount(parseFloat(this.amount()) - 1);
     }
+
+    applyConfigGlobally() {
+        var affectingItems = new Set();
+        for (var u of this.island.allGoodConsumptionUpgrades.upgrades)
+            if (u.populationLevels.indexOf(this) != -1)
+                affectingItems.add(u);
+
+        for (var isl of view.islands()) {
+            if (this.region && isl.region && this.region != isl.region)
+                continue;
+
+            var other = isl.assetsMap.get(this.guid);
+
+            for (var i of affectingItems)
+                if (isl.assetsMap.has(i.guid))
+                    isl.assetsMap.get(i.guid).checked(i.checked());
+
+            for (var i = 0; i < this.needs.length; i++) {
+                other.needs[i].checked(this.needs[i].checked());
+                other.needs[i].percentBoost(this.needs[i].percentBoost());
+            }
+
+            for (var i = 0; i < this.buildingNeeds.length; i++)
+                other.buildingNeeds[i].checked(this.buildingNeeds[i].checked());
+
+            other.amountPerHouse(this.amountPerHouse());
+            other.limitPerHouse(this.limitPerHouse());
+            other.fixAmountPerHouse(true);
+            other.fixLimitPerHouse(true);
+        }
+    }
 }
 
 class ProductCategory extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
-        this.products = config.products.map(p => assetsMap.get(p)).filter(p => p != null);
-        this.consumers = [];
+        this.products = config.products.map(p => assetsMap.get(p)).filter(p => p != null && p instanceof Product);
     }
 }
 
@@ -1402,13 +1605,29 @@ class Workforce extends NamedElement {
 class WorkforceDemand extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
+        this.buildings = 0;
+
         this.amount = ko.observable(0);
+        this.percentBoost = createIntInput(100);
+        this.percentBoost.subscribe(val => {
+            if (val < 0) {
+                this.percentBoost(0);
+                return;
+            }
+
+            this.updateAmount(this.buildings);
+        });
+
         this.workforce.add(this);
+
         this.amount.subscribe(val => this.workforce.updateAmount());
     }
 
     updateAmount(buildings) {
-        this.amount(Math.ceil(buildings) * this.Amount);
+        this.buildings = buildings;
+
+        var perBuilding = Math.ceil(this.Amount * this.percentBoost() / 100);
+        this.amount(Math.ceil(buildings) * perBuilding);
     }
 }
 
@@ -1549,8 +1768,8 @@ class GoodConsumptionUpgrade extends Option {
         this.populationLevelsSet = new Set(this.populationLevels);
 
         for (var entry of config.goodConsumptionUpgrade) {
-            if (entry.AmountInPercent <= -100)
-                continue;
+            //if (entry.AmountInPercent <= -100)
+            //    continue;
 
             this.entries.push(new GoodConsumptionUpgradeEntry($.extend({ upgrade: this }, entry), assetsMap));
             this.entriesMap.set(entry.ProvidedNeed, this.entries[this.entries.length - 1]);
@@ -1681,6 +1900,11 @@ class GoodConsumptionUpgradeList {
 
         this.updateAmount();
         view.newspaperConsumption.amount.subscribe(() => this.updateAmount());
+
+        this.amount.subscribe(() => {
+            if (view.settings.autoApplyConsumptionUpgrades.checked())
+                this.apply();
+        });
     }
 
     add(upgrade) {
@@ -1697,7 +1921,7 @@ class GoodConsumptionUpgradeList {
                 remainingSupply += entry.amount;
         }
 
-        this.amount(remainingSupply * (100 + view.newspaperConsumption.amount()) / 100);
+        this.amount(Math.max(0, remainingSupply * (100 + view.newspaperConsumption.amount()) / 100));
     }
 
     apply() {
@@ -2030,7 +2254,7 @@ class TradeContract {
         this.importAmount = createFloatInput(0);
 
         this.ratio = ko.computed(() => {
-            return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight / 
+            return (this.importProduct.agio || 1) * this.importProduct.exchangeWeight /
                 this.exportProduct.exchangeWeight /
                 (view.contractUpgradeManager.upgradesMap().get(this.exportProduct.guid) || 1);
         });
@@ -2130,13 +2354,24 @@ class ContractManager {
         }
 
         this.traderLoadingSpeed = createFloatInput(2);
+        this.existingStorageCapacity = createIntInput(2000);
 
         if (localStorage) {
-            let id = "traderLoadingSpeed.amount";
-            if (localStorage.getItem(id) != null)
-                this.traderLoadingSpeed(parseFloat(localStorage.getItem(id)));
+            {
+                let id = "traderLoadingSpeed.amount";
+                if (localStorage.getItem(id) != null)
+                    this.traderLoadingSpeed(parseFloat(localStorage.getItem(id)));
 
-            this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
+                this.traderLoadingSpeed.subscribe(val => localStorage.setItem(id, val));
+            }
+
+            {
+                let id = "existingStorageCapacity.amount";
+                if (localStorage.getItem(id) != null)
+                    this.existingStorageCapacity(parseInt(localStorage.getItem(id)));
+
+                this.existingStorageCapacity.subscribe(val => localStorage.setItem(id, val));
+            }
         }
 
         this.traderLoadingDuration = ko.computed(() => {
@@ -2222,6 +2457,53 @@ class ContractManager {
     islandDeleted(island) {
     }
 
+    setStorageCapacity() {
+        if (!this.contracts().length)
+            return;
+
+        var transferTime = params.tradeContracts.traderTransferMinutes + 4;
+
+        var totalAmount = 0;
+        var productToAmount = new Map();
+        for (var c of this.contracts()) {
+            totalAmount += c.importAmount() + c.exportAmount();
+
+            // import
+            var guid = c.importProduct.guid;
+            if (productToAmount.has(guid))
+                productToAmount.set(guid, c.importAmount() + productToAmount.get(guid));
+            else
+                productToAmount.set(guid, c.importAmount());
+
+            // export
+            guid = c.exportProduct.guid;
+            if (productToAmount.has(guid))
+                productToAmount.set(guid, c.exportAmount() + productToAmount.get(guid));
+            else
+                productToAmount.set(guid, c.exportAmount());
+        }
+
+        var maxAmount = 0;
+        for (var val of productToAmount.values())
+            if (val > maxAmount)
+                maxAmount = val;
+
+
+        var s = 60 * this.traderLoadingSpeed() * params.tradeContracts.loadingSpeedFactor;
+
+        //x = newTotalAmount / s
+        //existingStorageCapactiy = newMaxAmount * (loadingDuration + transferTime) 
+        //    = newMaxAmount * (-transferTime * x/(x-1) + transferTime)
+        //    = newMaxAmount * (- transferTime * (newTotalAmount / s) / ((newTotalAmount / s) - 1) + transferTime)
+        //    = f * maxAmount * (- transferTime * (f * totalAmount / s) / ((f * totalAmount / s) - 1) + transferTime)
+
+        var c = this.existingStorageCapacity();
+        var f = c * s / (maxAmount * s * transferTime + c * totalAmount);
+
+        for (var c of this.contracts()) {
+            c.importAmount(f * c.importAmount());
+        }
+    }
 }
 
 class ContractUpgrade {
@@ -2241,9 +2523,9 @@ class ContractUpgradeManager {
 
         this.productsMap = new Map();
         var assetsMap = new Map();
-        for(var p of params.products)
-        if (p.exchangeWeight)
-            this.productsMap.set(p.guid, new Product(p, assetsMap));
+        for (var p of params.products)
+            if (p.exchangeWeight)
+                this.productsMap.set(p.guid, new Product(p, assetsMap));
 
 
         if (localStorage) {
@@ -2366,7 +2648,7 @@ class ContractCreatorFactory {
         });
         this.exchangeFactory = ko.observable();
         this.exchangeFactory.subscribe(f => this.exchangeProduct(f ? f.product : null));
-        
+
         this.newAmount = createFloatInput(0);
 
         this.contractList = ko.pureComputed(() => {
@@ -2448,6 +2730,43 @@ class ContractCreatorFactory {
     }
 }
 
+class RecipeList extends NamedElement {
+    constructor(list, assetsMap, island) {
+        super(list);
+
+        this.island = island;
+
+        this.recipeBuildings = list.recipeBuildings.map(r => {
+            var a = assetsMap.get(r);
+            a.recipeList = this;
+            return a;
+        });
+
+        this.unusedRecipes = ko.computed(() => {
+            var result = [];
+            for (var recipe of this.recipeBuildings) {
+                if (!recipe.existingBuildings())
+                    result.push(recipe);
+            }
+
+            return result;
+        });
+        this.selectedRecipe = ko.observable(this.recipeBuildings[0]);
+
+        this.canCreate = ko.pureComputed(() => {
+            return this.unusedRecipes().length && this.selectedRecipe();
+        });
+
+    }
+
+    create() {
+        if (!this.canCreate())
+            return;
+
+        this.selectedRecipe().existingBuildings(1);
+    }
+}
+
 class ProductionChainView {
     constructor() {
         this.factoryToDemands = new Map();
@@ -2460,6 +2779,11 @@ class ProductionChainView {
                     if (Math.abs(a) < ACCURACY)
                         return;
 
+                    if (f == view.selectedFactory()) {
+                        for (var e of d.demands)
+                            traverse(e);
+                        return;
+                    }
 
                     if (!this.factoryToDemands.has(f)) {
                         var demandAggregate = {
@@ -2482,12 +2806,17 @@ class ProductionChainView {
                     traverse(e);
             }
 
+            var f = view.selectedFactory();
+            var demands = f.demands;
+            if (!demands.size && f.needs && f.needs.length)
+                demands = f.needs;
+
             this.factoryToDemands.clear();
-            for (var d of view.selectedFactory().demands) {
+            for (var d of demands) {
                 traverse(d);
             }
 
-            if (view.selectedFactory().extraDemand)
+            if (f.extraDemand)
                 traverse(view.selectedFactory().extraDemand);
 
             for (var c of chain) {
@@ -2545,67 +2874,94 @@ class PopulationReader {
             }
 
 
-            if (!json.version || json.version.startsWith("v1")) {
-                view.island().populationLevels.forEach(function (element) {
-                    element.amount(0);
-                });
-                if (json.farmers) {
-                    view.island().populationLevels[0].amount(json.farmers);
+            if (view.settings.proposeIslandNames.checked()) {
+                for (var isl of (json.islands || [])) {
+                    view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
                 }
-                if (json.workers) {
-                    view.island().populationLevels[1].amount(json.workers);
-                }
-                if (json.artisans) {
-                    view.island().populationLevels[2].amount(json.artisans);
-                }
-                if (json.engineers) {
-                    view.island().populationLevels[3].amount(json.engineers);
-                }
-                if (json.investors) {
-                    view.island().populationLevels[4].amount(json.investors);
-                }
-                if (json.jornaleros) {
-                    view.island().populationLevels[5].amount(json.jornaleros);
-                }
-                if (json.obreros) {
-                    view.island().populationLevels[6].amount(json.obreros);
-                }
-            } else {
+            }
 
-                if (view.settings.proposeIslandNames.checked()) {
-                    for (var isl of (json.islands || [])) {
-                        view.islandManager.registerName(isl.name, view.assetsMap.get(isl.session));
+            var island = null;
+            if (json.islandName) {
+                island = view.islandManager.getByName(json.islandName);
+            }
+
+            if (!island)
+                return;
+
+            if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
+                return;
+
+
+            for (let key in json) {
+                let asset = island.assetsMap.get(parseInt(key));
+                if (asset instanceof PopulationLevel) {
+                    if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
+                        asset.existingBuildings(json[key].existingBuildings);
+
+                        if (json[key].limit && view.settings.populationLevelLimit.checked())
+                            asset.limitPerHouse(json[key].limit / json[key].existingBuildings);
+
+                        if (json[key].amount && view.settings.populationLevelAmount.checked())
+                            asset.amountPerHouse(json[key].amount / json[key].existingBuildings);
                     }
-                }
 
-                var island = null;
-                if (json.islandName) {
-                    island = view.islandManager.getByName(json.islandName);
-                }
+                    if (json[key].limit && view.settings.populationLevelLimit.checked()) {
+                        asset.limit(json[key].limit);
+                    }
 
-                if (!island)
-                    return;
+                    if (json[key].amount && view.settings.populationLevelAmount.checked()) {
+                        asset.amount(json[key].amount);
+                    }
 
-                if (view.settings.updateSelectedIslandOnly.checked() && island != view.island())
-                    return;
+                } else if (asset instanceof Consumer) {
+                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                        asset.existingBuildings(parseInt(json[key].existingBuildings));
 
+                    if (view.settings.factoryPercentBoost.checked()) {
+                        if (view.settings.optimalProductivity.checked()) {
+                            if (asset.existingBuildings() && json[key].limit) {
 
-                for (let key in json) {
-                    let asset = island.assetsMap.get(parseInt(key));
-                    if (asset instanceof PopulationLevel) {
-                        if (json[key].amount && view.settings.populationLevelAmount.checked()) {
-                            asset.amount(json[key].amount);
+                                var limit = Math.max(0, json[key].limit - asset.extraGoodProductionList.amount());
+
+                                if (asset.getOutputs().length && asset.getOutputs()[0].product.producers.length > 1) {
+
+                                    // in all islands view, multiple factories can be produce one good
+                                    // the server stored the same values for all of these factories
+                                    // we consider them together and sum their existing buildings
+
+                                    var factories = [];
+                                    var countBuildings = 0;
+
+                                    for (var guid of asset.getOutputs()[0].product.producers) {
+                                        var factory = island.assetsMap.get(guid);
+
+                                        if (factory.existingBuildings() && json[guid]) {
+                                            factories.push(factory);
+                                            countBuildings += factory.existingBuildings() * factory.extraGoodFactor() * factory.tpmin;
+                                        }
+                                    }
+
+                                    var percentBoost = 100 * limit / countBuildings;
+                                    if (countBuildings == 0 || percentBoost < 50 || percentBoost >= 1000)
+                                        continue;
+
+                                    for (var factory of factories)
+                                        factory.percentBoost(percentBoost);
+                                }
+                                else {
+                                    var percentBoost = 100 * limit / asset.existingBuildings() / asset.tpmin / asset.extraGoodFactor();
+                                    if (percentBoost >= 50 && percentBoost < 1000)
+                                        asset.percentBoost(percentBoost);
+                                }
+                            }
+
                         }
-                        if (json[key].existingBuildings && view.settings.populationLevelExistingBuildings.checked()) {
-                            asset.existingBuildings(json[key].existingBuildings);
-                        }
-                    } else if (asset instanceof Consumer) {
-                        if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
-                            asset.existingBuildings(parseInt(json[key].existingBuildings));
-                        if (json[key].percentBoost && view.settings.factoryPercentBoost.checked())
+                        else if (json[key].percentBoost)
                             asset.percentBoost(parseInt(json[key].percentBoost));
                     }
+
                 }
+
             }
         } catch (e) {
         }
@@ -2633,12 +2989,14 @@ class IslandManager {
         let islandKey = "islandName";
         let islandsKey = "islandNames";
 
+        // used for creation and renaming
         this.islandNameInput = ko.observable();
         this.sessionInput = ko.observable(view.sessions[0]);
         this.params = params;
         this.islandCandidates = ko.observableArray();
         this.unusedNames = new Set();
         this.serverNamesMap = new Map();
+        this.renameIsland = ko.observable();
 
         this.showIslandOnCreation = new Option({
             name: "Show Island on Creation",
@@ -2682,10 +3040,10 @@ class IslandManager {
                 localStorage.setItem(islandsKey, islandNames);
             });
 
-            view.island.subscribe(island => {
-                localStorage.setItem(islandKey, island.name());
+            this.currentIslandSubscription = ko.computed(() => {
+                var name = view.island().name();
+                localStorage.setItem(islandKey, name);
             });
-
         }
 
         this.islandExists = ko.computed(() => {
@@ -2753,6 +3111,45 @@ class IslandManager {
         this.unusedNames.add(island.name());
         this.islandCandidates.push({ name: island.name(), session: island.session });
         this.sortUnusedNames();
+    }
+
+    rename(island, name) {
+        if (this.islandExists())
+            return;
+
+        if (this.serverNamesMap.has(name) && this.serverNamesMap.get(name).name() == name)
+            return;
+
+        for (var entry of this.serverNamesMap.entries()) {
+            if (entry[1] == island)
+                this.serverNamesMap.set(entry[0], null);
+        }
+
+        this.serverNamesMap.delete(island.name());
+        this.unusedNames.add(island.name());
+        this.islandCandidates.push({ name: island.name(), session: island.session });
+
+        island.name(name);
+        this.sortIslands();
+
+        this.serverNamesMap.set(name, island);
+        var removedCandidates = this.islandCandidates.remove(i => !isNaN(this.compareNames(i.name, name)));
+        for (var c of removedCandidates) {
+            this.unusedNames.delete(c.name);
+            this.serverNamesMap.set(c.name, island);
+        }
+
+        this.islandNameInput(null);
+        this.sortUnusedNames();
+    }
+
+    startRename(island) {
+        if (island.isAllIslands())
+            return;
+
+        this.renameIsland(island);
+        this.islandNameInput(island.name());
+        $('#island-rename-dialog').modal("show");
     }
 
     deleteCandidate(candidate) {
@@ -2908,6 +3305,66 @@ class DarkMode {
     }
 }
 
+class ViewMode {
+    constructor(firstRun) {
+        this.hiddenOptions = [
+            "additionalProduction",
+            "autoApplyExtraNeed",
+            "consumptionModifier",
+            "autoApplyConsumptionUpgrades",
+            "deriveResidentsPerHouse"
+        ];
+
+        this.simpleViewSubscription = ko.computed(() => {
+            var checked = view.settings.simpleView.checked();
+
+            if (checked) {
+                view.settings.populationInput("0");
+                view.settings.additionalProduction.checked(false);
+                view.settings.autoApplyExtraNeed.checked(true);
+                view.settings.consumptionModifier.checked(true);
+                view.settings.autoApplyConsumptionUpgrades.checked(true);
+                view.settings.needUnlockConditions.checked(true);
+                view.settings.deriveResidentsPerHouse.checked(true);
+            }
+
+            for (var option of this.hiddenOptions)
+                if (view.settings[option])
+                    view.settings[option].visible(!checked);
+        });
+
+        this.hideSimple = false;
+        if (firstRun || localStorage.getItem("simpleView") == null) {
+            localStorage.setItem("simpleView", 0);
+
+            this.showOnStartup = true;
+
+            if (view.settings.additionalProduction.checked())
+                this.hideSimple = true;
+        }
+    }
+
+    simple() {
+        view.settings.simpleView.checked(true);
+    }
+
+    complex() {
+        view.settings.simpleView.checked(false);
+    }
+
+    full() {
+        view.settings.simpleView.checked(false);
+
+        view.settings.tradeRoutes.checked(true);
+        view.settings.additionalProduction.checked(true);
+        view.settings.contracts.checked(true);
+        view.settings.consumptionModifier.checked(true);
+        view.settings.missingBuildingsHighlight.checked(true);
+        view.settings.needUnlockConditions.checked(true);
+        view.settings.decimalsForBuildings.checked(true);
+    }
+}
+
 class Template {
     constructor(asset, parentInstance, attributeName, index) {
 
@@ -2964,7 +3421,7 @@ class Template {
     }
 }
 
-function init() {
+function init(isFirstRun) {
     view.darkMode = new DarkMode();
 
     // set up options
@@ -3001,6 +3458,26 @@ function init() {
                 o.checked(parseInt(localStorage.getItem(id)));
 
             o.checked.subscribe(val => localStorage.setItem(id, val ? 1 : 0));
+        }
+    }
+
+    view.settings.populationInput = ko.observable("1");
+    if (localStorage) {
+        let id = "settings.populationInput";
+        let oldId = "settings.existingBuildingsInput";
+        if (localStorage.getItem(id) != null)
+            view.settings.populationInput(localStorage.getItem(id));
+
+        view.settings.populationInput.subscribe(val => {
+            if (val != "0" && val != "1" && val != "2")
+                view.settings.populationInput("1");
+
+            localStorage.setItem(id, val);
+        });
+
+        if (localStorage.getItem(oldId) != null) {
+            view.settings.populationInput("0");
+            localStorage.removeItem(oldId);
         }
     }
 
@@ -3074,9 +3551,36 @@ function init() {
 
     // set up modal dialogs
     view.selectedFactory = ko.observable(view.island().factories[0]);
+    view.selectedPopulationLevel = ko.observable(view.island().populationLevels[0]);
     view.selectedGoodConsumptionUpgradeList =
         ko.observable(view.island().populationLevels[0].needs[0].goodConsumptionUpgradeList);
     view.productionChain = new ProductionChainView();
+    view.selectedGoodConsumptionUpgradeIslandList = ko.observable(view.island().allGoodConsumptionUpgrades);
+    view.selectedMultiFactoryProducts = ko.observable(view.island().multiFactoryProducts);
+    view.selectedReplaceInputItems = ko.observable(view.island().replaceInputItems);
+    view.selectedExtraGoodItems = ko.observable(view.island().extraGoodItems);
+    view.selectedContractManager = ko.observable(view.island().contractManager);
+
+    $('#good-consumption-island-upgrade-dialog').on('show.bs.modal',
+        () => {
+            view.selectedGoodConsumptionUpgradeIslandList(view.island().allGoodConsumptionUpgrades);
+        });
+
+    $('#factory-choose-dialog').on('show.bs.modal',
+        () => {
+            view.selectedMultiFactoryProducts(view.island().multiFactoryProducts);
+            view.selectedReplaceInputItems(view.island().replaceInputItems);
+        });
+
+    $('#item-equipment-dialog').on('show.bs.modal',
+        () => {
+            view.selectedExtraGoodItems(view.island().extraGoodItems);
+        });
+
+    $('#contract-management-dialog').on('show.bs.modal',
+        () => {
+            view.selectedContractManager(view.island().contractManager);
+        });
 
     view.tradeManager = new TradeManager();
 
@@ -3099,11 +3603,18 @@ function init() {
         populationLevels: arrayToTemplate("populationLevels"),
         categories: arrayToTemplate("categories"),
         consumers: arrayToTemplate("consumers"),
+        powerPlants: arrayToTemplate("powerPlants"),
+        publicRecipeBuildings: arrayToTemplate("publicRecipeBuildings"),
         buildingMaterialsNeeds: arrayToTemplate("buildingMaterialsNeeds"),
         workforce: arrayToTemplate("workforce")
     }
 
+    view.viewMode = new ViewMode(isFirstRun);
+
     ko.applyBindings(view, $(document.body)[0]);
+
+    if (view.viewMode.showOnStartup)
+        $('#view-mode-dialog').modal("show");
 
     view.island().name.subscribe(val => { window.document.title = val; });
 
@@ -3203,7 +3714,7 @@ function createIntInput(init) {
     obs.subscribe(val => {
         var num = parseInt(val);
 
-        if (typeof num == "number" && isFinite(num) && val != num)
+        if (typeof num == "number" && isFinite(num) && val !== num)
             obs(num);
         else if (typeof num != "number" || !isFinite(num))
             obs(init);
@@ -3231,6 +3742,13 @@ function factoryReset() {
         localStorage.clear();
 
     location.reload();
+}
+
+function setDefaultFixedFactories(assetsMap) {
+    // Default rum, cotton fabric and coffee to the new world production
+    assetsMap.get(1010240).fixedFactory(assetsMap.get(1010318));
+    assetsMap.get(1010257).fixedFactory(assetsMap.get(1010340));
+    assetsMap.get(120032).fixedFactory(assetsMap.get(101252));
 }
 
 function isLocal() {
@@ -3410,6 +3928,8 @@ function installImportConfigListener() {
 }
 
 $(document).ready(function () {
+    var isFirstRun = !localStorage || localStorage.getItem("versionCalculator") == null;
+
     // parse the parameters
     for (let attr in texts) {
         view.texts[attr] = new NamedElement({ name: attr, locaText: texts[attr] });
@@ -3430,12 +3950,12 @@ $(document).ready(function () {
     if (window.params == null)
         $('#params-dialog').modal("show");
     else
-        init();
+        init(isFirstRun);
 
     $('#params-dialog').on('hide.bs.modal', () => {
         try {
             window.params = JSON.parse($('textarea#input-params').val());
-            init();
+            init(isFirstRun);
         } catch (e) {
             console.log(e);
             $('#params-dialog').modal("show");
