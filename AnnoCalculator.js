@@ -1,4 +1,4 @@
-let versionCalculator = "v6.0";
+let versionCalculator = "v6.1";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -583,8 +583,10 @@ class Consumer extends NamedElement {
         this.outputAmount = ko.computed(() => this.amount());
 
         this.workforceDemand = this.getWorkforceDemand(assetsMap);
-        this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
-        this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+        if (this.workforceDemand) {
+            this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+            this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+        }
 
         this.tradeList = new TradeList(island, this);
 
@@ -608,7 +610,7 @@ class Consumer extends NamedElement {
             if (a instanceof Workforce)
                 return new WorkforceDemand($.extend({ factory: this, workforce: a }, m), assetsMap);
         }
-        return { updateAmount: () => { } };
+        return null;
     }
 
     getRegionExtendedName() {
@@ -693,9 +695,16 @@ class PublicConsumerBuilding extends Consumer {
     referenceProducts(assetsMap) {
         super.referenceProducts(assetsMap);
 
-        this.needs = this.getInputs().map(input =>
-            new Demand({ guid: input.Product, consumer: { factory: ko.observable(this) } }, assetsMap)
-        );
+        this.needs = this.getInputs().map(input => {
+            var d;
+            let items = this.items.filter(item => item.replacements && item.replacements.has(input.Product));
+            if (items.length)
+                d = new ItemDemandSwitch({ factory: ko.observable(this) }, input, items, assetsMap);
+            else
+                d = new Demand({ guid: input.Product, consumer: { factory: ko.observable(this) } }, assetsMap);
+
+            return d;
+        });
     }
 }
 
@@ -772,7 +781,8 @@ class Factory extends Consumer {
             return buildings;
         });
 
-        this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
+        if(this.workforceDemand)
+            this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
         // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
         // that cycles between two values by adding a damper
