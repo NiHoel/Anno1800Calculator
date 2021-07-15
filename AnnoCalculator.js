@@ -1,4 +1,4 @@
-let versionCalculator = "v6.1";
+let versionCalculator = "v6.2";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -495,6 +495,9 @@ class Island {
 
         if (params.tradeContracts && (!this.region || this.region.guid == 5000000))
             this.contractManager = new ContractManager(this, params.tradeContracts);
+
+        if (isNew)
+            this.allGoodConsumptionUpgrades.apply();
     }
 
     reset() {
@@ -781,7 +784,7 @@ class Factory extends Consumer {
             return buildings;
         });
 
-        if(this.workforceDemand)
+        if (this.workforceDemand)
             this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
 
         // use the history to break the cycle: extra good (lumberjack) -> building materials need (timber) -> production (sawmill) -> production (lumberjack)
@@ -1349,6 +1352,8 @@ class BuildingMaterialsNeed extends Need {
 class ResidenceBuilding extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
+
+        this.existingBuildings = createIntInput(0);
     }
 }
 
@@ -2970,6 +2975,9 @@ class PopulationReader {
                             asset.percentBoost(parseInt(json[key].percentBoost));
                     }
 
+                } else if (asset instanceof ResidenceBuilding) {
+                    if (json[key].existingBuildings && view.settings.factoryExistingBuildings.checked())
+                        asset.existingBuildings(parseInt(json[key].existingBuildings));
                 }
 
             }
@@ -3892,7 +3900,7 @@ function installImportConfigListener() {
                     if (localStorage) {
 
                         if (config.islandName && config.islandName != "Anno 1800 Calculator" &&
-                            !config.islandNames && !config[config.islandName]) {
+                            !config.islandNames && !config[config.islandName] && (!config.versionCalculator || config.versionCalculator.startsWith("v1") || config.versionCalculator.startsWith("v2"))) {
                             // import old, one island save
                             delete config.versionCalculator;
                             delete config.versionServer;

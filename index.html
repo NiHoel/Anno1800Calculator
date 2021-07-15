@@ -1000,8 +1000,8 @@
                                         <td>
                                             <div class="inline-list">
                                                 <span class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
-                                                    <label class="custom-control-label" data-bind="attr: { for: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
+                                                    <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped' }">
+                                                    <label class="custom-control-label" data-bind="attr: { for: 'fc-' + $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName() }" src-only style="vertical-align: top;">
 
                                                     </label>
                                                 </span>
