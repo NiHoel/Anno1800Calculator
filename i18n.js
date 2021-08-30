@@ -53,6 +53,20 @@ texts = {
         "japanese": "建物",
         "russian": "Сооружения"
     },
+    skyscrapers: {
+        "english": "Skyscrapers",
+        //"guid": 131726,
+        "spanish": "Rascacielos",
+        "chinese": "摩天大楼",
+        "korean": "마천루",
+        "japanese": "高層ビル",
+        "taiwanese": "摩天大樓",
+        "french": "Gratte-ciel",
+        "polish": "Wieżowce",
+        "german": "Wolkenkratzer",
+        "italian": "Grattacieli",
+        "russian": "Небоскребы"
+    },
     workforce: {
         english: "Required Workforce",
         german: "Benötigte Arbeitskraft",
@@ -646,8 +660,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 11: Tourist Season. Configuration menu for population tiers.",
-        german: "Game Update 11: Reisezeit. Konfigurationsmenü für Bevölkerungslevel.",
+        english: "Game Update 12: High Life. Please read the population configuration section in the help menu first.",
+        german: "Game Update 12: Dächer der Stadt. Bitte den Abschnitt Bevölkerungskonfiguration im Hilfemenü zuerst lesen.",
     },
     helpContent: {
         german:
@@ -667,6 +681,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <img class="img-thumbnail img-responsive" src="ResidentHelp.png" />
 <p>Der Button links oben bei den Bevölkerungsstufen öffnet ein separates Menü. Obige Grafik veranschaulicht, welche Werte aus dem Warenrechner welchen im Spiel entsprechen. Die "Pro Wohnhaus"-Einträge geben einen Durchschnittswert an und können folglich Nachkommastellen haben. Entsperrt man die Eingabe, dann wird der Wert aktualisiert, sobald ein neuer Gebäude- oder Bevölkerungswert eingegeben wird. Bei gesperrter Eingabe werden dagegen die anderen Einträge in der rechten Spalte so angepasst, dass Alles konsistent ist. Wird das Statistik-Auslese-Tool verwendet oder ist die Einstellungen aktiviert, dass die Einwohner pro Haus basierend auf erfüllten Bedürfnissen berechnet werden, dann muss die Eingabe gesperrt sein, sie wird aber trotzdem aktualisiert.</p>
 <p>Die Radio-Buttons in der linken Spalte legen fest, welcher Wert auf der Hauptseite angezeigt wird. Die Buttons neben den Waren (ent-)sperren das Bedürfnis. Der Button <b>Global Anwenden</b> übernimmt beide pro-Haus-Einträge, gesperrte Bedürfnisse sowie die ausgewählten Verbrauchseffekte für alle Inseln.</p><br/>
+<p>Durch Klick auf die Überschrift <b>Wolkenkratzer</b> werden die Wolkenkratzerlevel und der <b>Skyline Tower</b> angezeigt. In der <b>einfachen Ansicht</b> wird nur der Gebäudezähler angezeigt. Der Panoramaeffekt kann hier nicht berücksichtigt werden. In der komplexen Ansicht enthält jede Zeile die Anzahl an Gebäuden, das Einwohnerlimit pro Haus (5) sowie das Gesamtlimit (3) des Levels. Die Einwohnerzahl pro Haus muss manuell anhand des <b>Panoramaeffekts</b>, Items und weiterer Effekte geschätzt werden. Abgesehen von der Wolkenkratzerverwaltung unter Finanzen bietet das Spiel hier keine Hilfe. Es empfhielt sich, erst den pro-Haus-Wert anzpassen und danach die Gebäudeanzahl zu aktualisieren. So ist gewährleistet, dass das Bevölkerungslimit links korrekt aktualisiert wird. Vom Bevölkerungslimit hängt der Verbrauch ab, wie viele Einwohner dagegen aktuell in einem Wolkenkratzer leben ist unerheblich. Sobald ein Wolkenkratzer gebaut ist, fungieren die darüberstehenden Angaben als Zusammenfassung. So kann Einwohner (max.) pro Wohnhaus nicht mehr geändert werden und Einwohner pro Haus nicht mehr gesperrt. Damit sich die Eingabefelder aber ohne Wolkenkratzer wie bisher verhalten, war es nötig, reguläre Häuser mit aufzunehmen und deren Werte synchron zu halten. Änderungen in den oberen Eingabefeldern wirken sich folglich nur auf die Häuser aus und sollten vermieden werden.</p><br/>
 
 <h5>Globale Einstellungen</h5>
 <span class="btn-group bg-dark mr-2 float-left">
@@ -767,6 +782,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <img class="img-thumbnail img-responsive" src="ResidentHelp.png" />
 <p>The button top left of the population levels opens a dedicated menu. The above graphic illustrates which values from the calculator correspond to which values in the game. The "Per House" entries are an average value and can have decimals. After unlocking the field, its value gets updated whenever the value for buildings or residents is changed. If the field is locked, the other values in the right column are updated to be consistent. If the statistic extraction is used or the setting that residents per house are calculated based on fulfilled needs, then the field must be locked but gets updated.</p>
 <p>The radio buttons in the left column determine which value is displayed on the main page. The buttons next to the goods lock/unlock the need. The button <b>Apply Globally</b> applies both per house entries, the locked needs, and all selected consumption effects to all islands.</p><br/>
+<p>When clicking on the heading <b>Skyscrapers</b> the skyscraper levels and the <b>Skyline Tower</b> are shown. The <b>simple view</b> only shows the building counters. The panorama effect cannot be incorporated. The complex view shows the building counter, the residents limit per house (5), and the population limit of the level. On must manually estimate the number of residents per house based on the <b>panorama effect</b>, items and other effects. Except for the skyscraper maintenance in the finance screen, the game provides no help to estimate these values. It is recommended to set the per residence values before the number of buildings. This ensures that the population limit is updated correctly. The consumption depends on the population limit, whereas it is irrelevant how many residents live in a skyscraper. The upper input fields become summary fields once the first skyscraper is built. Thus, max. residents per house cannot be changed and the amount per residence not locked. That the input fields work without skyscrapers in the same way as before, it was necessary to add regular houses and sync their values with the summary fields. Changing the summary fields only affects the houses and should be avoided.</p><br/>
 
 <h5>Global Settings</h5>
 <span class="btn-group bg-dark mr-2 float-left">
