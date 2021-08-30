@@ -186,13 +186,26 @@ nav {
     margin-bottom: 20px;
 }
 
-    .ui-fieldset legend {
-        font-weight: bold;
-        color: #000;
-        font-size: unset;
-        width:unset;
-        padding-right:5px;
-    }
+.ui-fieldset legend {
+    font-weight: bold;
+    color: #000;
+    font-size: unset;
+    width: unset;
+    padding-right: 5px;
+}
+
+.collapsable-section {
+    border-top: 1px solid #CECECE;
+    margin-bottom: 20px;
+}
+
+.collapsable-section legend {
+    font-weight: bold;
+    color: #000;
+    font-size: unset;
+    width: unset;
+    padding-right: 5px;
+}
 
 .ui-fchain-item {
     float: left;
@@ -202,6 +215,18 @@ nav {
     border: 1px solid #00000031;
     border-radius: 4px;
     padding: 10px;
+}
+
+.ui-fchain-item-small {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 12rem;
+}
+
+.ui-fchain-item-xl {
+    width: 30rem;
+    height: unset;
 }
 
     .ui-fchain-item.danger {
@@ -255,7 +280,7 @@ nav {
 .ui-fchain-item-name {
     font-size: 12px;
     text-align: center;
-    word-wrap: break-word;
+    /*word-wrap: break-word;*/
     height: 2rem;
 }
 
@@ -390,6 +415,11 @@ nav {
 
 .input-group-short {
     max-width: 10rem;
+    float: right;
+}
+
+.input-group-medium {
+    max-width: 12rem;
     float: right;
 }
 
@@ -708,11 +738,121 @@ body:not(.bg-dark) .icon-light {
 
 
 
-
 .input-group-btn-vertical > .btn:first-child {
     border-bottom: unset;
 }
 
 .input-group-btn-vertical > .btn:last-child {
     border-top: unset;
+}
+
+
+/* Tree for production chain */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.tree {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+}
+
+.tree ul {
+	padding-top: 20px; position: relative;
+	margin-bottom: 0;
+	transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+}
+
+.tree li {
+    float: left;
+	text-align: center;
+	list-style-type: none;
+	position: relative;
+	padding: 20px 5px 0 5px;
+	
+	transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+}
+
+/*We will use ::before and ::after to draw the connectors*/
+
+.tree li::before, .tree li::after{
+	content: '';
+	position: absolute; top: 0; right: 50%;
+	border-top: 1px solid #ccc;
+	width: 50%; height: 20px;
+}
+.tree li::after{
+	right: auto; left: 50%;
+	border-left: 1px solid #ccc;
+}
+
+/*We need to remove left-right connectors from elements without 
+any siblings*/
+.tree li:only-child::after, .tree li:only-child::before {
+	display: none;
+}
+
+/*Remove space from the top of single children*/
+.tree li:only-child{ padding-top: 0;}
+
+/*Remove left connector from first child and 
+right connector from last child*/
+.tree li:first-child::before, .tree li:last-child::after{
+	border: 0 none;
+}
+/*Adding back the vertical connector to the last nodes*/
+.tree li:last-child::before{
+	border-right: 1px solid #ccc;
+	border-radius: 0 5px 0 0;
+	-webkit-border-radius: 0 5px 0 0;
+	-moz-border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after{
+	border-radius: 5px 0 0 0;
+	-webkit-border-radius: 5px 0 0 0;
+	-moz-border-radius: 5px 0 0 0;
+}
+
+/*Time to add downward connectors from parents*/
+.tree ul ul::before{
+	content: '';
+	position: absolute; top: 0; left: 50%;
+	border-left: 1px solid #ccc;
+	width: 0; height: 20px;
+}
+
+.tree li shadow{
+	border: 1px solid #ccc;
+	padding: 5px 10px;
+	text-decoration: none;
+	display: inline-block;
+	
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	
+	transition: all 0.5s;
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+}
+
+.tree > ul > li > div > ul > li {
+    margin-bottom: 2rem !important; /* if the tree wraps over liner, add margin to the first line */
+}
+
+.tree-node {
+    width: 7rem;
+}
+
+.tree-node-item-name {
+    font-size: 12px;
+    text-align: center;
+    word-wrap: break-word;
 }
