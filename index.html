@@ -1606,7 +1606,7 @@
                                     <td>
                                         <div class="float-right">
                                             <img class="mr-2 icon-sm" src="" data-bind="attr: { src: $data.product.icon ? $data.product.icon : null, alt: $data.product.name}">
-                                            <span data-bind="text: formatNumber(($data.clipped && $data.clipped()  && (!this.palaceBuff || this.palaceBuff.guid !== 191141) ? 2 : 1) * $data.outputAmount() / $data.palaceBuff.additionalOutputCycle)"></span><span> t/min</span>
+                                            <span data-bind="text: formatNumber($data.buffAmount())"></span><span> t/min</span>
                                         </div>
                                     </td>
                                 </tr>

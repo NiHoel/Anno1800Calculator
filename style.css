@@ -677,7 +677,7 @@ body:not(.bg-dark) .icon-light {
     background: #222;
 }
 
-.bg-dark .input-group-text, .bg-dark .modal-content {
+.bg-dark .input-group-text, .bg-dark .modal-content, .bg-dark .collapsable-section legend {
     color: #f8f9fa !important;
     background: #343a40 !important;
 }
