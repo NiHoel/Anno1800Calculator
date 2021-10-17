@@ -3,7 +3,7 @@
 [![Tutorial](CalculatorScreenshot.png?raw=true "Calculator Screenshot")](https://youtu.be/4ZJYZ5GBc60)
 
 * A calculator for the computer game [Anno 1800](https://www.ubisoft.com/de-de/game/anno-1800/) to compute the required production depending on the population 
-* [YouTube-Tutorial](https://youtu.be/4ZJYZ5GBc60)
+* [YouTube-Tutorial](https://youtu.be/YxU-8YCzpec)
 * To use the calculator go to the following website: https://nihoel.github.io/Anno1800Calculator/
 * To use it offline, download, unzip and open index.html with a browser: https://github.com/NiHoel/Anno1800Calculator/archive/v7.2.zip
 
