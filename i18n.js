@@ -664,8 +664,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 12: High Life. Please read the population configuration section in the help menu first.",
-        german: "Game Update 12: Dächer der Stadt. Bitte den Abschnitt Bevölkerungskonfiguration im Hilfemenü zuerst lesen.",
+        english: "Game Update 13: Docklands exchange ratios.",
+        german: "Game Update 13: Tauschverhältnisse in der Speicherstadt geändert.",
     },
     helpContent: {
         german:

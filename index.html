@@ -25,7 +25,7 @@
 
     <script type="text/javascript" src="i18n.js"></script>
     <script type="text/javascript" src="AnnoCalculator.js"></script>
-    <script type="text/javascript" src="params_2021-08-31_full.js"></script>
+    <script type="text/javascript" src="params.js"></script>
 
     <script id="treeElement" type="text/html">
         <li>
@@ -1294,7 +1294,7 @@
                                             <!-- ko foreach: $data.exports -->
                                             <tr>
                                                 <td>
-                                                    <div class="input-group spinner" style="max-width: 13rem">
+                                                    <div class="input-group spinner input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
                                                                 <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
@@ -1324,7 +1324,7 @@
                                                 </td>
                                                 <td>
 
-                                                    <div class="input-group spinner float-right" style="max-width: 13rem;">
+                                                    <div class="input-group spinner float-right input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
                                                                 <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
@@ -1356,7 +1356,7 @@
                                             <!-- ko foreach: $data.imports -->
                                             <tr>
                                                 <td>
-                                                    <div class="input-group spinner" style="max-width: 13rem">
+                                                    <div class="input-group spinner input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
                                                                 <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
@@ -1388,7 +1388,7 @@
                                                 </td>
                                                 <td>
 
-                                                    <div class="input-group spinner float-right" style="max-width: 13rem">
+                                                    <div class="input-group spinner float-right input-transfer-amount">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">
                                                                 <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />
@@ -1455,14 +1455,15 @@
                                             <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
                                         </div>
                                     </div>
-                                    <div class="input-group input-group-short spinner">
+                                    <div class="input-group input-group-short spinner input-transfer-amount">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">
                                                 <img class="icon-sm" src="" data-bind="attr: { src: $root.selectedFactory().icon ? $root.selectedFactory().icon : null, alt:$root.selectedFactory().name}" style="margin: 0 0.25rem;">
                                             </span>
                                         </div>
-                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount" />
+                                        <input step="0.1" class="form-control" type="number" value="0" data-bind="value: newAmount, attr: {id: 'factory-new-contract-amount-input' }" />
                                         <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.newAmount, id: 'factory-new-contract-amount-input' }}"></div>
                                             <span class="input-group-text">t/min</span>
                                         </div>
                                     </div>
@@ -1889,7 +1890,7 @@
                                     <tr>
                                         <td>
                                             <div>
-                                                <div class="input-group spinner" style="max-width: 16rem;">
+                                                <div class="input-group spinner input-transfer-amount">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
                                                             <img class="icon-sm icon-light" src="icon_transporter_unloading_light.png" />
@@ -1915,7 +1916,7 @@
                                         <td><span>&rarr;</span></td>
                                         <td>
                                             <div>
-                                                <div class="input-group spinner" style="max-width: 16rem;">
+                                                <div class="input-group spinner input-transfer-amount">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">
                                                             <img class="icon-sm icon-light" src="icon_transporter_loading_light.png" />

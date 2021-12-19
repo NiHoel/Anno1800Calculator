@@ -735,7 +735,9 @@ body:not(.bg-dark) .icon-light {
 }
 
 
-
+.input-transfer-amount {
+    max-width: 16rem
+}
 
 
 .input-group-btn-vertical > .btn:first-child {
