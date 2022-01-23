@@ -664,8 +664,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 13: Docklands exchange ratios.",
-        german: "Game Update 13: Tauschverhältnisse in der Speicherstadt geändert.",
+        english: "Game Update 13.1: Correction of all exchange ratios for Docklands.",
+        german: "Game Update 13.1: Korrektur aller Tauschverhältnisse in der Speicherstadt.",
     },
     helpContent: {
         german:
