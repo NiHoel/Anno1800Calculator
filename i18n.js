@@ -39,6 +39,20 @@ texts = {
         "korean": "주민",
         "russian": "Жители"
     },
+    residences: {
+        "chinese": "住所",
+        "english": "Residences",
+        "french": "Résidences",
+        "german": "Wohngebäude",
+        //"guid": 22976,
+        "italian": "Residenze",
+        "japanese": "住居",
+        "korean": "주거지",
+        "polish": "Domy mieszkalne",
+        "russian": "Жилые здания",
+        "spanish": "Residencias",
+        "taiwanese": "住所"
+    },
     buildings: {
         "english": "Buildings",
         //"guid": 22659,
@@ -582,6 +596,10 @@ texts = {
         english: "Use as input on main page",
         german: "Verwende als Eingabe auf der Hauptseite"
     },
+    notes: {
+        english: "Note",
+        german: "Notizen"
+    },
     // view mode
     viewMode: {
         english: "View Mode",
@@ -664,8 +682,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 13.1: Correction of all exchange ratios for Docklands.",
-        german: "Game Update 13.1: Korrektur aller Tauschverhältnisse in der Speicherstadt.",
+        english: "Game Update 14: Hacienda with quarters, farms, fertilizer production and policies (see the help on how to activate them). Section for notes for each need, population level and factory.",
+        german: "Game Update 14: Hacienda mit Unterkünften, farmen, Düngerproduktion und Richtlinien (siehe Hilfe, wie man es aktiviert). Notizfunktion für jedes Bedürfnis, Bevölkerungsstufe und Fabrik.",
     },
     helpContent: {
         german:
@@ -754,6 +772,11 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>Eine Besonderheit ergibt sich bei <b>Allen Inseln</b> (standardmäßig ausgewählt, wenn Inselverwaltung deaktiviert). Dort ist es erlaubt dieselbe Ware <b>zu importieren und exportieren</b>, um so Verträge für mehrere Speicherstädte zusammenfassen zu können. Allerdings werden keine zusammenfassenden Informationen zum Handel angezeigt.</p>
 <br/>
 
+<h5>Keim der Hoffnung</h5>
+<p>Die <b>Hacienda</b> beeinflusst viele Spielmechaniken und die Konfigurationsmöglichkeiten verteilen sich über den gesamten Warenrechner. Hier eine kurze Übersicht: Die Einwohnerunterkünfte können in der <b>Bevölkerungskonfiguration</b> durch Ausklappen des Abschnitts <b>Wohnhäuser</b> gefunden werden. Die <b>Initiative für maßvolle Ernährung</b> ist im Zeitungsmenü auswählbar. Hacienda-Farmen können im Konfigurationsmenü für Produktionsketten ausgewählt werden. Die <b>Gleiche Region</b>-Option bevorzugt die traditionellen Produktionsgebäude - wenn beide in derselben Region sind. Neue Inseln werden so eingestellt, dass die traditionellen Produktionsgebäude gewählt werden. Vorhandene Inseln aus älteren Konfigurationen des Warenrechners verwenden die gleiche-Region-Regel für alle Produkte, die jetzt neue Produktionsgebäude erhalten haben. Das bedeutet, dass von Obreras verbrauchtes Bier in der Hacienda-Brauerei hergestellt wird.</p>
+<p>Die <b>Düngerproduktionskette</b> funktioniert ähnlich wie bei Silos. Jede Farm hat eine zusätzliches Kontrollkästchen, um diese zu aktivieren. Damit werden Produktionsboost, Zusatzwaren und Düngerverbrauch ausgelöst. Bei Farmen der Alten Welt muss man das Konfigurationsdialog der Fabrik öffnen, um die Option angezeigt zu bekommen. Die Mistproduktion ist allerding besonders. Es gibt keine Standard-Fabrik, welche Mist produziert. Also habe ich eine künstliche erstellt: <b>Alle Tierhöfe</b>. Deren Zweck ist den Überblick über die komplette Mistproduktion zu behalten. Die Produktionsparameter sind von der Mistproduktion einer Alpkafarm abgeleitet. Man könnte also das künstliche Produktionsgebäude direkt verwenden. Der korrekte Weg geht allerdings über <b>Zusatzwaren</b> - welche in den Einstellungen aktiviert werden müssen. Den zugehörigen Abschnitt in der Hilfe bitte vorher lesen! Die Mistproduktion wird auf Tierhöfen genauso aktiviert wie man ein Item ausrüsten würde. Der gesammelte Mist wird dann unter Zusatzwaren bei Allen Tierhöfen angezeigt. Danach wird er vom Düngerwerk verarbeitet - übrigens das einzige Produktionsgebäude, bei dem sich das Icon von Ware und Fabrik unterscheiden.</p>
+<br/>
+
 <h5>Haftungsausschluss</h5>
 <p>Der Warenrechner wird ohne irgendeine Gewährleistung zur Verfügung gestellt. Die Arbeit wurde in KEINER Weise von Ubisoft Blue Byte unterstützt. Alle Assets aus dem Spiel Anno 1800 sind © by Ubisoft.</p><br/>
 <p>Darunter fallen insbesondere, aber nicht ausschließlich alle Icons, Bezeichnungen und Verbrauchswerte.</p><br/>
@@ -785,7 +808,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <img class="img-thumbnail img-responsive" src="ResidentHelp.png" />
 <p>The button top left of the population levels opens a dedicated menu. The above graphic illustrates which values from the calculator correspond to which values in the game. The "Per House" entries are an average value and can have decimals. After unlocking the field, its value gets updated whenever the value for buildings or residents is changed. If the field is locked, the other values in the right column are updated to be consistent. If the statistic extraction is used or the setting that residents per house are calculated based on fulfilled needs, then the field must be locked but gets updated.</p>
 <p>The radio buttons in the left column determine which value is displayed on the main page. The buttons next to the goods lock/unlock the need. The button <b>Apply Globally</b> applies both per house entries, the locked needs, and all selected consumption effects to all islands.</p><br/>
-<p>When clicking on the heading <b>Skyscrapers</b> the skyscraper levels and the <b>Skyline Tower</b> are shown. The <b>simple view</b> only shows the building counters. The panorama effect cannot be incorporated. The complex view shows the building counter, the residents limit per house (5), and the population limit of the level. On must manually estimate the number of residents per house based on the <b>panorama effect</b>, items and other effects. Except for the skyscraper maintenance in the finance screen, the game provides no help to estimate these values. It is recommended to set the per residence values before the number of buildings. This ensures that the population limit is updated correctly. The consumption depends on the population limit, whereas it is irrelevant how many residents live in a skyscraper. The upper input fields become summary fields once the first skyscraper is built. Thus, max. residents per house cannot be changed and the amount per residence not locked. That the input fields work without skyscrapers in the same way as before, it was necessary to add regular houses and synchronize their values with the summary fields. Changing the summary fields only affects the houses and should be avoided.</p><br/>
+<p>When clicking on the heading <b>Skyscrapers</b> the skyscraper levels and the <b>Skyline Tower</b> are shown. The <b>simple view</b> only shows the building counters. The panorama effect cannot be incorporated. The complex view shows the building counter, the residents limit per house (5), and the population limit of the level. One must manually estimate the number of residents per house based on the <b>panorama effect</b>, items and other effects. Except for the skyscraper maintenance in the finance screen, the game provides no help to estimate these values. It is recommended to set the per residence values before the number of buildings. This ensures that the population limit is updated correctly. The consumption depends on the population limit, whereas it is irrelevant how many residents live in a skyscraper. The upper input fields become summary fields once the first skyscraper is built. Thus, max. residents per house cannot be changed and the amount per residence not locked. That the input fields work without skyscrapers in the same way as before, it was necessary to add regular houses and synchronize their values with the summary fields. Changing the summary fields only affects the houses and should be avoided.</p><br/>
 
 <h5>Global Settings</h5>
 <span class="btn-group bg-dark mr-2 float-left">
@@ -852,6 +875,11 @@ Siehe folgenden Link für weitere Informationen: `,
 <p>The upper part of the dialog shows the <b>export pyramid</b>. New entries are added by selecting a product and a multiplier. Rearranging the pyramid is achieved by deleting and recreating the entries. Existing contracts are updated such that the imported tons per minute remain the same.</p>
 <p>The lower part of the dialog shows an overview of all contracts and summary information about the trade. First of all, one has to enter the <b>loading speed of the pier</b> where Tobias trades. The loading speed is displayed in the lower part of the pier's information panel in the game. The calculator computes the trading duration, the total stock turnover in t/min, the island's required storage capacity, and the tons one must enter for each contract. The calculation of these values includes the loading speed bonus for Tobias and the duration to enter and leave the session. In case ∞ is displayed, the entered stock turnover exceeds the maximum. Then, one must distribute the contracts over more islands, increase the loading speed or reduce the traded volume.</p>
 <p>There is a second use case, where one wants to trade as many goods as possible per trade. First of all, one has to specify all the trade contracts and the loading speed. Here, the absolute amount per contract does not matter, only the relative difference between different contracts. Then, enter the total island storage capacity and click the button <b>Set total capacity</b> next to it. It determines the good that requires the maximal storage capacity c. It scales the contract by a factor f such that c matches the island storage capacity. Finally, f is applied to all other contracts.</p><p><b>All Islands</b> (selected by default, if no island management is active) behaves a bit different. It allows to <b>import and export</b> the same good so that one can aggregate the contracts of several docklands. But it does not show the summary information about the trade.</p>
+<br/>
+
+<h5>Seeds of Change</h5>
+<p>The <b>Hacienda</b> affects many game mechanics and configuration options are scattered across the calculator. Here is a short overview: The resident quarters can be found in the <b>population configuration</b> menu by expanding the <b>Residences</b> dropdown. The <b>Dietary Education Initiative</b> is available in the newspaper dialog. Hacienda farms can be selected in the production chain configuration menu. The <b>same region</b> option favors the traditional production buildings - if both are in the same region. New islands will be configured to use the traditional ones. Existing islands from older configurations use the same region option for all products that now have new production buildings. This means that beer consumed by Obreras is assumed to be produced by Hacienda Brewery.</p>
+<p>The <b>fertiliser chain</b> works like silos. Each farm has an extra checkbox to enable it. This will induce production increase, extra goods, and fertiliser consumption. For old world farms, one has to open the factory configuration dialog to see this checkbox. Dung production is special, however. There is no standard factory in the game to produce it, so I created an artificial one: <b>All Animal Farms</b>. Its purpose is to keep track of all produced dung. The production statistics are derived from the dung production of an alpaca farm. So, one can use this artificial production building directly. The correct way, however, is via <b>extra goods</b> - which must be enabled in the settings. Please read the corresponding help section first! The dung production on an animal farm is enabled like you would equip an item. The collected dung is shown in the extra goods section of the All Animal Farms and then processed by the Fertilizer Works - which is the only factory where product and factory icon differ.</p> 
 <br/>
 
 <h5>Disclaimer</h5>

@@ -217,6 +217,17 @@ nav {
     padding: 10px;
 }
 
+.ui-service-building-item {
+    float: left;
+    height: 180px;
+    width: 130px;
+    margin-bottom: 10px;
+    margin-right: -1px;
+    border: 1px solid #00000031;
+    border-radius: 4px;
+    padding: 10px;
+}
+
 .ui-fchain-item-small {
     display: flex;
     flex-direction: column;
