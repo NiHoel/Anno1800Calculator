@@ -1,4 +1,4 @@
-let versionCalculator = "v8.0";
+let versionCalculator = "v8.1";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -372,7 +372,7 @@ class Island {
 
                 if (module)
                     f[m + "Demand"] = new Demand({ guid: module.getInputs()[0].Product, region: f.region }, assetsMap);
-        }
+            }
         }
 
 
@@ -661,7 +661,7 @@ class Consumer extends NamedElement {
         for (let m of this.maintenances || []) {
             let a = assetsMap.get(m.Product);
             if (a instanceof Workforce) {
-                let items = this.items.filter(item => item.replacingWorkforce);
+                let items = this.items.filter(item => item.replacingWorkforce && item.replacingWorkforce != a);
                 if (items.length)
                     this.workforceDemand = new WorkforceDemandSwitch($.extend({ factory: this, workforce: a }, m), items[0], assetsMap);
                 else
@@ -669,7 +669,7 @@ class Consumer extends NamedElement {
 
                 this.existingBuildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
                 this.buildings.subscribe(val => this.workforceDemand.updateAmount(Math.max(val, this.buildings())));
-        }
+            }
         }
         return null;
     }
@@ -876,7 +876,7 @@ class Factory extends Consumer {
                 if (demand)
                     if (checked())
                         demand.updateAmount(Math.max(Math.ceil(buildings), this.existingBuildings()) * module.tpmin);
-                else
+                    else
                         demand.updateAmount(0);
             }
 
@@ -909,7 +909,7 @@ class Factory extends Consumer {
                     val = (val + this.computedExtraAmountHistory[0][0]) / 2;
             }
 
-            this.computedExtraAmountHistory.unshift([val,time]);
+            this.computedExtraAmountHistory.unshift([val, time]);
             if (this.computedExtraAmountHistory.length > 2)
                 this.computedExtraAmountHistory.pop();
             return val;
@@ -1125,8 +1125,8 @@ class PublicBuildingNeed extends Option {
         if (this.requiredToBeBuilding) {
             this.residence = assetsMap.get(this.requiredToBeBuilding);
             this.hidden = ko.pureComputed(() => !this.residence.existingBuildings());
+        }
     }
-}
 }
 
 class StoreNeed extends PublicBuildingNeed {
@@ -1210,16 +1210,16 @@ class Demand extends NamedElement {
 
     updateFixedProductFactory(f) {
         if (f == null && (this.consumer || this.region)) { // find factory in the same region as consumer
-                let region = this.region || this.consumer.factory().region;
+            let region = this.region || this.consumer.factory().region;
             if (region && !(this.product.mainFactory && this.product.mainFactory.region === region)) {
-                    for (let fac of this.product.factories) {
-                        if (fac.region === region) {
-                            f = fac;
-                            break;
-                        }
+                for (let fac of this.product.factories) {
+                    if (fac.region === region) {
+                        f = fac;
+                        break;
                     }
                 }
             }
+        }
 
         if (f == null) // region based approach not successful
             f = this.product.mainFactory || this.product.factories[0];
@@ -1452,8 +1452,8 @@ class PopulationLevelNeed extends PopulationNeed {
             level.limit.subscribe(limit => this.updateAmount(limit - level.specialResidence.existingBuildings() * this.freeResidents));
         } else {
             level.limit.subscribe(limit => this.updateAmount(limit));
+        }
     }
-}
 }
 
 class SkyscraperPopulationNeed extends PopulationNeed {
@@ -1753,6 +1753,10 @@ class PopulationLevel extends NamedElement {
                         this.amount(Math.floor(val * this.amountPerHouse()));
                 } else {
                     var perHouse = this.amount() / val;
+                    if (perHouse < 1) {
+                        this.amount(val);
+                        perHouse = 1;
+                    }
                     if (Math.abs(this.amountPerHouse() - perHouse) > ACCURACY)
                         this.amountPerHouse(perHouse);
                 }
@@ -2990,11 +2994,18 @@ class ContractCreatorFactory {
                 return [];
 
             var f = view.selectedFactory();
-            var i = f.contractList.island;
-            var contractList = i.isAllIslands()
-                ? f.contractList.imports().concat(f.contractList.exports())
-                : i.contractManager.contracts();
-            var usedProducts = new Set(contractList.map(c => c.importProduct).concat(contractList.map(c => c.exportProduct)));
+            var fl = f.contractList;
+            var i = fl.island
+            var il = i.contractManager.contracts();
+
+            var usedProducts = fl.imports().map(c => c.exportProduct).concat(fl.exports().map(c => c.importProduct));
+            if (!i.isAllIslands())
+                if (this.export())
+                    usedProducts.concat(il.map(c => c.exportProduct))
+                else
+                    usedProducts.concat(il.map(c => c.importProduct))
+
+            usedProducts = new Set(usedProducts);
             usedProducts.add(f.product);
 
             var list;
@@ -3055,7 +3066,9 @@ class ContractCreatorFactory {
                 this.export(false);
                 this.newAmount(Math.abs(Math.min(0, overProduction)));
             } else {
-                if (overProduction < 0 && this.canImport()) {
+                if (overProduction < 0 &&
+                    (f.product.canImport && (f.contractList.island.isAllIslands() || !f.contractList.exports().length))) {
+                    // do not use this.canImport() since it may not be updated yet
                     this.export(false);
                     this.newAmount(Math.abs(overProduction));
                 } else {
@@ -3079,24 +3092,26 @@ class ContractCreatorFactory {
         if (!l)
             return;
 
+        var otherF = this.exchangeFactory();
+
         if (this.export()) {
             var contract = new TradeContract({
                 exportFactory: f,
-                importFactory: this.exchangeFactory(),
+                importFactory: otherF,
                 exportAmount: this.newAmount()
             });
 
             l.exports.push(contract);
-            this.exchangeFactory().contractList.imports.push(contract);
+            otherF.contractList.imports.push(contract);
         } else {
             var contract = new TradeContract({
-                exportFactory: this.exchangeFactory(),
+                exportFactory: otherF,
                 importFactory: f,
                 importAmount: this.newAmount()
             });
 
             l.imports.push(contract);
-            this.exchangeFactory().contractList.exports.push(contract);
+            otherF.contractList.exports.push(contract);
         }
 
         l.island.contractManager.add(contract);

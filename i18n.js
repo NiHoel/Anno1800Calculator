@@ -682,8 +682,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 14: Hacienda with quarters, farms, fertilizer production and policies (see the help on how to activate them). Section for notes for each need, population level and factory.",
-        german: "Game Update 14: Hacienda mit Unterkünften, farmen, Düngerproduktion und Richtlinien (siehe Hilfe, wie man es aktiviert). Notizfunktion für jedes Bedürfnis, Bevölkerungsstufe und Fabrik.",
+        english: "Game Update 14.1 and bug fixes.",
+        german: "Game Update 14.1 und Bugfixes.",
     },
     helpContent: {
         german:
