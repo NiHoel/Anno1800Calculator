@@ -86,6 +86,20 @@ texts = {
         german: "Benötigte Arbeitskraft",
         korean: "필요한 인력"
     },
+    commuterPier: {
+        "chinese": "运输码头",
+        "english": "Commuter Pier",
+        "french": "Embarcadère",
+        "german": "Pendler-Anlegestelle",
+        //"guid": 601455,
+        "italian": "Molo per pendolari",
+        "japanese": "通勤用埠頭",
+        "korean": "인력 수송항",
+        "polish": "Molo dla pasażerów",
+        "russian": "Пассажирский причал",
+        "spanish": "Muelle de cercanías",
+        "taiwanese": "運輸碼頭"
+    },
     productionBoost: {
         "french": "Productivité",
         "brazilian": "Production",
@@ -260,6 +274,20 @@ texts = {
         "french": "Besoin de luxe",
         "japanese": "高級品の需要",
         "russian": "Потребность в роскоши"
+    },
+    "lifestyleNeeds": {
+        "chinese": "生活需求",
+        "english": "Lifestyle Needs",
+        "french": "Besoins de confort",
+        "german": "Lebensqualität",
+        //"guid": 2291,
+        "italian": "Bisogni di stile di vita",
+        "japanese": "ライフスタイルの需要",
+        "korean": "일용품 요구",
+        "polish": "Potrzeby stylu życia",
+        "russian": "Персональные потребности",
+        "spanish": "Necesidades de estilo de vida",
+        "taiwanese": "生活需求"
     },
     "reducedNeeds": {
         "english": "Reduced Needs",
@@ -477,6 +505,20 @@ texts = {
         "english": "Multiply all contracts by such a factor that the total capacity equals this value.",
         "german": "Multipliziere all Verträge mit solch einem Faktor, dass die Gesamtkapazität diesem Wert entspricht.",
     },
+    travelTime: {
+        "chinese": "航行时间",
+        "english": "Travel Time",
+        "french": "Durée du voyage",
+        "german": "Reisezeit",
+        //"guid": 12736,
+        "italian": "Durata viaggio",
+        "japanese": "移動時間",
+        "korean": "이동 시간",
+        "polish": "Czas podróży",
+        "russian": "Время путешествия",
+        "spanish": "Tiempo de viaje",
+        "taiwanese": "航行時間"
+    },
     loadingSpeed: {
         "english": "Loading Speed",
         "chinese": "装货速度",
@@ -491,17 +533,31 @@ texts = {
         "russian": "Скорость погрузки"
     },
     duration: {
-        "english": "Duration",
+        "english": "Trade Duration",
         "chinese": "持续时间",
         "taiwanese": "持續時間",
         "italian": "Durata",
         "spanish": "Duración",
-        "german": "Dauer",
+        "german": "Handelsdauer",
         "polish": "Czas trwania",
         "french": "Durée",
         "korean": "지속 시간",
         "japanese": "持続時間",
         "russian": "Длительность"
+    },
+    "docklands": {
+        "english": "Docklands",
+        //"guid": 410083,
+        "polish": "Okno na świat",
+        "spanish": "Zona portuaria",
+        "taiwanese": "港灣",
+        "german": "Speicherstadt",
+        "chinese": "港湾",
+        "italian": "Area portuale",
+        "korean": "부둣가",
+        "french": "Zone portuaire",
+        "japanese": "港湾地区",
+        "russian": "Доки"
     },
     exportPyramid: {
         "english": "Your Specialty Exports",
@@ -682,8 +738,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 14.1 and bug fixes.",
-        german: "Game Update 14.1 und Bugfixes.",
+        english: "Game Update 15: Empire of the Skies.\nDLCs need to be unlocked indivicually in the calculator!\nClick into an input field and use the mouse wheel + Ctrl/Shift to change the number at different step sizes.",
+        german: "Game Update 15: Reich der Lüfte.\nDLCs müssen nun einzeln im Warenrechner aktiviert werden!\nKlicke in ein Eingabefeld und verwende Mausrad + Strg/Shift, um die Zahl in verschiedenen Schrittweiten zu verändern.",
     },
     helpContent: {
         german:
@@ -696,7 +752,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
 </span><span>. Diese versuchen den Boost so einzustellen, dass alle Gebäude des Typs bestmöglich ausgelastet sind und dabei ein Gebäude mehr (+) bzw. eines weniger (-) benötigt wird.</span></p>
-<p>Der Abschnitt öffentliche Gebäude enthält nur diejenigen Gebäude, welche Waren verbrauchen. Die Rezepte aus dem Reisezeit-DLC sind dabei wie folgt umgesetzt. Jedes Rezept ist durch ein eigenes Gebäude repräsentiert. Um ein Rezept zum ersten Mal zu verwenden, muss es in der Liste ausgewählt und anschließend der Plus-Button geklickt werden. Es erscheint eine neue Kachel, die sich wie ein normales Produktionsgebäude verhält. Der einzige Unterschied besteht, wenn man die Gebäudezahl auf Null setzt. Dann verschwindet die Kachel und das Rezept wird wieder der Liste hinzugefügt.</p><br/>
+<p>Der Abschnitt öffentliche Gebäude enthält nur diejenigen Gebäude, welche Waren verbrauchen. Für die Post aus dem Reich-der-Lüfte-DLC wird nicht die Anzahl benötigter Postbüros sondern die Bevölkerung, welche sich in Reichweite eines Postbüros befinden muss, angezeigt. Die Rezepte aus dem Reisezeit-DLC sind dabei wie folgt umgesetzt. Jedes Rezept ist durch ein eigenes Gebäude repräsentiert. Um ein Rezept zum ersten Mal zu verwenden, muss es in der Liste ausgewählt und anschließend der Plus-Button geklickt werden. Es erscheint eine neue Kachel, die sich wie ein normales Produktionsgebäude verhält. Der einzige Unterschied besteht, wenn man die Gebäudezahl auf Null setzt. Dann verschwindet die Kachel und das Rezept wird wieder der Liste hinzugefügt.</p><br/>
 <p>Da <b>Baumaterialien</b> sich Zwischenmaterialien mit Konsumgütern teilen sind sie (im Gegensatz zu Warenrechnern früherer Annos) mit aufgeführt, um so den Verbrauch von Minen besser planen zu können. Es muss die Anzahl der Endbetriebe per Hand eingegeben werden.</p><br/>
 
 <h5>Bevölkerungskonfiguration</h5>
@@ -767,6 +823,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"> <img class="icon-navbar" src="icon_docklands_2d_white.png"> </button></span>
 <p>Die Speicherstadt bietet enormes Potential, Waren einzutauschen und sich auf effiziente Produktionen zu beschränken. Jedoch bietet das Spiel nur eingeschränkte Möglichkeiten, um die für den Export notwendigen Produktionskapazitäten zu berechnen. Im Warenrechner werden die Handelsverträge deshalb in t/min angegeben. Der Rechner ermittelt dann, wie viele Tonnen gehandelt werden müssen, um den gewünschten Warenfluss zu erreichen. Um das Feature verwenden zu können, muss es zunächst in den Einstellungen aktiviert werden. Anschließend erscheint - wie bei Handelsrouten und Zusatzwaren - das Eingabefeld für Zusatzbedarf, über den die Werte intern verrechnet werden. Das <b>Anlegen eines Vertrags</b> ähnelt dem einer Handelsroute. Im <b>Konfigurationsdialog einer Fabrik</b> werden die Warenmenge und das Tauschprodukt eingestellt. Mittels des Schiebereglers in der Mitte kann eingestellt werden, ob die Ware der ausgewählten Fabrik exportiert oder importiert werden. Wird kein Regler angezeigt, dann kann die Ware nicht importiert werden. <b>Beim Einstellen des Tauschprodukts taucht bei manchen Produkten ein zusätzliches Auswahlfeld auf.</b> Dort muss die Fabrik eingestellt werden, dem die Ware abgezogen bzw. zugeschrieben wird. Bei sämtlichen Auswahlfeldern kann durch Eingeben der Anfangsbuchstaben direkt zum Begriff gesprungen werden. Der Plus-Button erstellt die Route. Anschließend wird die Route in der Export-Fabrik und der Import-Fabrik angezeigt. Außerdem werden alle Verträge im Speicherstadt-Menü angezeigt. Mit einem Klick auf die Produkt-Icons kann zwischen den Menüs gewechselt werden.</p>
 <p>Im oberen Bereich des Menüs wird die <b>Export-Pyramide</b> angezeigt und bearbeitet. Hierfür müssen ein Produkt und der Multiplikator ausgewählt und hinzugefügt werden. Zum Umsortieren müssen erst die alten Produkte gelöscht und mit anderen Multiplikatoren neu erstellt werden. Bereits eingestellte Verträge werden dann so angepasst, dass die importierten Tonnen pro Minute gleich bleiben.</p>
+<img src="wheel_input.gif" class="float-left" style="margin: 0.5rem 0.5rem 0 0"/>
 <p>Im unteren Bereich befindet sich die Übersicht über alle Verträge und zusammenfassende Informationen zum Handel. Hierfür muss als erstes die <b>Ladegeschwindigkeit des Piers</b> eingestellt werden, an dem Morris handelt. Die Information hierzu kann dem unteren Bereich des Anlegestellen-Infomenüs entnommen werden. Der Rechner ermittelt dann die Umschlagsdauer des Händlers, den Gesamtwarenumschlag in t/min, die benötigte Insellagerkapazität und die einzustellenden Tonnen pro Vertrag. Bei der Berechnung der Werte ist der Ladegeschwindigkeitsbonus des Händlers und die Dauer zum Betreten und Verlassen der Session bereits mit eingerechnet. Sollte dort ∞ stehen, dann übersteigt der eingestellte Warenumschlag den maximal möglichen des Händlers. Dann müssen die Verträge auf mehrere Inseln verteilt, die Ladegeschwindigkeit erhöht oder das Handelsvolumen reduziert werden</p>
 <p>Es gibt noch einen weiteren Anwendungsfall, bei dem man pro Handel möglichst viele Waren tauschen möchte. Zuerst müssen dafür die Verträge eingerichtet und die Ladegeschwindigkeit angegeben werden. Die absolute Warenmenge ist dabei unerheblich, es kommt nur auf die relativen Unterschiede zwischen den Verträgen an. Anschließend muss die Insellagerkapazität eingetragen und daneben der Button <b>Setze Gesamtkapazität</b> geklickt werden. Der bestimmt die Ware, welche die meiste Lagerkapazität c benötigt. Der Vertrag wird um einen Faktor f skaliert, sodass c der Insellagerkapazität entspricht. Schließlich werden alle anderen Verträge ebenfalls mit f multipliziert.</p>
 <p>Eine Besonderheit ergibt sich bei <b>Allen Inseln</b> (standardmäßig ausgewählt, wenn Inselverwaltung deaktiviert). Dort ist es erlaubt dieselbe Ware <b>zu importieren und exportieren</b>, um so Verträge für mehrere Speicherstädte zusammenfassen zu können. Allerdings werden keine zusammenfassenden Informationen zum Handel angezeigt.</p>
@@ -801,7 +858,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">+</button>
 <button type="button" class="btn btn-secondary" style="padding: 0em 0.25em 0em 0.25em; font-size: unset;">-</button>
 </span><span> Those try to adjust the boost such that all buildings operate at full capacity and one more (+) or one building less (-) is required.</span></p>
-<p> The public buildings section lists all public services that consume goods. The recipe mechanic from the tourist season DLC is implemented as follows. Each recipe is a dedicated building. To add a recipe for the first time, select it from the dropdown and click the plus button. A new tile appears that behaves like a normal production building. The only difference is that by setting it to zero, the tile disappears and the recipe is re-added to the list.</p><br/>
+<p> The public buildings section lists all public services that consume goods. For the mail in the Empire of the Skies DLC, not the number of post offices required but the amount of population that needs to be within range of a post office is displayed. The recipe mechanic from the tourist season DLC is implemented as follows. Each recipe is a dedicated building. To add a recipe for the first time, select it from the dropdown and click the plus button. A new tile appears that behaves like a normal production building. The only difference is that by setting it to zero, the tile disappears and the recipe is re-added to the list.</p><br/>
 <p>Since <b>construction materials</b> share intermediate products with consumables they are explicitly listed (unlike in calculators for previous Annos) to better plan the production of mines. The number of factories must be entered manually.</p><br/>
 
 <h5>Population Configuration</h5>
@@ -873,6 +930,7 @@ Siehe folgenden Link für weitere Informationen: `,
 <span class="float-left btn-group bg-dark mr-2"><button type="button" class="btn"> <img class="icon-navbar" src="icon_docklands_2d_white.png"> </button></span>
 <p>Docklands offers an enormous potential to trade goods and to focus on efficient production chains. But the game provides limited information to compute the required production capacities required for the export. Therefore, trade contracts in the calculator are based on t/min. The calculator computes the amount in tons that must be entered into the in-game contract to achieve the desired flow of goods. There is a checkbox in the settings to activate the docklands feature. After activation, an input box for extra demand appears - as it does when activating extra goods or trade routes. The calculator uses extra demand internally to account for the effects of trade routes etc. <b>Creating a contract</b> is like creating a trade route. One configures the number of goods and the exchange product in the <b>factory configuration dialog</b>. The switch in the middle toggles between exporting and importing the product of the selected factory. If no switch is shown, the good cannot be imported. <b>When selecting particular exchange products, an additional selection box appears.</b> There, one has to choose the factory where the good is added or subtracted. In every selection box, one can directly jump to the term by typing the first letters. The plus button creates a route. Afterwards, the route is shown at the import and export factory. The docklands dialog shows an overview of all contracts for one island. One can switch between the dialogs by clicking on the product icons.</p>
 <p>The upper part of the dialog shows the <b>export pyramid</b>. New entries are added by selecting a product and a multiplier. Rearranging the pyramid is achieved by deleting and recreating the entries. Existing contracts are updated such that the imported tons per minute remain the same.</p>
+<img src="wheel_input.gif" class="float-left" style="margin: 0.5rem 0.5rem 0 0"/>
 <p>The lower part of the dialog shows an overview of all contracts and summary information about the trade. First of all, one has to enter the <b>loading speed of the pier</b> where Tobias trades. The loading speed is displayed in the lower part of the pier's information panel in the game. The calculator computes the trading duration, the total stock turnover in t/min, the island's required storage capacity, and the tons one must enter for each contract. The calculation of these values includes the loading speed bonus for Tobias and the duration to enter and leave the session. In case ∞ is displayed, the entered stock turnover exceeds the maximum. Then, one must distribute the contracts over more islands, increase the loading speed or reduce the traded volume.</p>
 <p>There is a second use case, where one wants to trade as many goods as possible per trade. First of all, one has to specify all the trade contracts and the loading speed. Here, the absolute amount per contract does not matter, only the relative difference between different contracts. Then, enter the total island storage capacity and click the button <b>Set total capacity</b> next to it. It determines the good that requires the maximal storage capacity c. It scales the contract by a factor f such that c matches the island storage capacity. Finally, f is applied to all other contracts.</p><p><b>All Islands</b> (selected by default, if no island management is active) behaves a bit different. It allows to <b>import and export</b> the same good so that one can aggregate the contracts of several docklands. But it does not show the summary information about the trade.</p>
 <br/>
@@ -979,6 +1037,7 @@ options = {
             "russian": "Дополнительные товары"
         }
     },
+    /*
     "contracts": {
         "name": "Contracts",
         //guid: 132271
@@ -998,6 +1057,7 @@ options = {
             "russian": "Доки"
         }
     },
+    */
     "tradeRoutes": {
         "name": "Trade Routes",
         "dialog": "trade-routes-management-dialog",

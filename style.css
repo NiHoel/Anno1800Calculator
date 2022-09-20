@@ -618,7 +618,7 @@ input[type=number]::-webkit-inner-spin-button {
 .danger-icon {
     position: absolute;
     color: red;
-    z-index: 1000;
+    z-index: 500;
     margin: 2px;
 }
 
@@ -641,6 +641,16 @@ input[type=number]::-webkit-inner-spin-button {
     flex-flow: nowrap;
     justify-content: space-between;
     align-items: center;
+}
+
+.dlc-list li {
+    display: inline-block;
+    vertical-align: top;
+    width: 32%;
+}
+
+.dlc-list li div {
+    display: inline-block;
 }
 
 /* dark-mode styles */
