@@ -1,6 +1,6 @@
 // @ts-check
 
-let versionCalculator = "v9.0";
+let versionCalculator = "v9.1";
 let ACCURACY = 0.01;
 let EPSILON = 0.0000001;
 let ALL_ISLANDS = "All Islands";
@@ -4597,6 +4597,9 @@ function init(isFirstRun) {
 
     if (!isFirstRun)
         configUpgrade();
+    else
+        localStorage.setItem("upgrade.bonusResidentsApplied", 1);
+
 
     // set up modal dialogs
     view.skyscraperDropdownStatus = ko.observable("hide");
