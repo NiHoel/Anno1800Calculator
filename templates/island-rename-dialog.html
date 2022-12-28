@@ -1,0 +1,23 @@
+<div id="island-rename-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog" data-bind="with: $root.islandManager">
+        <div class="modal-content">
+            <div class="modal-header" data-bind="with: renameIsland">
+                <img class="icon-light icon-sm mr-2" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.session.icon ? $data.session.icon  : null, alt: $data.session.name, title: $data.session.name}" />
+                <h4 data-bind="text: name">Name</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+
+                <form data-bind="submit: () => {rename(renameIsland(), islandNameInput()); $('#island-rename-dialog').modal('hide');}">
+                    <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="text: $root.texts.confirm.name, enable: !islandExists(), click: () => {rename(renameIsland(), islandNameInput()); $('#island-rename-dialog').modal('hide');}">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div id="download-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.download.name">Downloads</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <tr>
+                        <td data-bind="text: $root.texts.downloadConfig.name"></td>
+                        <td>
+                            <div class="btn-group float-right">
+                                <label class="btn btn-secondary" id="import-config-button" role="button" href="#" for="config-selector">
+                                    <input id="config-selector" type="file" style="display: none;">
+                                    <span class="fa fa-upload"> </span>
+                                </label>
+                                <label data-bind="click: () => exportConfig()" id="export-config-button" role="button" href="#" class="btn btn-secondary">
+                                    <span class="fa fa-download"> </span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td data-bind="text: $root.texts.downloadCalculator.name" style="white-space:pre-wrap"></td>
+                        <td>
+                            <a id="download-calculator-button" role="button" href="https://github.com/NiHoel/Anno1800Calculator/releases/latest" class="btn btn-secondary float-right">
+                                <span class="fa fa-download"> </span>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span data-bind="text: $root.texts.downloadCalculatorServer.name" style="white-space:pre-wrap"></span>
+                            <a href="https://github.com/NiHoel/Anno1800UXEnhancer">https://github.com/NiHoel/Anno1800UXEnhancer</a>
+                        </td>
+                        <td>
+                            <a id="download-calculator-server-button" role="button" href="https://github.com/NiHoel/Anno1800UXEnhancer/releases/latest" class="btn btn-secondary float-right">
+                                <span class="fa fa-download"> </span>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <a class="mb-3" href="https://github.com/NiHoel/Anno1800SavegameVisualizer" target="_blank">
+                                <img class="img-thumbnail img-responsive" src="https://raw.githubusercontent.com/NiHoel/Anno1800SavegameVisualizer/main/imgs/savegame_visualizer_demo.gif" />
+                            </a>
+                            <span data-bind="text: $root.texts.downloadSavegameVisualizer.name" style="white-space:pre-wrap"></span>
+                            <a href="https://github.com/NiHoel/Anno1800SavegameVisualizer" target="_blank">https://github.com/NiHoel/Anno1800SavegameVisualizer</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

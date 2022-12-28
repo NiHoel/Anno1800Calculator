@@ -1,0 +1,64 @@
+<div data-bind="if: $root.viewMode">
+    <div id="view-mode-dialog" class="modal" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 data-bind="text: texts.viewMode.name">View Mode</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" data-bind="text: texts.language.name">Language</span>
+                        </div>
+
+                        <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
+                    </div>
+
+                    <table class="table table-borderless center" data-bind="with: viewMode">
+                        <tr>
+                            <td>
+                                <div>
+                                    <button data-dismiss="modal" data-bind="click: () => start()" class="btn btn-primary btn-lg">
+                                        <span data-bind="text: $root.texts.viewStart.name">Start</span>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <button data-dismiss="modal" data-bind="click: () => plan()" class="btn btn-primary btn-lg">
+                                        <span data-bind="text: $root.texts.viewPlan.name">Plan</span>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <button data-dismiss="modal" data-bind="click: () => master()" class="btn btn-primary btn-lg">
+                                        <span data-bind="text: $root.texts.viewMaster.name">Master</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>
+                                    <span data-bind="text: $root.texts.viewStartDescription.name"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span data-bind="text: $root.texts.viewPlanDescription.name"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <span data-bind="text: $root.texts.viewMasterDescription.name"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

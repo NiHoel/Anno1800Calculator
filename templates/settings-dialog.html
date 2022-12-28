@@ -1,0 +1,74 @@
+<div id="settings-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.settings.name">Settings</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" data-bind="text: $root.texts.language.name">Language</span>
+                        </div>
+
+                        <select name="language" class="custom-select" id="language" data-bind="value: settings.language, options:settings.languages"></select>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" data-bind="text: $root.texts.selectedIsland.name">Select Island</span>
+                        </div>
+
+                        <select name="islands" class="custom-select" id="islands" data-bind="value: view.island, options: view.islands, optionsText: i => i.sessionExtendedName()"></select>
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#island-management-dialog').modal(),500)" class="btn btn-light">
+                                <span class="fa fa-cog"> </span>
+                            </button>
+
+                        </div>
+                    </div>
+                    <hr />
+                    <table class="table table-striped">
+                        <tbody data-bind="foreach: settings.options">
+                            <tr data-bind="if: $data.visible()">
+                                <td>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                                        <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="float-right" data-bind="if: $data.dialog">
+                                        <button data-dismiss="modal" data-bind="click: () => setTimeout(() => $('#' + $data.dialog).modal(),500), enable: $data.checked()" class="btn btn-light btn-sm">
+                                            <span class="fa fa-cog"> </span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <hr />
+                    <ul class="dlc-list" data-bind="foreach: $root.dlcs">
+                        <li class="inline-list" data-bind="css:{inactive: $data.used()}">
+                            <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }" style="margin-right: 8px;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" data-bind="disable: $data.used(), checked: $data.checked, attr: { id: $data.id }">
+                                <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+
+                            </div>
+                        </li>
+                    </ul>
+                    <hr />
+                    <h6>Server<button type="button" class="help" data-toggle="modal" data-target="#download-dialog">?</button></h6>
+                    <div data-bind="foreach: settings.serverOptions">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">
+                            <label class="custom-control-label" data-bind="text: $data.name, attr: { for: $data.id }"></label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

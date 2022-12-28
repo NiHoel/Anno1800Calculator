@@ -1,0 +1,140 @@
+<div id="island-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.islands.name">Islands</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" data-bind="text: $root.texts.selectedIsland.name">Select Island</span>
+                    </div>
+
+                    <select name="islands" class="custom-select" id="islands" data-bind="value: $root.island, options: $root.islands, optionsText: i => i.sessionExtendedName()"></select>
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" data-bind="disable: $root.island().isAllIslands(), click: () => $root.islandManager.startRename($root.island())">
+                            <span class="fa fa-pencil"> </span>
+                        </button>
+
+                    </div>
+                </div>
+
+                <hr />
+
+                <form data-bind="submit: () => $root.islandManager.create($root.islandManager.islandNameInput(), $root.islandManager.sessionInput())">
+                    <div class="input-group">
+                        <select name="session" class="form-control custom-select" id="session" data-bind="value: $root.islandManager.sessionInput, valueAllowUnset: true, options: $root.islandManager.availableSessions, optionsText: s => s.name()" />
+
+
+                        <input name="island" class="form-control" id="island" type="text" data-bind="value: $root.islandManager.islandNameInput" />
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary" data-bind="disable: $root.islandManager.islandExists">
+                                <span class="fa fa-plus"> </span>
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+                <div class="custom-control custom-checkbox mb-3">
+                    <input id="checkbox-show-island-on-creation" type="checkbox" class="custom-control-input" data-bind="checked: $root.islandManager.showIslandOnCreation.checked">
+                    <label class="custom-control-label" for="checkbox-show-island-on-creation" data-bind="text: $root.islandManager.showIslandOnCreation.name"></label>
+                </div>
+
+                <table class="table table-striped">
+
+                    <tbody data-bind="foreach: $root.islandManager.islandCandidates">
+                        <tr>
+                            <td>
+                                <span data-bind="click: () => $root.islandManager.deleteCandidate($data)" aria-hidden="true" class="dismiss">&times;</span>
+                            </td>
+                            <td>
+                                <div data-bind="if: $data.session">
+                                    <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
+                                </div>
+                            </td>
+                            <td data-bind="text: $data.name"></td>
+                            <td>
+                                <span class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => {$root.islandManager.islandNameInput($data.name), $root.islandManager.sessionInput($data.session)}">
+                                        <span class="fa fa-pencil"> </span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.create($data.name, $data.session)">
+                                        <span class="fa fa-plus"> </span>
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr />
+                <h6 data-bind="text: $root.texts.world.name">The World</h6>
+                <table class="table table-striped table-sm">
+
+                    <tbody data-bind="foreach: $root.islands">
+                        <tr>
+                            <td>
+                                <div class="inline-list">
+                                    <div class="mr-2" data-bind="if: $data.session">
+                                        <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm icon-light" data-bind="attr: {src: $data.session.icon}" />
+                                    </div>
+                                    <a href="#" data-dismiss="modal" data-bind="text: $data.name, click: () => $root.island($data)"></a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="inline-list">
+                                    <span class="mr-3">
+                                        <img class="icon-sm" src="../icons/icon_residence.png">
+                                    </span>
+                                    <span data-bind="if: !$data.top2Population().length">0</span>
+                                    <!-- ko foreach: $data.top2Population -->
+                                    <span class="inline-list">
+                                        <span class="ui-tier-unit-icon" class="mr-3">
+                                            <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+
+                                        </span>
+                                        <span class="mr-3" data-bind="text: formatNumber($data.residents())"></span>
+                                    </span>
+                                    <!-- /ko -->
+                                </div>
+                            </td>
+                            <td>
+                                <div class="inline-list">
+                                    <span class="mr-3">
+                                        <img class="icon-sm" src="../icons/icon_resource_storage_amount.png">
+                                    </span>
+                                    <span data-bind="if: !$data.top5Factories().length">0</span>
+                                    <!-- ko foreach: $data.top5Factories -->
+                                    <span class="inline-list">
+                                        <span class="mr-1">
+                                            <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+
+                                        </span>
+                                        <span class="mr-3" data-bind="text: $root.settings.missingBuildingsHighlight.checked() ? $data.existingBuildings() : Math.ceil($data.buildings())"></span>
+                                    </span>
+                                    <!-- /ko -->
+                                </div>
+                            </td>
+                            <td>
+                                <div class="float-right" data-bind="if: !$data.isAllIslands()">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.startRename($data)">
+                                        <span class="fa fa-pencil"> </span>
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.delete($data)">
+                                        <span class="fa fa-trash"> </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-bind="text: $root.texts.deleteAll.name, click: factoryReset">Delete All</button>
+            </div>
+        </div>
+    </div>
+</div>

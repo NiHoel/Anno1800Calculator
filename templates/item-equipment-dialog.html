@@ -1,0 +1,57 @@
+<div id="item-equipment-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.itemsEquipped.name">Items equipped</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead style="text-align: center">
+                    <th></th>
+                    <th></th>
+                    <th data-bind="text: $root.texts.extraGoods.name">Extra Goods</th>
+                    <th data-bind="text: $root.texts.productionBuildings.name">Production Buildings</th>
+                    <th data-bind="text: $root.texts.all.name">All</th>
+                    </thead>
+                    <tbody data-bind="foreach: $root.selectedExtraGoodItems">
+                        <tr data-bind="visible: $data.visible">
+                            <td><img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null}"></td> <!-- item icon -->
+                            <td data-bind="text: $data.name"></td> <!-- item name -->
+                            <td>
+                                <span data-bind="foreach: $data.extraGoods" class="inline-list-centered">
+                                    <!-- icon extra goods -->
+                                    <span style="flex: 100 1 auto;"></span>
+
+                                    <span style="flex: auto;" data-bind="visible: $data.visible()">
+                                        <img src="../icons/icon_marketplace_2d_light.png" width="25" height="25" data-bind="attr: { src: $data.icon ? $data.icon  : null, alt: $data.name}" />
+                                    </span>
+
+                                    <span style="flex: 100 1 auto;"></span>
+                                </span>
+                            </td>
+                            <td>
+                                <span data-bind="foreach: $data.availableEquipments" class="inline-list-centered">
+
+                                    <div style="flex-basis: fit-content;" data-bind="component: { name: 'icon-checkbox', params: {asset: $data.factory, checked: $data.checked, id: $data.factory.guid + '-' + $data.item.guid + '-equipped', title: $data.factory.getRegionExtendedName.bind($data.factory)}}"></div>
+
+                                </span>
+                            </td>
+
+                            <td>
+                                <span>
+                                    <span class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-check-all' }">
+                                        <label class="custom-control-label" data-bind="attr: { for: $data.guid + '-check-all' }" src-only style="vertical-align: top;"> </label>
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

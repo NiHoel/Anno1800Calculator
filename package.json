@@ -1,0 +1,17 @@
+{
+  "name": "Anno1800Calculator",
+  "displayName": "Anno 1800 Calculator",
+  "version": "v10.0",
+  "description": "A calculator to compute the consumption of goods in the computer game Anno 1800.",
+  "main": "js/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nico Höllerich",
+  "license": "MIT",
+  "dependencies": {
+    "webpack-cli": "^2.0.0",
+    "compression-webpack-plugin": "^10.0.0",
+    "webpack": "^5.75.0"
+  }
+}

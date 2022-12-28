@@ -1,0 +1,117 @@
+<div id="residence-effect-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" data-bind="with: $root.selectedResidenceEffectView">
+    <div class="modal-dialog modal-lg" data-bind="css: {'modal-xl': $data.productionChain && $data.productionChain.breadth() > 5}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $data.heading">Need Consumption</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <h6 data-bind="text: $root.texts.newspaper.name">Newspaper</h6>
+                <form>
+                    <div class="form mb-3" data-bind="foreach: $root.newspaperConsumption.allEffects">
+                        <span class="custom-control custom-checkbox" data-bind="visible: $data.visible()">
+                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.guid + '-checked' }">
+                            <label class="custom-control-label" data-bind="text: $data.name() + ' ' + formatPercentage($data.amount), attr: { for: $data.guid + '-checked' }" src-only style="vertical-align: top;"></label>
+                        </span>
+                    </div>
+
+                    <div class="form-inline inline-list-stretched">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" data-bind="text: $root.texts.newspaperEffectiveness.name">Newspaper Effectiveness</span>
+                            </div>
+
+                            <select class="custom-select" data-bind="value: $root.newspaperConsumption.selectedBuff, options: $root.newspaperConsumption.selectableBuffs, optionsText: p => formatPercentage(p)"></select>
+                        </div>
+
+                        <div class="custom-control">
+                            <span data-bind="text: $root.texts.reducedNeeds.name">Reduced Needs</span>
+                            <span>: </span>
+                            <span data-bind="text: formatPercentage($root.newspaperConsumption.amount())"></span>
+                        </div>
+                    </div>
+                </form>
+
+
+                <table class="table table-striped">
+                    <tbody data-bind="foreach: $data.aggregates">
+                        <tr>
+                            <td>
+                                <span data-bind="component: { name: 'asset-icon', params: $data.residenceEffect}"></span>
+                                <span data-bind="text: $data.residenceEffect.name"></span>
+                            </td>
+                            <td style="min-width: 10em;">
+                                <div data-bind="if: $parent.residences.length <= 1">
+                                    <span data-bind="text: formatPercentage(100 * $data.coverage[0].coverage()).substr(1)"></span>
+                                </div>
+                                <div data-bind="if: $parent.residences.length >= 2">
+                                    <div data-bind="foreach: {data: $data.coverage, as: '$data'}" class="inline-list-centered">
+                                        <div class="inline-list">
+                                            <span data-bind="text:formatPercentage(100 * $data.coverage()).substr(1)"></span>
+                                            <span data-bind="component: { name: 'residence-label', params: $data.residence}"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="min-width: 10em;" data-bind="component: {name: 'residence-effect-entry', params: {entries: $data.residenceEffect.entries, filter: $parent.consumedProducts}}"></td>
+                            <td>
+                                <div class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $parent.delete($data)">
+                                        <span class="fa fa-trash"> </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <form class="form form-inline" data-bind="if: $data.unusedEffects().length" style="justify-content: space-between">
+                    <div class="inline-list-stretched">
+                        <select style="max-width: 70%" name="effect" class="custom-select" id="residence-effect-selector" data-bind="value: $data.selectedEffect, options: $data.unusedEffects, optionsText: e => e.panoramaLevel != null ? e.residences[0].populationLevel.name() + ': ' + e.name() : e.name()"></select>
+                        <div class="input-group input-group-short spinner">
+
+                            <input step="0.1" class="form-control" type="number" value="100" data-bind="value: $data.percentCoverage" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                                <button class="btn btn-sm btn-light" data-bind="click: () => $data.create()">
+                                    <span class="fa fa-plus"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
+                    <div class="inline-list-stretched mt-3">
+                        <div style="min-width: 10em" data-bind="component: {name: 'residence-effect-entry', params: {entries: $data.selectedEffect().entries, filter: $data.consumedProducts}}"></div>
+
+                        <div style="min-width: 10em" data-bind="if: $data.residences.length >= 2">
+                            <div style="display: flex" data-bind="foreach: $data.residences" class="inline-list-centered">
+                                <div data-bind="if: $parent.selectedEffect().residences.indexOf($data) != -1">
+                                    <span data-bind="component: { name: 'residence-label', params: $data}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div data-bind="if: $data.productionChain && $data.productionChain.tree()">
+                    <collapsible params="id: 'residence-effect-need-production-chain', heading: $root.texts.production.name, collapsed: false, data: $data, summary: $data.need.amount">
+
+                        <div class="tree" data-bind="with: $data.productionChain.tree()" style="justify-content: center">
+                            <ul data-bind="template: 'treeElement'"></ul>
+                        </div>
+                    </collapsible>
+                </div>
+
+                <div class="mt-4" data-bind="component: { name: 'notes-section', params:{ $data: $data.need}}"></div>
+            </div>
+            <div class="modal-footer">
+                <btn class="btn btn-light" data-bind="click: $data.applyConfigGlobally, visible: $root.islands().length > 1">
+                    <span data-bind="text: $root.texts.applyGlobally.name()">Apply Globally</span>
+                </btn>
+            </div>
+        </div>
+    </div>
+</div>

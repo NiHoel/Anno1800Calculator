@@ -1,0 +1,29 @@
+﻿<div id="factory-choose-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.chooseFactories.name">Choose Factory for each Product</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div data-bind="foreach: $root.selectedMultiFactoryProducts">
+
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
+                                </span>
+                                <span class="input-group-text" data-bind="text: name"></span>
+                            </div>
+
+                            <select class="custom-select" data-bind="value: $data.fixedFactory, options: $data.availableFactories, optionsText: f => f.getRegionExtendedName(), optionsCaption: $root.texts.noFixedFactory.name()"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -153,8 +153,25 @@ h1 {
     vertical-align: middle;
 }
 
+.table-fixed {
+    table-layout: fixed;
+}
+
+.table-fixed tr td {
+    text-align: center;
+}
+
+.table-fixed tr td:first-child{
+    text-align: left !important;
+}
+
+.table-fixed tr td:last-child {
+    text-align: right !important;
+}
+
+
 .modal-xl {
-    max-width: 1140px;
+    max-width: 1450px;
 }
 
 .dismiss {
@@ -194,18 +211,7 @@ nav {
     padding-right: 5px;
 }
 
-.collapsable-section {
-    border-top: 1px solid #CECECE;
-    margin-bottom: 20px;
-}
 
-.collapsable-section legend {
-    font-weight: bold;
-    color: #000;
-    font-size: unset;
-    width: unset;
-    padding-right: 5px;
-}
 
 .ui-fchain-item {
     float: left;
@@ -226,6 +232,20 @@ nav {
     border: 1px solid #00000031;
     border-radius: 4px;
     padding: 10px;
+}
+
+.ui-service-building-item.no-name {
+    height: calc(180px - 2rem);
+}
+
+.bottom-button {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+
+.bottom-button button {
+    height: 1.6rem;
+    padding: 0.125rem;
 }
 
 .ui-fchain-item-small {
@@ -285,7 +305,7 @@ nav {
     text-align: center;
     margin-top: 5px;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 .ui-fchain-item-name {
@@ -303,13 +323,13 @@ nav {
     display: flex;
     flex-flow: column;
     height: 6rem;
-    justify-content: space-around;
+    justify-content: space-between;
     margin: -0.75rem 0rem;
 }
 
-    .ui-fchain-item-attribute-group .mb-3 {
-        margin-bottom: 0rem !important;
-    }
+.ui-fchain-item-attribute-group .mb-3 {
+    margin-bottom: 0rem !important;
+}
 
 .ui-fchain-item-boost {
     font-size: 12px;
@@ -326,6 +346,7 @@ nav {
 .ui-fchain-item-amount {
     font-size: 12px;
     text-align: center;
+    margin-bottom: 10px;
 }
 
 .ui-fchain-item-module {
@@ -492,6 +513,11 @@ div:last-child > .input-group-btn-vertical, div:last-child > .input-group-btn-ve
     margin-top: -1px;
 }
 
+.input-group-sm .icon-sm {
+    width: 20px;
+    height: 20px;
+}
+
 .input-group {
     flex-wrap: unset;
 }
@@ -512,16 +538,50 @@ div:last-child > .input-group-btn-vertical, div:last-child > .input-group-btn-ve
     width: 6rem;
 }
 
-.collapser {
-    cursor: pointer;
-}
-
 .input-group-text {
     font-size: 0.7rem;
 }
 
 p {
     margin-bottom: unset;
+}
+
+
+.collapsible-section {
+    border-top: 1px solid #CECECE;
+    margin-top: 1.5rem !important;
+}
+
+.collapsible-section legend {
+    font-weight: bold;
+    color: #000;
+    font-size: initial;
+    width: unset;
+    padding-right: 5px;
+}
+
+/*
+.collapser .custom-control-label::before,.collapser .custom-control-label::after {
+    top: .1rem;
+}*/
+
+.collapser .summary {
+    width: calc(100% - 2rem);
+    position: absolute;
+}
+
+.collapser .summary>*{
+    background-color: white;
+    padding-left: 10px;
+    float: right !important;
+}
+
+.bg-dark .collapser .summary > * {
+    background-color: #343a40 !important;
+}
+
+.collapser {
+    cursor: pointer;
 }
 
 .collapser > .fa {
@@ -557,11 +617,12 @@ input[type=number]::-webkit-inner-spin-button {
     height: 25px;
 }
 
-.subscript-icon {
+.superscript-icon {
     vertical-align: bottom;
     height: 20px;
     width: 20px;
-    margin-left: -20px;
+    position: absolute;
+    margin-left: -68px;
 }
 
 .inactive {
@@ -577,21 +638,21 @@ input[type=number]::-webkit-inner-spin-button {
     display: inline-block;
 }
 
-    .strike-through::after {
-        position: absolute;
-        content: "";
-        left: 0;
-        top: 50%;
-        right: 0;
-        border-top: 3px solid;
-        border-top-color: currentcolor;
-        border-color: #CECECE;
-        -webkit-transform: rotate(-30deg);
-        -moz-transform: rotate(-30deg);
-        -ms-transform: rotate(--30deg);
-        -o-transform: rotate(-30deg);
-        transform: rotate(-30deg);
-    }
+.strike-through::after {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 33%;
+    right: 0;
+    border-top: 3px solid;
+    border-top-color: currentcolor;
+    border-color: #CECECE;
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
 
 .help {
     float: right;
@@ -641,6 +702,7 @@ input[type=number]::-webkit-inner-spin-button {
     flex-flow: nowrap;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .dlc-list li {
@@ -698,7 +760,7 @@ body:not(.bg-dark) .icon-light {
     background: #222;
 }
 
-.bg-dark .input-group-text, .bg-dark .modal-content, .bg-dark .collapsable-section legend {
+.bg-dark .input-group-text, .bg-dark .modal-content, .bg-dark .collapsible-section legend {
     color: #f8f9fa !important;
     background: #343a40 !important;
 }
@@ -769,6 +831,13 @@ body:not(.bg-dark) .icon-light {
     border-top: unset;
 }
 
+.amount-negative {
+    color: #DB7979;
+}
+
+.amount-positive {
+    color: green;
+}
 
 /* Tree for production chain */
 

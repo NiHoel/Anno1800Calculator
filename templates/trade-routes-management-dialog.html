@@ -1,0 +1,89 @@
+<div id="trade-routes-management-dialog" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 data-bind="text: $root.texts.tradeRoutes.name">Trade Routes</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-sm" data-bind="if: $root.tradeManager.npcRoutes().length">
+                    <tbody class="mb-3" data-bind="foreach: $root.tradeManager.npcRoutes">
+                        <tr>
+                            <td>
+                                <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: {src: $data.trader.icon, alt: $data.trader.name}" />
+                                <span data-bind="text: $data.trader.name"></span>
+                            </td>
+                            <td><span>&rarr;</span></td>
+                            <td>
+                                <span data-bind="if: $data.to.session">
+                                    <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm icon-light" data-bind="attr: {src: $data.to.session.icon}" />
+                                </span>
+                                <a href="#" data-dismiss="modal" data-bind="text: $data.to.name, click: () => {setTimeout(() => { $root.island($data.to); $root.selectedFactory($data.toFactory);$('#factory-config-dialog').modal('show')}, 500);}"></a>
+                            </td>
+                            <td>
+                                <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: {src: $data.toFactory.product.icon, alt: $data.toFactory.product.name}" />
+                            </td>
+                            <td>
+                                <span data-bind="text: formatNumber($data.amount)"></span>
+                                <span> t/min</span>
+                            </td>
+                            <td>
+                                <div class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.checked(false)">
+                                        <span class="fa fa-trash"> </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table class="table table-striped table-sm">
+                    <tbody data-bind="foreach: $root.tradeManager.routes">
+                        <tr>
+                            <td>
+                                <span data-bind="if: $data.from.session">
+                                    <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm icon-light" data-bind="attr: {src: $data.from.session.icon}" />
+                                </span>
+                                <a href="#" data-dismiss="modal" data-bind="text: $data.from.name, click: () => { $root.island($data.from); setTimeout(() => {$root.selectedFactory($data.fromFactory);$('#factory-config-dialog').modal('show')}, 500);}"></a>
+                            </td>
+                            <td><span>&rarr;</span></td>
+                            <td>
+                                <span data-bind="if: $data.to.session">
+                                    <img src="../icons/icon_marketplace_2d_light.png" class="icon-sm icon-light" data-bind="attr: {src: $data.to.session.icon}" />
+                                </span>
+                                <a href="#" data-dismiss="modal" data-bind="text: $data.to.name, click: () => {setTimeout(() => { $root.island($data.to); $root.selectedFactory($data.toFactory);$('#factory-config-dialog').modal('show')}, 500);}"></a>
+                            </td>
+                            <td>
+                                <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: {src: $data.fromFactory.product.icon, alt: $data.fromFactory.product.name}" />
+                            </td>
+                            <td>
+                                <div class="float-right">
+                                    <span data-bind="if: !$data.isExport($parent) && $data.fromFactory.isHighlightedAsMissing()">
+                                        <span class="fa fa-exclamation-triangle danger-icon"></span>
+                                    </span>
+                                    <div class="input-group input-group-short spinner">
+                                        <input step="0.1" min="0" class="form-control" type="number" value="0" data-bind="value: amount, attr: { id: $data.from.name().replaceAll(' ', '-') + '-' + $data.to.name().replaceAll(' ', '-') + '-' + $data.toFactory.guid + '-amount-input' }" />
+                                        <div class="input-group-append">
+                                            <div data-bind="component: { name: 'number-input-increment', params: { obs: $data.amount, id: $data.from.name().replaceAll(' ', '-') + '-' + $data.to.name().replaceAll(' ', '-') + '-' + $data.toFactory.guid + '-amount-input' }}"></div>
+                                            <span class="input-group-text">t/min</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="float-right">
+                                    <button class="btn btn-secondary btn-sm" data-bind="click: () => $data.delete()">
+                                        <span class="fa fa-trash"> </span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
