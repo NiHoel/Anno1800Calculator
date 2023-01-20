@@ -5,7 +5,8 @@
 * A calculator for the computer game [Anno 1800](https://www.ubisoft.com/de-de/game/anno-1800/) to compute the required production depending on the population 
 * [YouTube-Tutorial](https://youtu.be/YxU-8YCzpec)
 * To use the calculator go to the following website: https://nihoel.github.io/Anno1800Calculator/
-* To use it offline, download, unzip and open index.html with a browser: https://github.com/NiHoel/Anno1800Calculator/archive/v10.0.zip
+* To use it offline, download, unzip and open index.html with a browser: https://github.com/NiHoel/Anno1800Calculator/archive/v10.1.zip
+
 
 [![Tutorial](CalculatorExtractionScreenshot.png?raw=true "Calculator Extraction Screenshot")](https://youtu.be/k4WmgEIkp4s)
 
@@ -13,5 +14,6 @@ An application to read population, productivities and factory count from the gam
 * Download link of UXEnhancer: https://github.com/NiHoel/Anno1800UXEnhancer 
 * [YouTube-Tutorial](https://youtu.be/k4WmgEIkp4s)
 
-* License: MIT
+* License: MIT except for params.js
+* All the assets from Anno 1800 game are © by Ubisoft
 * Author: Nico Höllerich

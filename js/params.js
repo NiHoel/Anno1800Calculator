@@ -2616,7 +2616,7 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "brazilian": "Motor Assembly Line",
-                "chinese": "蒸汽机生产线",
+                "chinese": "马达生产线",
                 "english": "Motor Assembly Line",
                 "french": "Usine de moteurs",
                 "german": "Motorenfabrik",
@@ -2627,7 +2627,7 @@ if(window.params == null)window.params={
                 "portuguese": "Motor Assembly Line",
                 "russian": "Линия сборки двигателей",
                 "spanish": "Fábrica de motores",
-                "taiwanese": "蒸汽機生產線"
+                "taiwanese": "馬達生產線"
             },
             "maintenances": [
                 {
@@ -10323,8 +10323,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 15,
-                    "InactiveAmount": 8,
+                    "Amount": 150,
+                    "InactiveAmount": 75,
                     "Product": 1010017
                 },
                 {
@@ -10382,8 +10382,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 200,
+                    "InactiveAmount": 100,
                     "Product": 1010017
                 },
                 {
@@ -10441,8 +10441,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 15,
-                    "InactiveAmount": 8,
+                    "Amount": 150,
+                    "InactiveAmount": 75,
                     "Product": 1010017
                 },
                 {
@@ -10500,8 +10500,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 2000,
+                    "InactiveAmount": 1000,
                     "Product": 1010017
                 },
                 {
@@ -10559,8 +10559,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 400,
+                    "InactiveAmount": 200,
                     "Product": 1010017
                 },
                 {
@@ -10612,8 +10612,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 500,
+                    "InactiveAmount": 250,
                     "Product": 1010017
                 },
                 {
@@ -10766,8 +10766,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 150,
-                    "InactiveAmount": 75,
+                    "Amount": 200,
+                    "InactiveAmount": 100,
                     "Product": 1010017
                 },
                 {
@@ -10879,8 +10879,8 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 50,
-                    "InactiveAmount": 25,
+                    "Amount": 250,
+                    "InactiveAmount": 125,
                     "Product": 1010017
                 },
                 {
@@ -10926,7 +10926,7 @@ if(window.params == null)window.params={
                 "italian": "Impianto chimico: bobine di pellicola",
                 "japanese": "化学工場: フィルムリール",
                 "korean": "화학 공장: 필름 릴",
-                "polish": "Zakład chemiczny: błona zwojowa",
+                "polish": "Zakład chemiczny: rolki z filmem",
                 "russian": "Химический завод: Кинопленка",
                 "spanish": "Planta química: rollos de película",
                 "taiwanese": "化學廠：底片捲"
@@ -10942,7 +10942,7 @@ if(window.params == null)window.params={
                     "Product": 1010367
                 }
             ],
-            "name": "Chemical Plant: Roll Film",
+            "name": "Chemical Plant: Film Reels",
             "outputs": [
                 {
                     "Amount": 1,
@@ -10951,7 +10951,7 @@ if(window.params == null)window.params={
                 }
             ],
             "region": 5000001,
-            "tpmin": 0.5
+            "tpmin": 2
         },
         {
             "canClip": true,
@@ -10980,9 +10980,9 @@ if(window.params == null)window.params={
             "locaText": {
                 "chinese": "军火工厂：警察装备",
                 "english": "Arsenal: Police Equipment",
-                "french": "Laboratoire : équipement de police",
+                "french": "Arsenal : équipement de police",
                 "german": "Arsenal: Polizeiausrüstung",
-                "italian": "Laboratorio: equipaggiamento della polizia",
+                "italian": "Arsenale: equipaggiamento della polizia",
                 "japanese": "アーセナル: 警察装備",
                 "korean": "무기고: 경찰 장비",
                 "polish": "Laboratorium przemysłowe: wyposażenie policyjne",
@@ -11033,9 +11033,9 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "chinese": "军火工厂：灭火器",
-                "english": "Arsenal: Fire Extinguisher",
+                "english": "Laboratory: Fire Extinguisher",
                 "french": "Laboratoire : extincteur",
-                "german": "Arsenal: Feuerlöscher",
+                "german": "Labor: Feuerlöscher",
                 "italian": "Laboratorio: estintore",
                 "japanese": "アーセナル: 消火器",
                 "korean": "무기고: 소화기",
@@ -11055,7 +11055,7 @@ if(window.params == null)window.params={
                     "Product": 1010367
                 }
             ],
-            "name": "Arsenal: Fire Extinguisher",
+            "name": "Laboratory: Fire Extinguisher",
             "outputs": [
                 {
                     "Amount": 1,
@@ -11092,9 +11092,9 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "chinese": "军火工厂：药物",
-                "english": "Arsenal: Medicine",
+                "english": "Laboratory: Medicine",
                 "french": "Laboratoire : médicaments",
-                "german": "Arsenal: Medizin",
+                "german": "Labor: Medizin",
                 "italian": "Laboratorio: medicina",
                 "japanese": "アーセナル: 薬",
                 "korean": "무기고: 의약품",
@@ -11114,7 +11114,7 @@ if(window.params == null)window.params={
                     "Product": 5406
                 }
             ],
-            "name": "Arsenal: Medicine",
+            "name": "Laboratory: Medicine",
             "outputs": [
                 {
                     "Amount": 1,
@@ -11146,9 +11146,9 @@ if(window.params == null)window.params={
             ],
             "locaText": {
                 "chinese": "军火工厂：颜料",
-                "english": "Arsenal: Pigments",
+                "english": "Laboratory: Pigments",
                 "french": "Laboratoire : pigments",
-                "german": "Arsenal: Pigmente",
+                "german": "Labor: Pigmente",
                 "italian": "Laboratorio: pigmenti",
                 "japanese": "アーセナル: 顔料",
                 "korean": "무기고: 안료",
@@ -11168,7 +11168,7 @@ if(window.params == null)window.params={
                     "Product": 5406
                 }
             ],
-            "name": "Arsenal: Pigments",
+            "name": "Laboratory: Pigments",
             "outputs": [
                 {
                     "Amount": 1,
@@ -11177,13 +11177,13 @@ if(window.params == null)window.params={
                 }
             ],
             "region": 5000001,
-            "tpmin": 2
+            "tpmin": 1.3333333333333335
         },
         {
             "guid": 8027,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_niter.png",
             "locaText": {
-                "chinese": "供电牧场",
+                "chinese": "通电牧场",
                 "english": "Powered Pasture",
                 "french": "Pâturage alimenté",
                 "german": "Elektrifizierte Weide",
@@ -11191,9 +11191,9 @@ if(window.params == null)window.params={
                 "japanese": "電力のある牧草地",
                 "korean": "동력식 목초지",
                 "polish": "Zasilane pastwisko",
-                "russian": "Электрифицированное пастбище",
+                "russian": "Электрифиц. пастбище",
                 "spanish": "Pasto eléctrico",
-                "taiwanese": "供電牧場"
+                "taiwanese": "通電牧場"
             },
             "maintenances": [
             ],
@@ -11212,17 +11212,17 @@ if(window.params == null)window.params={
             "guid": 8002,
             "iconPath": "data/ui/2kimages/main/3dicons/icon_sheep_milk.png",
             "locaText": {
-                "chinese": "供电牧场",
-                "english": "Powered Pasture",
-                "french": "Pâturage alimenté",
-                "german": "Elektrifiziertes Rindergehege",
-                "italian": "Pascolo alimentato",
-                "japanese": "電力のある牧草地",
-                "korean": "동력식 목초지",
-                "polish": "Zasilane pastwisko",
-                "russian": "Электрифицированное пастбище",
-                "spanish": "Pasto eléctrico",
-                "taiwanese": "供電牧場"
+                "chinese": "牧场",
+                "english": "Pasture",
+                "french": "Pâturage",
+                "german": "Weide",
+                "italian": "Pascolo",
+                "japanese": "牛の牧草地",
+                "korean": "목초지",
+                "polish": "Pastwisko",
+                "russian": "Пастбище",
+                "spanish": "Pasto",
+                "taiwanese": "牧場"
             },
             "maintenances": [
             ],
@@ -11242,7 +11242,7 @@ if(window.params == null)window.params={
             "guid": 8026,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_nandu_feathers.png",
             "locaText": {
-                "chinese": "供电牧场",
+                "chinese": "通电牧场",
                 "english": "Powered Pasture",
                 "french": "Pâturage alimenté",
                 "german": "Elektrifizierte Weide",
@@ -11250,9 +11250,9 @@ if(window.params == null)window.params={
                 "japanese": "電力のある牧草地",
                 "korean": "동력식 목초지",
                 "polish": "Zasilane pastwisko",
-                "russian": "Электрифицированное пастбище",
+                "russian": "Электрифиц. пастбище",
                 "spanish": "Pasto eléctrico",
-                "taiwanese": "供電牧場"
+                "taiwanese": "通電牧場"
             },
             "maintenances": [
             ],
@@ -11323,6 +11323,8 @@ if(window.params == null)window.params={
         "data/ui/2kimages/main/3dicons/drop_goods/icon_dropgood_pamphlets.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/drop_goods/icon_dropgood_seamines.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/drop_goods/icon_dropgood_water.png": "data:image/webp;base64,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",
+        "data/ui/2kimages/main/3dicons/effects_highlife/icon_buff_dlc09_10.png": "data:image/webp;base64,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",
+        "data/ui/2kimages/main/3dicons/effects_highlife/icon_buff_dlc09_11.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/goods_africa/icon_beeswax.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/goods_africa/icon_candles.png": "data:image/webp;base64,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",
         "data/ui/2kimages/main/3dicons/goods_africa/icon_ceramics.png": "data:image/webp;base64,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",
@@ -13399,8 +13401,7 @@ if(window.params == null)window.params={
             ],
             "factories": [
                 1010286,
-                1010326,
-                5862
+                1010326
             ],
             "guid": 191353,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_normal_dressed_401.png",
@@ -13447,7 +13448,7 @@ if(window.params == null)window.params={
                 "korean": "수석 전기 공학자",
                 "polish": "Wiodący elektro-inżynier",
                 "portuguese": "Leading Electrical Engineer",
-                "russian": "Превосходный инженер-электротехник",
+                "russian": "Превосходный инженер-электрик",
                 "spanish": "Ingeniero eléctrico jefe",
                 "taiwanese": "頂尖電氣工程師"
             },
@@ -15008,17 +15009,17 @@ if(window.params == null)window.params={
             "guid": 7225,
             "iconPath": "data/ui/2kimages/main/3dicons/specialists/systemic/icon_inuit_specialist_1003_a.png",
             "locaText": {
-                "chinese": "Bait Specialist",
+                "chinese": "诱饵专家",
                 "english": "Bait Specialist",
-                "french": "Bait Specialist",
-                "german": "Bait Specialist",
-                "italian": "Bait Specialist",
-                "japanese": "Bait Specialist",
-                "korean": "Bait Specialist",
-                "polish": "Bait Specialist",
-                "russian": "Bait Specialist",
-                "spanish": "Bait Specialist",
-                "taiwanese": "Bait Specialist"
+                "french": "Spécialiste des appâts",
+                "german": "Köderspezialist",
+                "italian": "Specialista in esche",
+                "japanese": "餌の専門家",
+                "korean": "미끼 전문가",
+                "polish": "Specjalista od przynęt",
+                "russian": "Специалист по наживке",
+                "spanish": "Especialista en cebo",
+                "taiwanese": "誘餌專家"
             },
             "name": "Bait Specialist",
             "replaceInputs": [
@@ -22523,9 +22524,11 @@ if(window.params == null)window.params={
                 135150,
                 135130,
                 1414,
-                5389,
                 5400,
+                5389,
                 6280,
+                5390,
+                5392,
                 5393,
                 5394,
                 5397,
@@ -22534,7 +22537,6 @@ if(window.params == null)window.params={
                 114408,
                 117702,
                 117701,
-                5390,
                 270042
             ]
         }
@@ -25014,7 +25016,7 @@ if(window.params == null)window.params={
                 "korean": "고급 무기",
                 "polish": "Zaawansowane uzbrojenie",
                 "portuguese": "Advanced Weapons",
-                "russian": "Усовершенствованное оружие",
+                "russian": "Усовершенств. оружие",
                 "spanish": "Armas avanzadas",
                 "taiwanese": "先進武器"
             },
@@ -28946,7 +28948,7 @@ if(window.params == null)window.params={
             "dlcs": [
                 "dlc12"
             ],
-            "exchangeWeight": 1804.3562264999996,
+            "exchangeWeight": 1811.3562264999996,
             "guid": 5400,
             "iconPath": "data/ui/2kimages/main/3dicons/recipes/icon_pigments.png",
             "locaText": {
@@ -28976,7 +28978,7 @@ if(window.params == null)window.params={
             "guid": 5390,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_motor.png",
             "locaText": {
-                "chinese": "蒸汽机",
+                "chinese": "马达",
                 "english": "Motor",
                 "french": "Moteur",
                 "german": "Motor",
@@ -28986,7 +28988,7 @@ if(window.params == null)window.params={
                 "polish": "Motor",
                 "russian": "Двигатель",
                 "spanish": "Motor",
-                "taiwanese": "蒸汽機"
+                "taiwanese": "馬達"
             },
             "mainFactory": 5659,
             "name": "Motor",
@@ -28998,7 +29000,7 @@ if(window.params == null)window.params={
             "dlcs": [
                 "dlc12"
             ],
-            "exchangeWeight": 9128.714114499999,
+            "exchangeWeight": 9135.714114499999,
             "guid": 5391,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_scooter.png",
             "locaText": {
@@ -29024,7 +29026,7 @@ if(window.params == null)window.params={
             "dlcs": [
                 "dlc12"
             ],
-            "exchangeWeight": 2792.1209715,
+            "exchangeWeight": 2691.3209715000003,
             "guid": 5392,
             "iconPath": "data/ui/2kimages/main/3dicons/production_goods/icon_film_role.png",
             "locaText": {
@@ -31325,7 +31327,7 @@ if(window.params == null)window.params={
             },
             "maintenances": [
                 {
-                    "Amount": 100,
+                    "Amount": 1000,
                     "Product": 1010017
                 },
                 {
@@ -33032,6 +33034,7 @@ if(window.params == null)window.params={
     ],
     "residenceEffects": [
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -30,
@@ -33070,6 +33073,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33185,6 +33189,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33217,6 +33222,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33259,6 +33265,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33307,6 +33314,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33413,6 +33421,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33446,6 +33455,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33503,6 +33513,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33536,6 +33547,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33573,6 +33585,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33623,6 +33636,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33657,6 +33671,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33771,6 +33786,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33884,6 +33900,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -33929,6 +33946,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -33966,6 +33984,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -100,
@@ -34007,6 +34026,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34045,6 +34065,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34157,6 +34178,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34205,6 +34227,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -20,
@@ -34277,6 +34300,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -30,
@@ -34349,6 +34373,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -40,
@@ -34385,7 +34410,7 @@ if(window.params == null)window.params={
                 "chinese": "亚美莉亚女士的必要禁酒措施",
                 "english": "Ms. Amelia's Essential Prohibition Measures",
                 "french": "Mesures essentielles de prohibition par Mme Amélia",
-                "german": "Ms. Amelias wesentliche Prohibitionsmaßnahmen",
+                "german": "Ms. Amelias wesentliche Prohibitions-maßnahmen",
                 "italian": "Misure essenziali di proibizionismo della signorina Amelia",
                 "japanese": "ミス・アメリアの必須禁酒手段",
                 "korean": "아멜리아의 필수 금지 조치",
@@ -34421,6 +34446,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34534,6 +34560,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34654,6 +34681,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -34774,6 +34802,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34808,6 +34837,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34841,6 +34871,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34874,6 +34905,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34909,6 +34941,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34953,6 +34986,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -34992,6 +35026,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35033,6 +35068,97 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
+            "effects": [
+                {
+                    "consumptionModifier": -10,
+                    "guid": 1010225,
+                    "residents": 0,
+                    "suppliedBy": [
+                    ]
+                },
+                {
+                    "consumptionModifier": -10,
+                    "guid": 1010250,
+                    "residents": 0,
+                    "suppliedBy": [
+                    ]
+                },
+                {
+                    "consumptionModifier": -10,
+                    "guid": 1010246,
+                    "residents": 0,
+                    "suppliedBy": [
+                    ]
+                }
+            ],
+            "guid": 137263,
+            "iconPath": "data/ui/2kimages/main/3dicons/effects_highlife/icon_buff_dlc09_10.png",
+            "locaText": {
+                "chinese": "为反消费主义的使命贡献",
+                "english": "Dedication to Anti-Consumerist Causes",
+                "french": "Dévouement aux causes anticonsuméristes",
+                "german": "Engagement gegen übermäßigen Konsum",
+                "italian": "Dedizione alle cause anticonsumistiche",
+                "japanese": "反大量消費主義の象徴",
+                "korean": "반소비주의를 향한 헌신",
+                "polish": "Poświęcenie sprawie zwalczania konsumpcjonizmu",
+                "russian": "Посвящение движению антипотребительства",
+                "spanish": "Fomento del anticonsumismo",
+                "taiwanese": "為反消費主義的使命貢獻"
+            },
+            "name": "Dedication to Anti-Consumerist Causes",
+            "residences": [
+                406
+            ]
+        },
+        {
+            "allowStacking": true,
+            "effects": [
+                {
+                    "consumptionModifier": -10,
+                    "guid": 1010225,
+                    "residents": 0,
+                    "suppliedBy": [
+                    ]
+                },
+                {
+                    "consumptionModifier": -10,
+                    "guid": 1010250,
+                    "residents": 0,
+                    "suppliedBy": [
+                    ]
+                },
+                {
+                    "consumptionModifier": -10,
+                    "guid": 1010246,
+                    "residents": 0,
+                    "suppliedBy": [
+                    ]
+                }
+            ],
+            "guid": 137264,
+            "iconPath": "data/ui/2kimages/main/3dicons/effects_highlife/icon_buff_dlc09_11.png",
+            "locaText": {
+                "chinese": "为西奥朵拉的平等主义未来贡献",
+                "english": "Dedication to Theodora's Egalitarian Future",
+                "french": "Dévouement à la vision d'avenir égalitariste de Theodora",
+                "german": "Engagement für Theodoras Vision von Gleichberechtigung",
+                "italian": "Dedizione al futuro egualitario di Theodora",
+                "japanese": "セオドラが考える平等な未来の象徴",
+                "korean": "테오도라의 평등주의적 미래를 향한 헌신",
+                "polish": "Poświęcenie sprawiedliwej przyszłości wg Teodory",
+                "russian": "Посвящение идеям Теодоры о равном будущем",
+                "spanish": "Fomento de un futuro igual de Theodora",
+                "taiwanese": "為西奧朵拉的平等主義未來貢獻"
+            },
+            "name": "Dedication to Theodora's Egalitarian Futures",
+            "residences": [
+                406
+            ]
+        },
+        {
+            "allowStacking": true,
             "dlcs": [
                 "dlc10"
             ],
@@ -35078,6 +35204,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": -5,
@@ -35179,6 +35306,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35211,6 +35339,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35260,6 +35389,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35293,6 +35423,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35326,6 +35457,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "effects": [
                 {
                     "consumptionModifier": 0,
@@ -35441,6 +35573,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc1"
             ],
@@ -35488,6 +35621,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35522,6 +35656,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35556,6 +35691,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35589,6 +35725,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc3"
             ],
@@ -35623,6 +35760,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35657,6 +35795,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35690,6 +35829,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35723,6 +35863,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35757,6 +35898,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35798,6 +35940,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35839,6 +35982,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35879,6 +36023,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35919,6 +36064,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -35952,6 +36098,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -35992,6 +36139,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -36025,6 +36173,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -36065,6 +36214,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc6"
             ],
@@ -36128,6 +36278,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -36210,6 +36361,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -36257,6 +36409,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36377,6 +36530,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36497,6 +36651,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36617,6 +36772,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36737,6 +36893,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36857,6 +37014,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -36986,6 +37144,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37115,6 +37274,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37244,6 +37404,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37373,6 +37534,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37502,6 +37664,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -37555,6 +37718,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -37608,6 +37772,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -37665,6 +37830,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc4"
             ],
@@ -37762,6 +37928,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc4"
             ],
@@ -37851,6 +38018,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -37947,6 +38115,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc9"
             ],
@@ -38002,6 +38171,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38111,6 +38281,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38213,6 +38384,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38315,6 +38487,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38417,6 +38590,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": true,
             "dlcs": [
                 "dlc8"
             ],
@@ -38534,6 +38708,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38594,6 +38769,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38647,6 +38823,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38706,6 +38883,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38766,6 +38944,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38825,6 +39004,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38878,6 +39058,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38937,6 +39118,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -38989,6 +39171,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39048,6 +39231,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39108,6 +39292,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39167,6 +39352,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39226,6 +39412,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39285,6 +39472,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39344,6 +39532,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc8"
             ],
@@ -39401,6 +39590,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39451,6 +39641,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39497,6 +39688,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39547,6 +39739,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39598,6 +39791,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39645,6 +39839,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39695,6 +39890,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39745,6 +39941,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39796,6 +39993,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39846,6 +40044,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39897,6 +40096,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39948,6 +40148,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -39994,6 +40195,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -40044,6 +40246,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],
@@ -40095,6 +40298,7 @@ if(window.params == null)window.params={
             ]
         },
         {
+            "allowStacking": false,
             "dlcs": [
                 "dlc9"
             ],

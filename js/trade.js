@@ -105,10 +105,7 @@ export class TradeList {
             if (this.npcRoutes != null && this.npcRoutes.length > 0)
                 return true;
 
-            if (this.island.isAllIslands())
-                return false;
-
-            return view.islands().length > 2;
+            return view.islands().length >= 2;
         });
     }
 
@@ -157,7 +154,7 @@ export class TradeList {
 
     onShow() {
         var usedIslands = new Set(this.routes().flatMap(r => [r.from, r.to]));
-        var islands = view.islands().slice(1).filter(i => !usedIslands.has(i) && i != this.island);
+        var islands = view.islands().filter(i => !usedIslands.has(i) && i != this.island);
         islands.sort((a, b) => {
             var sIdxA = view.sessions.indexOf(a.session);
             var sIdxB = view.sessions.indexOf(b.session);

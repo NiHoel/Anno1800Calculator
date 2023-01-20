@@ -831,8 +831,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 16: New World Rising. The population section has completely changed and some new information must be entered to get correct results.",
-        german: "Game Update 16: Aufstieg der Neuen Welt. Der Abschnitt Bevölkerung wurde komplett überarbeitet und einige neue Informationen müssen eingegeben werden, um korrekte Ergebnisse zu erhalten.",
+        english: "Game Update 16.1",
+        german: "Game Update 16.1",
     },
     helpContent: {
         german:

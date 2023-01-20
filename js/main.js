@@ -194,33 +194,20 @@ function installImportConfigListener() {
 
                     if (localStorage) {
 
-                        if (config.islandName && config.islandName != "Anno 1800 Calculator" &&
-                            !config.islandNames && !config[config.islandName] && (!config.versionCalculator || config.versionCalculator.startsWith("v1") || config.versionCalculator.startsWith("v2"))) {
-                            // import old, one island save
-                            delete config.versionCalculator;
-                            delete config.versionServer;
+                        localStorage.clear();
+                        for (var a in config)
+                            localStorage.setItem(a, config[a]);
+                        localStorage.setItem("versionCalculator", versionCalculator);
 
-                            view.islandManager.islandNameInput(config.islandName);
-                            view.islandManager.create();
-                            var island = view.islands().filter(i => i.name() == config.islandName)[0];
-                            island.storage.json = config;
-                            island.storage.save();
-                            localStorage.setItem("islandName", config.islandName);
-                        } else {
-                            localStorage.clear();
-                            for (var a in config)
-                                localStorage.setItem(a, config[a]);
-                            localStorage.setItem("versionCalculator", versionCalculator);
-
-                            if (!config.islandNames) { // old save, restore islands
-                                for (var island of view.islands()) {
-                                    if (!island.isAllIslands())
-                                        island.storage.save();
-                                }
-                                let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
-                                localStorage.setItem("islandNames", islandNames);
+                        if (!config.islandNames) { // old save, restore islands
+                            for (var island of view.islands()) {
+                                if (!island.isAllIslands())
+                                    island.storage.save();
                             }
+                            let islandNames = JSON.stringify(view.islands().filter(i => !i.isAllIslands()).map(i => i.name()));
+                            localStorage.setItem("islandNames", islandNames);
                         }
+                        
                         location.reload();
 
                     } else {

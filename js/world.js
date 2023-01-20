@@ -5,7 +5,7 @@ import { texts } from './i18n.js'
 import { CommuterWorkforce, Workforce, ResidenceBuilding, PopulationLevel } from './population.js'
 import { ResidenceEffect, RecipeList } from './consumption.js'
 import { NoFactoryProduct, Product, MetaProduct, Item, ProductCategory } from './production.js'
-import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff } from './factories.js'
+import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff, PowerPlant } from './factories.js'
 import { ContractManager } from './trade.js'
 import {ResidenceEffectView} from './views.js'
 
@@ -250,7 +250,7 @@ class Island {
 
         for (let consumer of (params.powerPlants || [])) {
 
-            let f = new PublicConsumerBuilding(consumer, assetsMap, this);
+            let f = new PowerPlant(consumer, assetsMap, this);
             assetsMap.set(f.guid, f);
             this.consumers.push(f);
             this.powerPlants.push(f);
