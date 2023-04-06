@@ -64,6 +64,20 @@
                             </td>
                         </tr>
 
+                        <!-- ko if: $data.setBuff -->
+                        <tr>
+                            <!-- extra goods set -->
+                            <td colspan="2">
+                                <div class="inline-list">
+                                    <div data-bind="component: {name: 'icon-checkbox', params: {asset: $data.setBuff, checked: $data.setBuffChecked, id: $data.guid + '-setBuff'}}"></div>
+                                    <span class="ml-1" data-bind="text: $data.setBuff.name"></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div data-bind="component: {name: 'additional-output', params: {amount: $data.setBuffExtraGoods}}"></div>
+                            </td>
+                        </tr>
+						<!-- /ko -->
                         <!-- ko if: $data.palaceBuff && $data.palaceBuff.visible() -->
                         <tr>
                             <!-- extra goods palace -->

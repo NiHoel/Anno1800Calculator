@@ -106,6 +106,19 @@ function configUpgrade(configVersion) {
                 }
             }
         }
+
+        if (configVersion[0] < 11) {
+            for (var isl of view.islands()) {
+                for (var f of isl.factories) {
+                    var id = `${f.guid}.palaceBuff.checked`;
+                    var buffChecked = isl.storage.getItem(id);
+                    if (buffChecked == "1" && f.palaceBuff == null && f.setBuff != null) {
+                        f.setBuffChecked(true);
+                        isl.storage.removeItem(id);
+                    }
+                }
+            }
+        }
     } catch (e) { console.warn(e); }
 }
 
@@ -197,7 +210,6 @@ function installImportConfigListener() {
                         localStorage.clear();
                         for (var a in config)
                             localStorage.setItem(a, config[a]);
-                        localStorage.setItem("versionCalculator", versionCalculator);
 
                         if (!config.islandNames) { // old save, restore islands
                             for (var island of view.islands()) {

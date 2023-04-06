@@ -332,3 +332,11 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+/old
+/mockups
+/wheel_input_raw.gif
+/build.cmd
+/knockout-3.5.1.debug.js
+/package-lock.json
+/TODO.txt
+/wheel_input.xcf

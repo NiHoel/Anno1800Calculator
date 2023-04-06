@@ -5,7 +5,7 @@ import { texts } from './i18n.js'
 import { CommuterWorkforce, Workforce, ResidenceBuilding, PopulationLevel } from './population.js'
 import { ResidenceEffect, RecipeList } from './consumption.js'
 import { NoFactoryProduct, Product, MetaProduct, Item, ProductCategory } from './production.js'
-import { PublicConsumerBuilding, Module, Factory, Consumer, PalaceBuff, PowerPlant } from './factories.js'
+import { PublicConsumerBuilding, Module, Factory, Consumer, Buff, PowerPlant } from './factories.js'
 import { ContractManager } from './trade.js'
 import {ResidenceEffectView} from './views.js'
 
@@ -290,7 +290,12 @@ class Island {
         }
 
         for (let buff of (params.palaceBuffs || [])) {
-            let f = new PalaceBuff(buff, assetsMap);
+            let f = new Buff(buff, assetsMap);
+            assetsMap.set(f.guid, f);
+        }
+
+        for (let buff of (params.setBuffs || [])) {
+            let f = new Buff(buff, assetsMap);
             assetsMap.set(f.guid, f);
         }
 
@@ -307,6 +312,7 @@ class Island {
             persistBool(f, "moduleChecked", `${f.guid}.module.checked`);
             persistBool(f, "fertilizerModuleChecked", `${f.guid}.fertilizerModule.checked`);
             persistBool(f, "palaceBuffChecked", `${f.guid}.palaceBuff.checked`);
+            persistBool(f, "setBuffChecked", `${f.guid}.setBuff.checked`);
             persistInt(f, "percentBoost");
             persistBool(f.extraGoodProductionList, "checked", `${f.guid}.extraGoodProductionList.checked`);
         }
@@ -591,6 +597,8 @@ class Island {
                 }
                 if (a.palaceBuffChecked)
                     a.palaceBuffChecked(false);
+                if (a.setBuffChecked)
+                    a.setBuffChecked(false);
                 a.percentBoost(100);
                 a.extraGoodProductionList.checked(true);
             }

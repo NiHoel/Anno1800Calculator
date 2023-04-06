@@ -188,7 +188,7 @@ export class PowerPlant extends PublicConsumerBuilding {
     }
 }
 
-export class PalaceBuff extends NamedElement {
+export class Buff extends NamedElement {
     constructor(config, assetsMap) {
         super(config);
 
@@ -321,8 +321,20 @@ export class Factory extends Consumer {
             this.palaceBuffExtraGoods = ko.pureComputed(() => {
                 if (!this.palaceBuffChecked())
                     return 0;
-                var f = this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 ? 2 : 1;
+                var f = this.clipped && this.clipped() ? 2 : 1;
                 return f * this.inputAmount() / this.palaceBuff.additionalOutputCycle;
+            });
+        }
+
+        if (config.setBuff) {
+            this.setBuff = assetsMap.get(config.setBuff);
+            this.setBuffChecked = ko.observable(false);
+            this.setBuff.lockDLCIfSet(this.setBuffChecked);
+
+            this.setBuffExtraGoods = ko.pureComputed(() => {
+                if (!this.setBuffChecked())
+                    return 0;
+                return this.inputAmount() / this.setBuff.additionalOutputCycle;
             });
         }
 
@@ -338,7 +350,10 @@ export class Factory extends Consumer {
             }
 
             if (this.palaceBuff && this.palaceBuffChecked())
-                factor += (this.clipped && this.clipped() && this.palaceBuff.guid !== 191141 /* bronce age gives no benefit from boosting */ ? 2 : 1) / this.palaceBuff.additionalOutputCycle;
+                factor += (this.clipped && this.clipped() ? 2 : 1) / this.palaceBuff.additionalOutputCycle;
+
+            if (this.setBuff && this.setBuffChecked())
+                factor += 1 / this.setBuff.additionalOutputCycle;
 
             if (this.extraGoodProductionList && this.extraGoodProductionList.selfEffecting && this.extraGoodProductionList.checked())
                 for (var e of this.extraGoodProductionList.selfEffecting())
@@ -526,6 +541,9 @@ export class Factory extends Consumer {
 
             if (this.palaceBuffChecked)
                 other.palaceBuffChecked(this.palaceBuffChecked());
+
+            if (this.setBuffChecked)
+                other.setBuffChecked(this.setBuffChecked());
 
             if (this.workforceDemand && this.workforceDemand.percentBoost)
                 other.workforceDemand.percentBoost(this.workforceDemand.percentBoost());

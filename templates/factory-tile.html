@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="ui-fchain-item-module" data-bind="visible: !!$data.module || !!$data.palaceBuff">
+            <div class="ui-fchain-item-module" data-bind="visible: !!$data.module || !!$data.palaceBuff || !!$data.setBuff">
                 <div style="flex: 100 1 auto;"></div>
 
                 <!-- module -->
@@ -93,7 +93,7 @@
                 </div>
 
                 <!-- palace buff -->
-                <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
+                <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible() && !$data.setBuff" style="flex: auto;">
                     <div class="custom-control custom-checkbox" data-bind="visible: !!$data.palaceBuff">
                         <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().palaceBuffChecked, attr: { id: category.guid + '-' + $data.guid + '-palaceBuff' }">
                         <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" src-only style="vertical-align: top;">
@@ -101,8 +101,21 @@
                         </label>
                     </div>
                 </div>
-                <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible()" style="flex: auto;">
+                <div data-bind="if: !!$data.palaceBuff && $data.palaceBuff.visible() && !$data.setBuff" style="flex: auto;">
                     <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.palaceBuff.icon ? $data.palaceBuff.icon  : null, alt: $data.palaceBuff.name, for: $data.guid + '-palaceBuff', title: $data.palaceBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
+                </div>
+
+                <!-- set buff -->
+                <div data-bind="if: !!$data.setBuff" style="flex: auto;">
+                    <div class="custom-control custom-checkbox" data-bind="visible: !!$data.setBuff">
+                        <input type="checkbox" class="custom-control-input" data-bind="checked: $data.instance().setBuffChecked, attr: { id: category.guid + '-' + $data.guid + '-setBuff' }">
+                        <label class="custom-control-label" data-bind="attr: { for: category.guid + '-' + $data.guid + '-setBuff', title: $data.setBuff.name }" src-only style="vertical-align: top;">
+
+                        </label>
+                    </div>
+                </div>
+                <div data-bind="if: !!$data.setBuff && $data.setBuff.visible()" style="flex: auto;">
+                    <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.setBuff.icon ? $data.setBuff.icon  : null, alt: $data.setBuff.name, for: $data.guid + '-setBuff', title: $data.setBuff.name }" style="margin-right: 0.75em;margin-left: -0.25em;" />
                 </div>
                 <div style="flex: 100 1 auto;"></div>
             </div>

@@ -831,8 +831,8 @@ Siehe folgenden Link für weitere Informationen: `,
         korean: "새로운 Anno1800 계산기 버전이 제공됩니다. 다운로드 버튼을 클릭하십시오."
     },
     newFeature: {
-        english: "Game Update 16.1",
-        german: "Game Update 16.1",
+        english: "Game Update 17",
+        german: "Game Update 17",
     },
     helpContent: {
         german:
