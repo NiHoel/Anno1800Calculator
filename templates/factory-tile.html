@@ -20,7 +20,7 @@
                 <!-- buildings display for non-construction products -->
                 <div class="ui-fchain-item-count" data-bind="if: !$data.editable()">
                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildings.name}">
-                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
+                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber($data.instance().buildings()) : Math.ceil( $data.instance().buildings() - 0.01)"></span>
                         <span>x</span>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                 <div class="ui-fchain-item-count" data-bind="if: $data.editable() &&  $data.instance().buildings() > $data.instance().existingBuildings()">
                     <div href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.requiredNumberOfBuildingsDescription.name}" style="display: flex">
                         <span data-bind="text: $root.texts.requiredNumberOfBuildings.name"></span>
-                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings())"></span>
+                        <span data-bind="text: $root.settings.decimalsForBuildings.checked() ? formatNumber( $data.instance().buildings()) : Math.ceil( $data.instance().buildings() - 0.01)"></span>
                         <span>x</span>
                     </div>
                 </div>
