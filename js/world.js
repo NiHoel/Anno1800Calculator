@@ -587,6 +587,8 @@ class Island {
                 a.existingBuildings(0);
                 if (a.workforceDemand && a.workforceDemand.percentBoost)
                     a.workforceDemand.percentBoost(100);
+                if (a.percentBoost)
+                    a.percentBoost(100);
             }
             if (a instanceof Factory) {
                 if (a.clipped)
