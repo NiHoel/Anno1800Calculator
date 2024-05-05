@@ -130,7 +130,7 @@ function factoryReset() {
 }
 
 function isLocal() {
-    return window.location.protocol == 'file:' || /localhost|127\.0\.0\.1/.test(window.location.host.replace);
+    return window.location.protocol == 'file:' || /localhost|127\.0\.0\.1/.test(window.location.hostname);
 }
 
 function exportConfig() {
