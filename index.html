@@ -10,7 +10,7 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./style.css" />
 
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -20,11 +20,11 @@
 
     <!-- Latest compiled JavaScript -->
     <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="bootstrap-notify.min.js"></script>
+    <script type="text/javascript" src="./bootstrap-notify.min.js"></script>
     <!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>-->
 
     <!-- <script src="js/params.js"></script> -->
-    <script src="dist/calculator.bundle.js"></script>
+    <script src="./dist/calculator.bundle.js"></script>
 
 </head>
 <body>
@@ -44,11 +44,11 @@
                 <div class="modal-body">
                     <h5>Calculator Tutorial</h5>
                     <a class="mb-3" href="https://youtu.be/YxU-8YCzpec" target="_blank">
-                        <img class="img-thumbnail img-responsive" src="CalculatorScreenshot.png" />
+                        <img class="img-thumbnail img-responsive" src="./CalculatorScreenshot.png" />
                     </a>
                     <h5 class="mt-3">Statistics Extraction Tutorial</h5>
                     <a class="mb-3" href="https://youtu.be/k4WmgEIkp4s" target="_blank">
-                        <img class="img-thumbnail img-responsive" src="CalculatorExtractionScreenshot.png" />
+                        <img class="img-thumbnail img-responsive" src="./CalculatorExtractionScreenshot.png" />
                     </a>
                     <br />
                     <div class="mt-3" data-bind="html: $root.texts.helpContent.name"></div>
@@ -73,16 +73,16 @@
         <nav class="navbar navbar-expand-sm bg-dark inline-list-stretched">
             <div class="btn-group">
                 <button type="button" class="btn">
-                    <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-navbar" src="icons/icon_marketplace_2d_light.png" data-bind="click: () => $root.island().prepareResidenceEffectView()" />
+                    <img data-toggle="modal" data-target="#residence-effect-dialog" class="icon-navbar" src="./icons/icon_marketplace_2d_light.png" data-bind="click: () => $root.island().prepareResidenceEffectView()" />
                 </button>
                 <button data-toggle="modal" data-target="#factory-choose-dialog" class="btn text-light">
                     <span class="fa fa-cogs"> </span>
                 </button>
                 <button type="button" class="btn">
-                    <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="icons/icon_add_goods_socket_white.png" />
+                    <img data-toggle="modal" data-target="#item-equipment-dialog" class="icon-navbar" src="./icons/icon_add_goods_socket_white.png" />
                 </button>
                 <button type="button" class="btn" data-bind="enable: $root.dlcsMap.get('dlc7').checked(), visible: $root.island().contractManager">
-                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="icons/icon_docklands_2d_white.png" />
+                    <img data-toggle="modal" data-target="#contract-management-dialog" class="icon-navbar" src="./icons/icon_docklands_2d_white.png" />
                 </button>
             </div>
             <div class="input-group input-group-sm" data-bind="visible: $root.islands().length > 1" style="width: unset;">
@@ -91,10 +91,10 @@
                 <select name="islands" class="custom-select" id="islands" data-bind="value: $root.island, options: $root.islands, optionsText: i => i.sessionExtendedName()" style="max-width: 20rem"></select>
                 <div class="input-group-append">
                     <button type="button" class="btn">
-                        <img data-toggle="modal" data-target="#island-management-dialog" class="icon-navbar" src="icons/icon_map.png" />
+                        <img data-toggle="modal" data-target="#island-management-dialog" class="icon-navbar" src="./icons/icon_map.png" />
                     </button>
                     <button type="button" class="btn">
-                        <img data-toggle="modal" data-target="#trade-routes-management-dialog" class="icon-navbar" src="icons/icon_shiptrade.png" />
+                        <img data-toggle="modal" data-target="#trade-routes-management-dialog" class="icon-navbar" src="./icons/icon_shiptrade.png" />
                     </button>
                 </div>
             </div>
@@ -205,7 +205,7 @@
                                 <div class="ui-fchain-item-count">
 
                                     <span href="#" data-toggle="tooltip" data-bind="attr: {'title' : $root.texts.residents.name}">
-                                        <img class="icon-sm icon-light" src="icons/icon_resource_population.png" />
+                                        <img class="icon-sm icon-light" src="./icons/icon_resource_population.png" />
                                         <span data-bind="text: formatNumber(Math.round($data.residentsInput()))"></span>
                                     </span>
 
