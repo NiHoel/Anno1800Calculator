@@ -148,6 +148,21 @@ export class Consumer extends NamedElement {
     updateAmount() {
 
     }
+
+    applyConfigGlobally() {
+        for (var isl of view.islands()) {
+            if (this.region && isl.region && this.region != isl.region)
+                continue;
+
+            var other = isl.assetsMap.get(this.guid);
+
+            for (var i = 0; i < this.items.length; i++)
+                other.items[i].checked(this.items[i].checked());
+
+            if (this.workforceDemand && this.workforceDemand.percentBoost)
+                other.workforceDemand.percentBoost(this.workforceDemand.percentBoost());
+        }
+    }
 }
 
 export class Module extends Consumer {
@@ -185,6 +200,20 @@ export class PowerPlant extends PublicConsumerBuilding {
         this.percentBoost.subscribe((val) => {
             this.boost(val / 100);
         });
+    }
+
+    applyConfigGlobally() {
+        super.applyConfigGlobally();
+
+        for (var isl of view.islands()) {
+            if (this.region && isl.region && this.region != isl.region)
+                continue;
+
+            var other = isl.assetsMap.get(this.guid);
+
+            // only update new attributes of this child classe
+            other.percentBoost(this.percentBoost());
+        }
     }
 }
 

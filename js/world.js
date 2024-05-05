@@ -255,6 +255,7 @@ class Island {
             this.consumers.push(f);
             this.powerPlants.push(f);
 
+            persistInt(f, "percentBoost");
             // values for existingBuildings are read from localstorage later, after products are referenced
         }
 
