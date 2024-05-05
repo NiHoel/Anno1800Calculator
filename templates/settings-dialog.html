@@ -61,6 +61,7 @@
                     </ul>
                     <hr />
                     <h6>Server<button type="button" class="help" data-toggle="modal" data-target="#download-dialog">?</button></h6>
+                    <div>server address <input data-bind="value:settings.serverAddress"></div>
                     <div data-bind="foreach: settings.serverOptions">
                         <div class="custom-control custom-checkbox">
                             <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: { id: $data.id }">

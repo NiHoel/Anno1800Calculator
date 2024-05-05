@@ -40,7 +40,10 @@ window.exportConfig = exportConfig;
 
 window.view = {
     settings: {
-        language: ko.observable("english")
+        language: ko.observable("english"),
+        options: [],
+        serverOptions: [],
+        serverAddress: ko.observable(localStorage.getItem('serverAddress')||'localhost'),
     },
     texts: {},
     dlcs: [],
@@ -249,7 +252,7 @@ class PopulationReader {
 
         // only ping the server when the website is run locally
         if (isLocal()) {
-            console.log('waiting for responses from ' + this.url);
+            console.log('waiting for responses from ' + window.view.settings.serverAddress());
             this.requestInterval = setInterval(this.handleResponse.bind(this), 1000);
 
             $.getJSON("https://api.github.com/repos/NiHoel/Anno1800UXEnhancer/releases/latest").done((release) => {
@@ -260,7 +263,9 @@ class PopulationReader {
     }
 
     async handleResponse() {
-        var url_with_params = this.url + "?" +
+        let host = window.view.settings.serverAddress();
+        localStorage.setItem('serverAddress', host);
+        let url_with_params = 'http://' + host + ":8000/AnnoServer/Population?" +
             jQuery.param({
                 lang: view.settings.language(),
                 //                optimalProductivity: view.settings.optimalProductivity.checked()
@@ -426,7 +431,7 @@ function init(isFirstRun, configVersion) {
     for (let attr in serverOptions) {
         let o = new Option(serverOptions[attr]);
         o.id = attr;
-        if (attr != "optimalProductivity")
+        if (attr !== "optimalProductivity")
             o.checked(true);
         view.settings[attr] = o;
         view.settings.serverOptions.push(o);
