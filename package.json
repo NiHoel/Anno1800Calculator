@@ -1,7 +1,7 @@
 {
   "name": "Anno1800Calculator",
   "displayName": "Anno 1800 Calculator",
-  "version": "v10.0",
+  "version": "v11.1",
   "description": "A calculator to compute the consumption of goods in the computer game Anno 1800.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
